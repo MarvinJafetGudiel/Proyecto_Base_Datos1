@@ -1,0 +1,221 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clientes | MAGIS-AUTO</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f3f6fb;
+    color: #243047;
+}
+
+.contenedor { display: flex; min-height: 100vh; }
+
+.menu {
+    width: 240px;
+    background: #14233d;
+    color: white;
+    padding: 25px 18px;
+}
+
+.logo { font-size: 24px; font-weight: bold; }
+
+.menu p { color: #aabbd3; font-size: 12px; margin-bottom: 40px; }
+
+.menu a {
+    display: block;
+    padding: 14px;
+    color: #dce6f5;
+    text-decoration: none;
+    border-radius: 8px;
+    margin-bottom: 9px;
+}
+
+.menu a:hover, .menu a.activo {
+    background: #2864dc;
+    color: white;
+}
+
+.principal { flex: 1; padding: 35px; min-width: 0; }
+
+h1 { margin-bottom: 8px; }
+.descripcion { color: #718096; }
+
+.panel {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    margin-top: 25px;
+    border: 1px solid #e5ebf3;
+}
+
+.buscador {
+    width: 100%;
+    max-width: 450px;
+    padding: 13px;
+    border: 1px solid #d6deea;
+    border-radius: 8px;
+    font-size: 15px;
+    margin: 15px 0;
+}
+
+.tabla-contenedor { overflow-x: auto; }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 700px;
+}
+
+th {
+    background: #edf3ff;
+    color: #234d91;
+    text-align: left;
+    padding: 14px;
+}
+
+td {
+    padding: 13px;
+    border-bottom: 1px solid #e8edf4;
+}
+
+tr:hover { background: #f7faff; }
+
+.total { font-weight: bold; color: #2864dc; }
+
+@media(max-width: 700px) {
+    .contenedor { display: block; }
+    .menu { width: 100%; }
+    .principal { padding: 20px; }
+}
+</style>
+</head>
+
+<body>
+<div class="contenedor">
+
+<aside class="menu">
+    <div class="logo">🚗 MAGIS-AUTO</div>
+    <p>Sistema de administración</p>
+
+    <a href="/">📊 Panel principal</a>
+    <a href="/clientes.html" class="activo">👥 Clientes</a>
+</aside>
+
+<main class="principal">
+
+    <h1>Administración de clientes</h1>
+    <p class="descripcion">
+        Consulta de clientes registrados en MAGIS-AUTO.
+    </p>
+
+    <section class="panel">
+
+        <h2>Listado de clientes</h2>
+
+        <p>
+            Clientes encontrados:
+            <span class="total" id="total">0</span>
+        </p>
+
+        <input
+            class="buscador"
+            type="text"
+            id="buscar"
+            placeholder="Buscar por nombre o DPI..."
+            oninput="mostrarClientes()"
+        >
+
+        <div class="tabla-contenedor">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre completo</th>
+                        <th>DPI</th>
+                        <th>NIT</th>
+                        <th>Correo electrónico</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tablaClientes"></tbody>
+            </table>
+        </div>
+
+        <p id="mensaje"></p>
+
+    </section>
+
+</main>
+</div>
+
+<script>
+let clientes = [];
+
+async function cargarClientes() {
+    try {
+        const respuesta = await fetch('/api/clientes');
+
+        if (!respuesta.ok) {
+            throw new Error('No se pudieron cargar los clientes');
+        }
+
+        clientes = await respuesta.json();
+        mostrarClientes();
+
+    } catch (error) {
+        document.getElementById('mensaje').textContent =
+            error.message;
+    }
+}
+
+function mostrarClientes() {
+
+    const buscar = document.getElementById('buscar')
+        .value.toLowerCase();
+
+    const tabla = document.getElementById('tablaClientes');
+    tabla.innerHTML = '';
+
+    const filtrados = clientes.filter(cliente => {
+        return cliente.NombreCompleto.toLowerCase().includes(buscar)
+            || cliente.DPI.includes(buscar);
+    });
+
+    filtrados.forEach(cliente => {
+
+        const fila = document.createElement('tr');
+
+        const valores = [
+            cliente.IdCliente,
+            cliente.NombreCompleto,
+            cliente.DPI,
+            cliente.NIT || 'Sin registrar',
+            cliente.CorreoElectronico || 'Sin registrar'
+        ];
+
+        valores.forEach(valor => {
+            const celda = document.createElement('td');
+            celda.textContent = valor;
+            fila.appendChild(celda);
+        });
+
+        tabla.appendChild(fila);
+    });
+
+    document.getElementById('total').textContent =
+        filtrados.length;
+}
+
+cargarClientes();
+</script>
+
+</body>
+</html>
