@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Cuotas y pagos | MAGIS-AUTO</title>
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                margin: 0;
+                font-family: Arial, Helvetica, sans-serif;
+                background: #f2f5fa;
+                color: #102b4e;
+            }
+            .contenedor {
+                display: flex;
+                min-height: 100vh;
+            }
+            .menu {
+                width: 275px;
+                background: #11294a;
+                color: white;
+                padding: 26px 18px;
+                flex-shrink: 0;
+            }
+            .logo {
+                font-size: 25px;
+                font-weight: bold;
+                margin-bottom: 8px;
+            }
+            .subtitulo {
+                font-size: 13px;
+                color: #bbd0e5;
+                margin-bottom: 40px;
+            }
+            .menu a {
+                display: block;
+                text-decoration: none;
+                color: white;
+                padding: 14px 15px;
+                margin: 6px 0;
+                border-radius: 10px;
+                font-size: 16px;
+            }
+            .menu a:hover, .menu a.activo {
+                background: #285b91;
+            }
+            .principal {
+                flex: 1;
+                min-width: 0;
+                padding: 35px 32px;
+            }
+            .principal h1 {
+                font-size: 32px;
+                margin: 0 0 10px;
+            }
+            .descripcion {
+                color: #5c708a;
+                margin: 0 0 26px;
+            }
+            .panel {
+                background: white;
+                border-radius: 17px;
+                padding: 28px;
+                margin-bottom: 22px;
+                box-shadow: 0 5px 18px #102b4e0b;
+            }
+            label {
+                display: block;
+                font-weight: bold;
+                margin-bottom: 10px;
+            }
+            select, input {
+                width: 100%;
+                padding: 14px;
+                border: 1px solid #c8d4e2;
+                border-radius: 9px;
+                background: white;
+                font-size: 15px;
+                color: #102b4e;
+            }
+            .controles {
+                display: grid;
+                grid-template-columns: 2fr 1fr;
+                gap: 15px;
+            }
+            .estadisticas {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 14px;
+                margin-top: 20px;
+            }
+            .dato {
+                background: #f0f5fb;
+                border-radius: 11px;
+                padding: 17px;
+            }
+            .dato span {
+                display: block;
+                color: #58718d;
+                font-size: 13px;
+                margin-bottom: 8px;
+            }
+            .dato strong {
+                font-size: 21px;
+            }
+            .tabla-wrap {
+                overflow-x: auto;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                min-width: 850px;
+            }
+            th {
+                background: #e9f0f8;
+                text-align: left;
+                padding: 15px;
+                color: #123a62;
+            }
+            td {
+                padding: 14px;
+                border-bottom: 1px solid #e7edf4;
+            }
+            tr:nth-child(even) {
+                background: #fafcff;
+            }
+            .estado {
+                border-radius: 30px;
+                padding: 6px 10px;
+                font-size: 12px;
+                font-weight: bold;
+                display: inline-block;
+            }
+            .pagada {
+                background: #e1f4e8;
+                color: #16763b;
+            }
+            .parcial {
+                background: #fff2d6;
+                color: #8a5900;
+            }
+            .pendiente {
+                background: #eaf0f7;
+                color: #52687f;
+            }
+            .mensaje {
+                color: #5c708a;
+                margin: 14px 0;
+            }
+            .error {
+                color: #bb3030;
+            }
+            @media(max-width: 900px) {
+                .contenedor {
+                    display: block;
+                }
+                .menu {
+                    width: auto;
+                    padding: 17px;
+                }
+                .menu a {
+                    display: inline-block;
+                    font-size: 13px;
+                }
+                .subtitulo {
+                    margin-bottom: 10px;
+                }
+                .principal {
+                    padding: 20px;
+                }
+                .estadisticas {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+            @media(max-width: 540px) {
+                .controles {
+                    grid-template-columns: 1fr;
+                }
+                .estadisticas {
+                    grid-template-columns: 1fr 1fr;
+                }
+                .dato strong {
+                    font-size: 16px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="contenedor">
+            <aside class="menu">
+                <div class="logo">🚗 MAGIS-AUTO</div>
+                <div class="subtitulo">Sistema de administración</div>
+                <a href="/">📊 Panel principal</a>
+                <a href="clientes.html">👥 Clientes</a>
+                <a href="vehiculos.html">🚘 Vehículos</a>
+                <a href="creditos.html">💳 Créditos y Financiamiento</a>
+                <a href="nuevoCredito.html">➕ Nuevo Financiamiento</a>
+                <a href="cuotas.html">🧮 Cuotas y Pagos</a>
+                <a class="activo" href="registroPago.html">💵 Registrar Pago</a>
+            </aside>
+            <main class="principal">
+                <h1>Administración de cuotas y pagos</h1>
+                <p class="descripcion">Consulta las cuotas y los pagos registrados para cada financiamiento.</p>
+                
+                <section class="panel">
+                    <div class="controles">
+                        <div>
+                            <label for="credito">Selecciona un crédito</label>
+                            <select id="credito">
+                                <option value="">Cargando créditos...</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="buscar">Buscar cuota</label>
+                            <input id="buscar" placeholder="Número o estado...">
+                        </div>
+                    </div>
+                    
+                    <div class="estadisticas">
+                        <div class="dato">
+                            <span>Cuotas del crédito</span>
+                            <strong id="cantidad">0</strong>
+                        </div>
+                        <div class="dato">
+                            <span>Total programado</span>
+                            <strong id="programado">Q 0.00</strong>
+                        </div>
+                        <div class="dato">
+                            <span>Total pagado</span>
+                            <strong id="pagado">Q 0.00</strong>
+                        </div>
+                        <div class="dato">
+                            <span>Saldo pendiente</span>
+                            <strong id="saldo">Q 0.00</strong>
+                        </div>
+                    </div>
+                    
+                    <p class="mensaje" id="mensaje">Selecciona un crédito para ver sus cuotas.</p>
+                </section>
+                
+                <section class="panel">
+                    <h2>Detalle de cuotas</h2>
+                    <div class="tabla-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Cuota</th>
+                                    <th>Vencimiento</th>
+                                    <th>Capital</th>
+                                    <th>Interés</th>
+                                    <th>Cargos</th>
+                                    <th>Total</th>
+                                    <th>Pagado</th>
+                                    <th>Saldo</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="filas"></tbody>
+                        </table>
+                    </div>
+                </section>
+            </main>
+        </div>
+        
+        <script>
+            const creditoSelect = document.getElementById('credito');
+            const buscar = document.getElementById('buscar');
+            const mensaje = document.getElementById('mensaje');
+            let cuotas = [];
+
+            const dinero = n => 'Q ' + Number(n || 0).toLocaleString('es-GT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const fecha = s => {
+                if (!s) return '';
+                const v = String(s).slice(0, 10).split('-');
+                return v.length === 3 ? `${v[2]}/${v[1]}/${v[0]}` : s;
+            };
+            const total = (arr, campo) => arr.reduce((s, f) => s + Number(f[campo] || 0), 0);
+
+            function estado(f) {
+                let pagado = Number(f.TotalPagado || 0), importe = Number(f.TotalCuota || 0);
+                if (pagado >= importe - 0.005) return 'Pagada';
+                if (pagado > 0) return 'Parcial';
+                return 'Pendiente';
+            }
+
+            function pintar() {
+                const q = buscar.value.trim().toLowerCase();
+                const visibles = cuotas.filter(f => String(f.NumeroCuota).includes(q) || estado(f).toLowerCase().includes(q));
+                const tbody = document.getElementById('filas');
+                tbody.innerHTML = '';
+
+                for (const f of visibles) {
+                    const tr = document.createElement('tr');
+                    const saldo = Math.max(0, Number(f.TotalCuota) - Number(f.TotalPagado || 0));
+                    const valores = [
+                        f.NumeroCuota,
+                        fecha(f.FechaVencimiento),
+                        dinero(f.Capital),
+                        dinero(f.Interes),
+                        dinero(Number(f.ManejoCuenta) + Number(f.SeguroVehiculo) + Number(f.SeguroVida)),
+                        dinero(f.TotalCuota),
+                        dinero(f.TotalPagado),
+                        dinero(saldo)
+                    ];
+
+                    for (const v of valores) {
+                        const td = document.createElement('td');
+                        td.textContent = v;
+                        tr.appendChild(td);
+                    }
+
+                    const td = document.createElement('td');
+                    const et = document.createElement('span');
+                    const e = estado(f);
+                    et.className = 'estado ' + (e === 'Pagada' ? 'pagada' : e === 'Parcial' ? 'parcial' : 'pendiente');
+                    et.textContent = e;
+                    td.appendChild(et);
+                    tr.appendChild(td);
+                    tbody.appendChild(tr);
+                }
+
+                document.getElementById('cantidad').textContent = cuotas.length;
+                document.getElementById('programado').textContent = dinero(total(cuotas, 'TotalCuota'));
+                document.getElementById('pagado').textContent = dinero(total(cuotas, 'TotalPagado'));
+                document.getElementById('saldo').textContent = dinero(cuotas.reduce((s, f) => s + Math.max(0, Number(f.TotalCuota) - Number(f.TotalPagado || 0)), 0));
+
+                if (cuotas.length) mensaje.textContent = `Mostrando ${visibles.length} de ${cuotas.length} cuotas.`;
+            }
+
+            async function cargarCreditos() {
+                try {
+                    const r = await fetch('/api/creditos', { cache: 'no-store' });
+                    if (!r.ok) throw Error('No se pudieron consultar los créditos.');
+                    const lista = await r.json();
+                    creditoSelect.innerHTML = '<option value="">Selecciona un financiamiento</option>';
+                    
+                    for (const c of lista) {
+                        const op = document.createElement('option');
+                        op.value = c.IdCredito;
+                        op.textContent = `${c.NumeroObligacion} - ${c.Cliente}`;
+                        creditoSelect.appendChild(op);
+                    }
+                    
+                    const favorito = lista.find(c => c.NumeroObligacion === 'MAGIS-PRUEBA-001');
+                    if (favorito) {
+                        creditoSelect.value = favorito.IdCredito;
+                        await cargarCuotas();
+                    }
+                } catch (e) {
+                    mensaje.textContent = e.message;
+                    mensaje.classList.add('error');
+                }
+            }
+
+            async function cargarCuotas() {
+                const id = creditoSelect.value;
+                cuotas = [];
+                buscar.value = '';
+                pintar();
+
+                if (!id) {
+                    mensaje.textContent = 'Selecciona un crédito para ver sus cuotas.';
+                    return;
+                }
+
+                mensaje.textContent = 'Cargando cuotas...';
+                mensaje.classList.remove('error');
+
+                try {
+                    const r = await fetch('/api/cuotas?credito=' + encodeURIComponent(id), { cache: 'no-store' });
+                    const datos = await r.json();
+                    if (!r.ok) throw Error(datos.mensaje || 'Error al consultar cuotas.');
+                    cuotas = datos;
+                    pintar();
+                    if (!cuotas.length) mensaje.textContent = 'Este crédito todavía no tiene cuotas registradas.';
+                } catch (e) {
+                    mensaje.textContent = e.message;
+                    mensaje.classList.add('error');
+                }
+            }
+
+            creditoSelect.addEventListener('change', cargarCuotas);
+            buscar.addEventListener('input', pintar);
+            cargarCreditos();
+        </script>
+    </body>
+</html>
