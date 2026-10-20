@@ -122,6 +122,12 @@
             .summary small {
                 color: #52657c;
             }
+            .etiqueta-seleccion {
+                margin-top: 12px;
+            }
+            input[type="search"] {
+                background: #f7faff;
+            }
             #mensaje {
                 font-weight: 600;
             }
@@ -137,24 +143,28 @@
                 }
             }
         </style>
-    </head>
+    <link rel="stylesheet" href="tema-oscuro.css?v=2">
+<script src="tema-oscuro.js?v=2" defer></script>
+</head>
     <body>
         <header>
             <h1>🚗 MAGIS-AUTO · Nuevo financiamiento</h1>
-            <a href="creditos.html">← Volver a créditos</a>
+            <a href="creditos.html">← Volver a créditos</a><a href="gestion.html">🛡️ Garantías y comisiones</a>
         </header>
         <main>
             <section class="card">
                 <h2>Registrar crédito</h2>
-                <p>Selecciona un cliente, un vendedor y un vehículo que todavía no tenga financiamiento. Los cálculos se realizan con interés simple (plano).</p>
+                <p>Selecciona un cliente, un vendedor y un vehículo NUEVO de agencia que todavía no tenga financiamiento. Si no aparece un vehículo, clasifícalo en <a href="vehiculos.html">Vehículos</a>. Los intereses se calculan sobre el saldo pendiente. El cliente debe tener al menos tres referencias personales antes de autorizar el crédito. <a href="gestion.html">Administrar referencias y fiadores</a>.</p>
                 <form id="formulario">
                     <div class="grid">
                         <div>
                             <label for="numero">Número de obligación</label>
-                            <input id="numero" required maxlength="30" placeholder="MAGIS-NUEVO-001" pattern="[A-Za-z0-9-]{3,30}">
+                            <input id="numero" required maxlength="30" pattern="[A-Za-z0-9-]{3,30}">
                         </div>
                         <div>
-                            <label for="cliente">Cliente</label>
+                            <label for="buscarCliente">Buscar cliente por nombre o DPI</label>
+                            <input id="buscarCliente" type="search" placeholder="Nombre o DPI" autocomplete="off">
+                            <label for="cliente" class="etiqueta-seleccion">Seleccionar cliente</label>
                             <select id="cliente" required>
                                 <option value="">Cargando clientes...</option>
                             </select>
@@ -166,7 +176,9 @@
                             </select>
                         </div>
                         <div>
-                            <label for="vehiculo">Vehículo disponible</label>
+                            <label for="buscarVehiculo">Buscar vehículo por marca, modelo o placa</label>
+                            <input id="buscarVehiculo" type="search" placeholder="Ejemplo: Toyota, Corolla o P-001GTA" autocomplete="off">
+                            <label for="vehiculo" class="etiqueta-seleccion">Seleccionar vehículo disponible</label>
                             <select id="vehiculo" required>
                                 <option value="">Cargando vehículos...</option>
                             </select>
@@ -181,12 +193,12 @@
                                 <option value="12">12 meses</option>
                                 <option value="24" selected>24 meses</option>
                                 <option value="36">36 meses</option>
-                                <option value="48">48 meses</option>
+                                <option value="48">48 meses</option><option value="60">60 meses</option>
                             </select>
                         </div>
                         <div>
                             <label for="tasa">Interés anual (%)</label>
-                            <input id="tasa" type="number" min="0" max="100" step="0.001" value="12" required>
+                            <input id="tasa" type="number" min="0" max="100" step="0.001" value="12.5" required>
                         </div>
                     </div>
                     <div class="actions">
@@ -231,6 +243,7 @@
         <script>
             const $ = id => document.getElementById(id);
             let vehiculos = [];
+            let clientes = [];
             const dinero = n => 'Q ' + Number(n || 0).toLocaleString('es-GT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             
             function opcion(select, valor, texto) {
@@ -240,6 +253,42 @@
                 select.appendChild(o);
             }
             
+            
+            function normalizar(texto) {
+                return String(texto || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            }
+
+            function buscarClientes() {
+                const busqueda = normalizar($('buscarCliente').value.trim());
+                const seleccion = $('cliente').value;
+                const encontrados = clientes.filter(c =>
+                    normalizar(c.NombreCompleto).includes(busqueda) ||
+                    String(c.DPI || '').includes(busqueda)
+                );
+                $('cliente').innerHTML = '';
+                opcion($('cliente'), '', encontrados.length ? 'Selecciona un cliente' : 'No se encontraron clientes');
+                encontrados.forEach(c => opcion($('cliente'), c.IdCliente, `${c.NombreCompleto} · ${c.DPI}`));
+                if (encontrados.some(c => String(c.IdCliente) === seleccion)) {
+                    $('cliente').value = seleccion;
+                }
+            }
+
+            function buscarVehiculos() {
+                const busqueda = normalizar($('buscarVehiculo').value.trim());
+                const seleccion = $('vehiculo').value;
+                const encontrados = vehiculos.filter(v =>
+                    normalizar(`${v.NombreMarca} ${v.Modelo} ${v.Placa || ''} ${v.VIN} ${v.AnioFabricacion}`).includes(busqueda)
+                );
+                $('vehiculo').innerHTML = '';
+                opcion($('vehiculo'), '', encontrados.length ? 'Selecciona un vehículo' : 'No se encontraron vehículos disponibles');
+                encontrados.forEach(v => opcion($('vehiculo'), v.VIN,
+                    `${v.NombreMarca} ${v.Modelo} (${v.AnioFabricacion}) · ${v.Placa || 'Sin placa'} · ${dinero(v.ValorAgencia)}`));
+                if (encontrados.some(v => v.VIN === seleccion)) {
+                    $('vehiculo').value = seleccion;
+                }
+                actualizar();
+            }
+
             async function cargar() {
                 try {
                     const urls = ['/api/clientes', '/api/vendedores', '/api/vehiculos', '/api/creditos'];
@@ -247,20 +296,21 @@
                     
                     if (respuestas.some(r => !r.ok)) throw Error('No se pudieron consultar los datos del sistema.');
                     
-                    const [clientes, vendedores, todos, creditos] = await Promise.all(respuestas.map(r => r.json()));
+                    const [datosClientes, vendedores, todos, creditos] = await Promise.all(respuestas.map(r => r.json()));
+                    clientes = datosClientes;
                     const usados = new Set(creditos.map(c => c.VIN));
-                    vehiculos = todos.filter(v => !usados.has(v.VIN));
+                    vehiculos = todos.filter(v => !usados.has(v.VIN) && Number(v.EsNuevo) === 1 && v.IdAgenciaOrigen);
                     
                     [['cliente', 'Selecciona un cliente'], ['vendedor', 'Selecciona un vendedor'], ['vehiculo', 'Selecciona un vehículo']].forEach(([id, t]) => {
                         $(id).innerHTML = '';
                         opcion($(id), '', t);
                     });
                     
-                    clientes.forEach(c => opcion($('cliente'), c.IdCliente, `${c.NombreCompleto} · ${c.DPI}`));
+                    $('buscarCliente').value = '';
+                    $('buscarVehiculo').value = '';
+                    buscarClientes();
                     vendedores.forEach(v => opcion($('vendedor'), v.IdVendedor, v.NombreCompleto));
-                    vehiculos.forEach(v => opcion($('vehiculo'), v.VIN, `${v.NombreMarca} ${v.Modelo} (${v.AnioFabricacion}) · ${dinero(v.ValorAgencia)}`));
-                    
-                    actualizar();
+                    buscarVehiculos();
                 } catch (e) {
                     $('mensaje').textContent = e.message;
                     $('mensaje').className = 'error';
@@ -274,8 +324,13 @@
                       plazo = Number($('plazo').value || 1),
                       tasa = Number($('tasa').value || 0);
                 
-                const monto = Math.max(0, precio - enganche),
-                      intereses = Math.round(monto * tasa / 100 * plazo / 12 * 100) / 100;
+                const monto = Math.max(0, precio - enganche);
+                let saldo = monto, intereses = 0;
+                for (let i = 1; i <= plazo; i++) {
+                    const capital = i === plazo ? saldo : Math.round(monto / plazo * 100) / 100;
+                    intereses += Math.round(saldo * tasa / 1200 * 100) / 100;
+                    saldo = Math.max(0, Math.round((saldo - capital) * 100) / 100);
+                }
                 const total = monto + intereses + plazo * 265;
                 
                 $('precio').textContent = dinero(precio);
@@ -283,7 +338,11 @@
                 $('total').textContent = dinero(total);$('cuota').textContent = dinero(total / plazo);
             }
             
-            ['vehiculo', 'enganche', 'plazo', 'tasa'].forEach(id => $(id).addEventListener('input', actualizar));$('formulario').addEventListener('submit', async e => {
+            $('buscarCliente').addEventListener('input', buscarClientes);
+            $('buscarVehiculo').addEventListener('input', buscarVehiculos);
+            ['vehiculo', 'enganche', 'plazo', 'tasa'].forEach(id => $(id).addEventListener('input', actualizar));
+
+            $('formulario').addEventListener('submit', async e => {
                 e.preventDefault();
                 const v = vehiculos.find(x => x.VIN === $('vehiculo').value);
                 
@@ -321,8 +380,7 @@
                     const data = await r.json();
                     if (!r.ok) throw Error(data.mensaje || 'Error al registrar.');
                     
-                    $('mensaje').textContent = data.mensaje;
-                    $('mensaje').className = 'ok';$('formulario').reset();
+                    $('formulario').reset();
                     await cargar();
                     $('mensaje').textContent = data.mensaje;
                     $('mensaje').className = 'ok';

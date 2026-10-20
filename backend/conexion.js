@@ -1,7 +1,6 @@
 
 const sql = require('mssql/msnodesqlv8');
 
-// Configuración de nuestra base de datos
 const config = {
     server: 'localhost',
     database: 'MAGIS_AUTO',
@@ -11,7 +10,6 @@ const config = {
     }
 };
 
-// Conectar con SQL Server
 async function conectarBD() {
     try {
         const conexion = await sql.connect(config);
