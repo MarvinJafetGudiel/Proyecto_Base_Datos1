@@ -74,7 +74,7 @@ Para los últimos ajustes se utilizaron estos archivos:
 
 ## Pruebas realizadas
 
-Durante el desarrollo probé el registro de clientes, la creación de financiamientos, la generación de cuotas, los pagos parciales, las referencias personales, los fiadores, las comisiones y la depreciación de vehículos. También revisé el funcionamiento del panel principal y varios reportes financieros.
+Durante el desarrollo de la web probamos el registro de clientes, la creación de financiamientos, la generación de cuotas, los pagos parciales, las referencias personales, los fiadores, las comisiones y la depreciación de vehículos. También revisé el funcionamiento del panel principal y varios reportes financieros.
 
 El sistema se ejecutó correctamente en mi computadora. Algunas operaciones de administración de las tablas se trabajan directamente con procedimientos SQL y no tienen una pantalla propia.
 
