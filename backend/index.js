@@ -15,6 +15,20 @@ app.use('/api', (req, res, next) => {
 
 app.use(express.static(path.join(__dirname, '../frontend')));
 
+function buscarFila(resultados, columna) {
+    if (!Array.isArray(resultados)) return null;
+
+    for (const item of resultados) {
+        if (Array.isArray(item)) {
+            const fila = item.find(f => f && f[columna] !== undefined);
+            if (fila) return fila;
+        } else if (item && item[columna] !== undefined) {
+            return item;
+        }
+    }
+    return null;
+}
+
 // Conexion con SQL Server
 const conexion =
     "Driver={ODBC Driver 18 for SQL Server};" +
@@ -27,15 +41,7 @@ const conexion =
 
 app.get('/api/resumen', (req, res) => {
 
-    const consulta = `
-        SELECT
-            (SELECT COUNT(*) FROM Persona) AS personas,
-            (SELECT COUNT(*) FROM Cliente) AS clientes,
-            (SELECT COUNT(*) FROM Vehiculo) AS vehiculos,
-            (SELECT COUNT(*) FROM Credito) AS creditos,
-            (SELECT COUNT(*) FROM Cuota) AS cuotas,
-            (SELECT COUNT(*) FROM Pago) AS pagos;
-    `;
+    const consulta = "EXEC dbo.usp_API_Resumen;";
 
     sql.query(conexion, consulta, (error, resultados) => {
 
@@ -56,19 +62,7 @@ app.get('/api/resumen', (req, res) => {
 // LISTAR CLIENTES
 app.get('/api/clientes', (req, res) => {
 
-    const consulta = `
-        SELECT
-            C.IdCliente,
-            P.NombreCompleto,
-            P.DPI,
-            P.NIT,
-            P.CorreoElectronico,
-            P.FechaNacimiento
-        FROM Cliente C
-        INNER JOIN Persona P
-            ON C.IdPersona = P.IdPersona
-        ORDER BY C.IdCliente DESC;
-    `;
+    const consulta = "EXEC dbo.usp_API_Clientes_Listar;";
 
     sql.query(conexion, consulta, (error, resultados) => {
 
@@ -102,36 +96,7 @@ app.post('/api/clientes', (req, res) => {
         });
     }
 
-    const consulta = `
-        SET NOCOUNT ON;
-        SET XACT_ABORT ON;
-
-        BEGIN TRY
-            BEGIN TRANSACTION;
-
-            INSERT INTO Persona
-                (DPI, NIT, NombreCompleto, CorreoElectronico)
-            VALUES (?, ?, ?, ?);
-
-            DECLARE @IdPersona INT;
-            SET @IdPersona = SCOPE_IDENTITY();
-
-            INSERT INTO Cliente (IdPersona)
-            VALUES (@IdPersona);
-
-            COMMIT TRANSACTION;
-
-            SELECT IdCliente
-            FROM Cliente
-            WHERE IdPersona = @IdPersona;
-
-        END TRY
-        BEGIN CATCH
-            IF @@TRANCOUNT > 0
-                ROLLBACK TRANSACTION;
-            THROW;
-        END CATCH;
-    `;
+    const consulta = "EXEC dbo.usp_API_Clientes_Crear ?, ?, ?, ?;";
 
     sql.query(conexion, consulta, [
         dpi,
@@ -151,17 +116,11 @@ app.post('/api/clientes', (req, res) => {
             });
         }
 
-        const cliente = Array.isArray(resultados)
-            ? resultados.find(fila =>
-                fila && fila.IdCliente !== undefined
-            )
-            : null;
-
-        if (!cliente) return;
+        const cliente = buscarFila(resultados, 'IdCliente');
 
         res.status(201).json({
             mensaje: 'Cliente registrado correctamente.',
-            idCliente: cliente.IdCliente
+            idCliente: cliente ? cliente.IdCliente : null
         });
     });
 });
@@ -185,21 +144,7 @@ app.put('/api/clientes/:id', (req, res) => {
         });
     }
 
-    const consulta = `
-        SET NOCOUNT ON;
-
-        UPDATE P
-        SET P.NombreCompleto = ?,
-            P.DPI = ?,
-            P.NIT = ?,
-            P.CorreoElectronico = ?
-        FROM Persona P
-        INNER JOIN Cliente C
-            ON P.IdPersona = C.IdPersona
-        WHERE C.IdCliente = ?;
-
-        SELECT @@ROWCOUNT AS Actualizados;
-    `;
+    const consulta = "EXEC dbo.usp_API_Clientes_Actualizar ?, ?, ?, ?, ?;";
 
     sql.query(conexion, consulta, [
         nombre.trim(),
@@ -219,15 +164,15 @@ app.put('/api/clientes/:id', (req, res) => {
             });
         }
 
-        const fila = Array.isArray(resultados)
-            ? resultados.find(item =>
-                item && item.Actualizados !== undefined
-            )
-            : null;
+        const fila = buscarFila(resultados, 'Actualizados');
 
-        if (!fila) return;
+        if (!fila) {
+            return res.status(500).json({
+                mensaje: 'No se pudo confirmar la actualizacion del cliente.'
+            });
+        }
 
-        if (fila.Actualizados === 0) {
+        if (Number(fila.Actualizados) === 0) {
             return res.status(404).json({
                 mensaje: 'Cliente no encontrado.'
             });
@@ -239,7 +184,7 @@ app.put('/api/clientes/:id', (req, res) => {
     });
 });
 
-// ELIMINAR CLIENTE
+ // ELIMINAR CLIENTE
 app.delete('/api/clientes/:id', (req, res) => {
 
     const id = Number(req.params.id);
@@ -250,16 +195,9 @@ app.delete('/api/clientes/:id', (req, res) => {
         });
     }
 
-    const consulta = `
-        SET NOCOUNT ON;
+    const consulta = "EXEC dbo.usp_API_Clientes_Eliminar ?, ?;";
 
-        DELETE FROM Cliente
-        WHERE IdCliente = ?;
-
-        SELECT @@ROWCOUNT AS Eliminados;
-    `;
-
-    sql.query(conexion, consulta, [id], (error, resultados) => {
+    sql.query(conexion, consulta, [id, id], (error, resultados) => {
 
         if (res.headersSent) return;
 
@@ -271,15 +209,15 @@ app.delete('/api/clientes/:id', (req, res) => {
             });
         }
 
-        const fila = Array.isArray(resultados)
-            ? resultados.find(item =>
-                item && item.Eliminados !== undefined
-            )
-            : null;
+        const fila = buscarFila(resultados, 'Eliminados');
 
-        if (!fila) return;
+        if (!fila) {
+            return res.status(500).json({
+                mensaje: 'No se pudo confirmar la eliminacion.'
+            });
+        }
 
-        if (fila.Eliminados === 0) {
+        if (Number(fila.Eliminados) === 0) {
             return res.status(404).json({
                 mensaje: 'Cliente no encontrado.'
             });
@@ -295,11 +233,7 @@ app.delete('/api/clientes/:id', (req, res) => {
 // CONSULTAR MARCAS
 app.get('/api/marcas', (req, res) => {
 
-    const consulta = `
-        SELECT IdMarca, NombreMarca
-        FROM Marca
-        ORDER BY NombreMarca;
-    `;
+    const consulta = "EXEC dbo.usp_API_Marcas_Listar;";
 
     sql.query(conexion, consulta, (error, filas) => {
 
@@ -316,23 +250,12 @@ app.get('/api/marcas', (req, res) => {
     });
 });
 
+app.get('/api/agencias', (req, res) => consultarSP(res, 'usp_API_Agencias_Listar'));
+
 // CONSULTAR VEHICULOS
 app.get('/api/vehiculos', (req, res) => {
 
-    const consulta = `
-        SELECT
-            V.VIN,
-            V.IdMarca,
-            M.NombreMarca,
-            V.Modelo,
-            V.AnioFabricacion,
-            V.ValorAgencia,
-            V.Placa
-        FROM Vehiculo V
-        INNER JOIN Marca M
-            ON V.IdMarca = M.IdMarca
-        ORDER BY V.Modelo, V.VIN;
-    `;
+    const consulta = "EXEC dbo.usp_API_Vehiculos_Listar;";
 
     sql.query(conexion, consulta, (error, filas) => {
 
@@ -387,7 +310,9 @@ function validarVehiculo(datos) {
         modelo,
         anio,
         valor,
-        placa: placa || null
+        placa: placa || null,
+        esNuevo: datos.esNuevo === true || datos.esNuevo === "1",
+        idAgencia: Number(datos.idAgencia) || null
     };
 }
 
@@ -402,15 +327,7 @@ app.post('/api/vehiculos', (req, res) => {
         });
     }
 
-    const consulta = `
-        SET NOCOUNT ON;
-
-        INSERT INTO Vehiculo
-            (VIN, IdMarca, Modelo, AnioFabricacion,
-             ValorAgencia, Placa)
-        OUTPUT INSERTED.VIN
-        VALUES (?, ?, ?, ?, ?, ?);
-    `;
+    const consulta = "EXEC dbo.usp_API_Vehiculos_Crear ?, ?, ?, ?, ?, ?, ?, ?;";
 
     sql.query(conexion, consulta, [
         datos.vin,
@@ -418,7 +335,8 @@ app.post('/api/vehiculos', (req, res) => {
         datos.modelo,
         datos.anio,
         datos.valor,
-        datos.placa
+        datos.placa,
+        datos.esNuevo ? 1 : 0, datos.idAgencia
     ], (error, filas) => {
 
         if (res.headersSent) return;
@@ -429,11 +347,6 @@ app.post('/api/vehiculos', (req, res) => {
             return res.status(400).json({
                 mensaje: 'No se pudo registrar. Revisa el VIN, placa y marca.'
             });
-        }
-
-        if (!Array.isArray(filas) ||
-            !filas.some(fila => fila && fila.VIN)) {
-            return;
         }
 
         res.status(201).json({
@@ -456,19 +369,7 @@ app.put('/api/vehiculos/:vin', (req, res) => {
         });
     }
 
-    const consulta = `
-        SET NOCOUNT ON;
-
-        UPDATE Vehiculo
-        SET
-            IdMarca = ?,
-            Modelo = ?,
-            AnioFabricacion = ?,
-            ValorAgencia = ?,
-            Placa = ?
-        OUTPUT INSERTED.VIN
-        WHERE VIN = ?;
-    `;
+    const consulta = "EXEC dbo.usp_API_Vehiculos_Actualizar ?, ?, ?, ?, ?, ?, ?, ?;";
 
     sql.query(conexion, consulta, [
         datos.marca,
@@ -476,7 +377,8 @@ app.put('/api/vehiculos/:vin', (req, res) => {
         datos.anio,
         datos.valor,
         datos.placa,
-        datos.vin
+        datos.vin,
+        datos.esNuevo ? 1 : 0, datos.idAgencia
     ], (error, filas) => {
 
         if (res.headersSent) return;
@@ -489,11 +391,11 @@ app.put('/api/vehiculos/:vin', (req, res) => {
             });
         }
 
-        if (!Array.isArray(filas)) return;
+        const fila = buscarFila(filas, 'VIN');
 
-        if (!filas.some(fila => fila && fila.VIN)) {
+        if (!fila) {
             return res.status(404).json({
-                mensaje: 'Vehiculo no encontrado.'
+                mensaje: 'Vehiculo no encontrado o no se pudo confirmar el cambio.'
             });
         }
 
@@ -515,13 +417,7 @@ app.delete('/api/vehiculos/:vin', (req, res) => {
         });
     }
 
-    const consulta = `
-        SET NOCOUNT ON;
-
-        DELETE FROM Vehiculo
-        OUTPUT DELETED.VIN
-        WHERE VIN = ?;
-    `;
+    const consulta = "EXEC dbo.usp_API_Vehiculos_Eliminar ?;";
 
     sql.query(conexion, consulta, [vin], (error, filas) => {
 
@@ -535,11 +431,11 @@ app.delete('/api/vehiculos/:vin', (req, res) => {
             });
         }
 
-        if (!Array.isArray(filas)) return;
+        const fila = buscarFila(filas, 'VIN');
 
-        if (!filas.some(fila => fila && fila.VIN)) {
+        if (!fila) {
             return res.status(404).json({
-                mensaje: 'Vehiculo no encontrado.'
+                mensaje: 'Vehiculo no encontrado o no se pudo confirmar el cambio.'
             });
         }
 
@@ -554,35 +450,7 @@ app.delete('/api/vehiculos/:vin', (req, res) => {
 // CONSULTAR CREDITOS 
 app.get('/api/creditos', (req, res) => {
 
-    const consulta = `
-        SELECT
-            C.IdCredito,
-            C.NumeroObligacion,
-            P.NombreCompleto AS Cliente,
-            M.NombreMarca,
-            V.Modelo,
-            C.VIN,
-            E.NombreEstado,
-            C.FechaAprobacion,
-            C.PlazoMeses,
-            C.Enganche,
-            C.MontoFinanciado,
-            C.TasaInteresAnual,
-            C.TotalIntereses,
-            C.TotalRecaudable
-        FROM Credito C
-        INNER JOIN Cliente CL
-            ON C.IdCliente = CL.IdCliente
-        INNER JOIN Persona P
-            ON CL.IdPersona = P.IdPersona
-        INNER JOIN Vehiculo V
-            ON C.VIN = V.VIN
-        INNER JOIN Marca M
-            ON V.IdMarca = M.IdMarca
-        INNER JOIN EstadoCredito E
-            ON C.IdEstadoCredito = E.IdEstadoCredito
-        ORDER BY C.IdCredito DESC;
-    `;
+    const consulta = "EXEC dbo.usp_API_Creditos_Listar;";
 
     sql.query(conexion, consulta, (error, resultados) => {
 
@@ -606,12 +474,7 @@ app.get('/api/creditos', (req, res) => {
 
 // Consultar vendedores
 app.get('/api/vendedores', (req, res) => {
-    const consulta = `
-        SELECT V.IdVendedor, P.NombreCompleto
-        FROM Vendedor V
-        INNER JOIN Persona P ON V.IdPersona = P.IdPersona
-        ORDER BY P.NombreCompleto;
-    `;
+    const consulta = "EXEC dbo.usp_API_Vendedores_Listar;";
 
     sql.query(conexion, consulta, (error, filas) => {
         if (res.headersSent) return;
@@ -655,144 +518,7 @@ app.post('/api/creditos', (req, res) => {
         });
     }
 
-    const consulta = `
-        SET NOCOUNT ON;
-        SET XACT_ABORT ON;
-
-        BEGIN TRY
-            BEGIN TRANSACTION;
-
-            DECLARE @Numero VARCHAR(30) = ?;
-            DECLARE @Cliente INT = ?;
-            DECLARE @Vendedor INT = ?;
-            DECLARE @VIN VARCHAR(17) = ?;
-            DECLARE @Enganche DECIMAL(12,2) = ?;
-            DECLARE @Plazo INT = ?;
-            DECLARE @Tasa DECIMAL(6,3) = ?;
-
-            DECLARE @Valor DECIMAL(12,2);
-            DECLARE @Monto DECIMAL(12,2);
-            DECLARE @Intereses DECIMAL(14,2);
-            DECLARE @Total DECIMAL(14,2);
-            DECLARE @Estado INT;
-            DECLARE @IdCredito INT;
-            DECLARE @i INT = 1;
-            DECLARE @Capital DECIMAL(12,2);
-            DECLARE @Interes DECIMAL(12,2);
-            DECLARE @CapitalPrevio DECIMAL(12,2) = 0;
-            DECLARE @InteresPrevio DECIMAL(12,2) = 0;
-            DECLARE @Fecha DATETIME2 = SYSDATETIME();
-
-            SELECT @Valor = ValorAgencia
-            FROM Vehiculo WITH (UPDLOCK, HOLDLOCK)
-            WHERE VIN = @VIN;
-
-            IF @Valor IS NULL
-                THROW 50001, 'El vehiculo no existe.', 1;
-
-            IF EXISTS (
-                SELECT 1 FROM Credito WHERE VIN = @VIN
-            )
-                THROW 50002, 'El vehiculo ya tiene un credito.', 1;
-
-            IF @Enganche >= @Valor
-                THROW 50003, 'El enganche es demasiado alto.', 1;
-
-            IF NOT EXISTS (
-                SELECT 1 FROM Cliente WHERE IdCliente = @Cliente
-            )
-                THROW 50004, 'El cliente no existe.', 1;
-
-            IF NOT EXISTS (
-                SELECT 1 FROM Vendedor WHERE IdVendedor = @Vendedor
-            )
-                THROW 50005, 'El vendedor no existe.', 1;
-
-            IF EXISTS (
-                SELECT 1 FROM Credito
-                WHERE NumeroObligacion = @Numero
-            )
-                THROW 50006, 'El numero de obligacion ya existe.', 1;
-
-            SELECT @Estado = IdEstadoCredito
-            FROM EstadoCredito
-            WHERE NombreEstado = 'Activo';
-
-            IF @Estado IS NULL
-                THROW 50007, 'Falta el estado Activo.', 1;
-
-            SET @Monto = @Valor - @Enganche;
-
-            SET @Intereses = ROUND(
-                @Monto * @Tasa / 100.0 * @Plazo / 12.0, 2
-            );
-
-            SET @Total = @Monto + @Intereses
-                       + @Plazo * (175 + 65 + 25);
-
-            INSERT INTO Credito (
-                NumeroObligacion, IdCliente, IdVendedor,
-                VIN, IdEstadoCredito, FechaAprobacion,
-                PlazoMeses, Enganche, MontoFinanciado,
-                TasaInteresAnual, PorcentajeComision,
-                SeguroVehiculoMensual, SeguroVidaMensual,
-                ManejoCuentaMensual, TotalIntereses,
-                TotalRecaudable
-            )
-            VALUES (
-                @Numero, @Cliente, @Vendedor,
-                @VIN, @Estado, @Fecha,
-                @Plazo, @Enganche, @Monto,
-                @Tasa, 2, 175, 65, 25,
-                @Intereses, @Total
-            );
-
-            SET @IdCredito = SCOPE_IDENTITY();
-
-            WHILE @i <= @Plazo
-            BEGIN
-                IF @i = @Plazo
-                BEGIN
-                    SET @Capital = @Monto - @CapitalPrevio;
-                    SET @Interes = @Intereses - @InteresPrevio;
-                END
-                ELSE
-                BEGIN
-                    SET @Capital = ROUND(@Monto / @Plazo, 2);
-                    SET @Interes = ROUND(@Intereses / @Plazo, 2);
-                END;
-
-                INSERT INTO Cuota (
-                    IdCredito, NumeroCuota, FechaVencimiento,
-                    Capital, Interes, ManejoCuenta,
-                    SeguroVehiculo, SeguroVida, TotalCuota
-                )
-                VALUES (
-                    @IdCredito, @i,
-                    DATEADD(MONTH, @i, CAST(@Fecha AS DATE)),
-                    @Capital, @Interes, 25, 175, 65,
-                    @Capital + @Interes + 25 + 175 + 65
-                );
-
-                SET @CapitalPrevio = @CapitalPrevio + @Capital;
-                SET @InteresPrevio = @InteresPrevio + @Interes;
-                SET @i = @i + 1;
-            END;
-
-            COMMIT TRANSACTION;
-
-            SELECT
-                @IdCredito AS IdCredito,
-                @Numero AS NumeroObligacion;
-
-        END TRY
-        BEGIN CATCH
-            IF @@TRANCOUNT > 0
-                ROLLBACK TRANSACTION;
-
-            THROW;
-        END CATCH;
-    `;
+    const consulta = "EXEC dbo.usp_API_Creditos_Crear ?, ?, ?, ?, ?, ?, ?;";
 
     sql.query(conexion, consulta, [
         numero, cliente, vendedor, vin,
@@ -808,21 +534,15 @@ app.post('/api/creditos', (req, res) => {
             );
 
             return res.status(400).json({
-                mensaje: 'No se pudo registrar: ' + error.message
+                mensaje: mensajeNegocio(error)
             });
         }
 
-        const registrado = Array.isArray(filas)
-            ? filas.find(f =>
-                f && f.IdCredito !== undefined
-            )
-            : null;
-
-        if (!registrado) return;
+        const registrado = buscarFila(filas, 'IdCredito');
 
         res.status(201).json({
             mensaje: 'Credito y cuotas registrados correctamente.',
-            idCredito: registrado.IdCredito
+            idCredito: registrado ? registrado.IdCredito : null
         });
     });
 });
@@ -838,30 +558,7 @@ app.get('/api/cuotas', (req, res) => {
         });
     }
 
-    const consulta = `
-        SELECT
-            C.IdCuota,
-            C.IdCredito,
-            C.NumeroCuota,
-            C.FechaVencimiento,
-            C.Capital,
-            C.Interes,
-            C.ManejoCuenta,
-            C.SeguroVehiculo,
-            C.SeguroVida,
-            C.TotalCuota,
-            ISNULL(P.TotalPagado, 0) AS TotalPagado
-        FROM Cuota C
-        LEFT JOIN (
-            SELECT
-                IdCuota,
-                SUM(MontoPagado) AS TotalPagado
-            FROM Pago
-            GROUP BY IdCuota
-        ) P ON C.IdCuota = P.IdCuota
-        WHERE C.IdCredito = ?
-        ORDER BY C.NumeroCuota;
-    `;
+    const consulta = "EXEC dbo.usp_API_Cuotas_Listar ?;";
 
     sql.query(conexion, consulta, [idCredito],
         (error, resultados) => {
@@ -888,11 +585,7 @@ app.get('/api/cuotas', (req, res) => {
 // Consultar medios de pago 
 app.get('/api/medios-pago', (req, res) => {
 
-    const consulta = `
-        SELECT IdMedioPago, NombreMedio
-        FROM MedioPago
-        ORDER BY NombreMedio;
-    `;
+    const consulta = "EXEC dbo.usp_API_MediosPago_Listar;";
 
     sql.query(conexion, consulta, (error, filas) => {
 
@@ -936,82 +629,7 @@ app.post('/api/pagos', (req, res) => {
         });
     }
 
-    const consulta = `
-        SET NOCOUNT ON;
-        SET XACT_ABORT ON;
-        SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
-        BEGIN TRY
-            BEGIN TRANSACTION;
-
-            DECLARE @IdCuota INT = ?;
-            DECLARE @IdMedio INT = ?;
-            DECLARE @Recibo VARCHAR(30) = ?;
-            DECLARE @Monto DECIMAL(12,2) = ?;
-            DECLARE @Referencia VARCHAR(100) = ?;
-
-            DECLARE @TotalCuota DECIMAL(12,2);
-            DECLARE @Pagado DECIMAL(14,2);
-            DECLARE @IdPago INT;
-
-            -- Bloquear la cuota mientras se registra el pago
-            SELECT @TotalCuota = TotalCuota
-            FROM Cuota WITH (UPDLOCK, HOLDLOCK)
-            WHERE IdCuota = @IdCuota;
-
-            IF @TotalCuota IS NULL
-                THROW 50001, 'La cuota no existe.', 1;
-
-            IF NOT EXISTS (
-                SELECT 1 FROM MedioPago
-                WHERE IdMedioPago = @IdMedio
-            )
-                THROW 50002, 'El medio de pago no existe.', 1;
-
-            IF EXISTS (
-                SELECT 1 FROM Pago
-                WHERE NumeroRecibo = @Recibo
-            )
-                THROW 50003, 'El numero de recibo ya existe.', 1;
-
-            SELECT @Pagado = ISNULL(SUM(MontoPagado), 0)
-            FROM Pago WITH (UPDLOCK, HOLDLOCK)
-            WHERE IdCuota = @IdCuota;
-
-            IF @Monto > (@TotalCuota - @Pagado)
-                THROW 50004, 'El monto supera el saldo de la cuota.', 1;
-
-            INSERT INTO Pago (
-                IdCuota,
-                IdMedioPago,
-                NumeroRecibo,
-                FechaPago,
-                MontoPagado,
-                ReferenciaBancaria
-            )
-            VALUES (
-                @IdCuota,
-                @IdMedio,
-                @Recibo,
-                SYSDATETIME(),
-                @Monto,
-                NULLIF(@Referencia, '')
-            );
-
-            SET @IdPago = SCOPE_IDENTITY();
-
-            COMMIT TRANSACTION;
-
-            SELECT @IdPago AS IdPago;
-
-        END TRY
-        BEGIN CATCH
-            IF @@TRANCOUNT > 0
-                ROLLBACK TRANSACTION;
-
-            THROW;
-        END CATCH;
-    `;
+    const consulta = "EXEC dbo.usp_API_Pagos_Crear ?, ?, ?, ?, ?;";
 
     sql.query(conexion, consulta, [
         idCuota,
@@ -1031,21 +649,128 @@ app.post('/api/pagos', (req, res) => {
             });
         }
 
-        const registrado = Array.isArray(filas)
-            ? filas.find(fila =>
-                fila && fila.IdPago !== undefined
-            )
-            : null;
-
-        if (!registrado) return;
+        const registrado = buscarFila(filas, 'IdPago');
 
         res.status(201).json({
             mensaje: 'Pago registrado correctamente.',
-            idPago: registrado.IdPago
+            idPago: registrado ? registrado.IdPago : null
         });
     });
 });
 
+
+app.get('/api/reportes/:numero', (req, res) => {
+    const numero = Number(req.params.numero);
+    if (!Number.isInteger(numero) || numero < 1 || numero > 20) {
+        return res.status(400).json({ mensaje: 'Reporte no valido.' });
+    }
+    const inicio = /^\d{4}-\d{2}-\d{2}$/.test(req.query.inicio || '') ? req.query.inicio : null;
+    const fin = /^\d{4}-\d{2}-\d{2}$/.test(req.query.fin || '') ? req.query.fin : null;
+    const fechaCorte = /^\d{4}-\d{2}-\d{2}$/.test(req.query.fechaCorte || '') ? req.query.fechaCorte : null;
+    const dias = req.query.minDias === undefined ? 1 : Number(req.query.minDias);
+    const mes = req.query.mes === undefined || req.query.mes === '' ? null : Number(req.query.mes);
+    const cliente = req.query.idCliente === undefined || req.query.idCliente === '' ? null : Number(req.query.idCliente);
+    const obligacion = String(req.query.numeroCredito || '').trim();
+    if (!Number.isInteger(dias) || dias < 0 || dias > 10000 ||
+        (mes !== null && (!Number.isInteger(mes) || mes < 1 || mes > 12)) ||
+        (cliente !== null && (!Number.isInteger(cliente) || cliente < 1)) || obligacion.length > 30) {
+        return res.status(400).json({ mensaje: 'Parametros de consulta incorrectos.' });
+    }
+    const procedimiento = `dbo.usp_Reporte_${String(numero).padStart(2, '0')}`;
+    const consulta = `EXEC ${procedimiento} ?, ?, ?, ?, ?, ?, ?;`;
+    sql.query(conexion, consulta, [inicio, fin, fechaCorte, dias, mes, cliente, obligacion || null], (error, filas) => {
+        if (error) {
+            console.error('Error en reporte:', error.message);
+            return res.status(500).json({ mensaje: 'No se pudo generar el reporte.' });
+        }
+        res.json(Array.isArray(filas) ? filas : []);
+    });
+});
+
+
+function mensajeNegocio(error) {
+    const m = String(error?.message || '');
+    const reglas = [
+        [/tres referencias/i, 'El cliente necesita al menos 3 referencias personales antes del financiamiento.'],
+        [/vehiculo.*(nuevo|agencia)|agencia.*vehiculo/i, 'Solo se pueden financiar vehículos nuevos con agencia de origen registrada. Revisa la ficha del vehículo.'],
+        [/ya tiene un credito/i, 'Este vehículo ya tiene un crédito registrado.'],
+        [/numero de obligacion ya existe/i, 'Ese número de obligación ya existe.'],
+        [/enganche es demasiado alto/i, 'El enganche debe ser menor que el precio del vehículo.'],
+        [/ya existe valoracion/i, 'Ya existe una valoración para ese vehículo en esa fecha.'],
+        [/ya asignado/i, 'Este fiador ya está asignado al crédito.'],
+        [/ya es referencia/i, 'Esta persona ya es referencia del cliente.'],
+        [/FOREIGN KEY|REFERENCE constraint/i, 'No se puede eliminar porque existen registros relacionados.'],
+        [/UNIQUE KEY|duplicate key/i, 'Ya existe un registro con esos datos.']
+    ];
+    for (const [exp, texto] of reglas) if (exp.test(m)) return texto;
+    return 'No se pudo completar la operación. Revisa los datos o consulta la terminal del servidor.';
+}
+
+function consultarSP(res, nombre, valores=[], codigo=200) {
+    const marcas=valores.map(()=>'?').join(', ');
+    sql.query(conexion, `EXEC dbo.${nombre}${marcas?' '+marcas:''};`, valores, (error, filas)=>{
+        if(error){ console.error(nombre, error.message); return res.status(400).json({mensaje:mensajeNegocio(error)}); }
+        res.status(codigo).json(Array.isArray(filas)?filas:[]);
+    });
+}
+function positivo(x){ const n=Number(x);return Number.isInteger(n)&&n>0?n:null; }
+function texto(x,lim=150){return typeof x==='string'?x.trim().slice(0,lim):'';}
+function personaValida(d){return /^\d{13}$/.test(texto(d.dpi))&&!!texto(d.nombre)&&!!texto(d.telefono,15)&&!!texto(d.direccion,250);}
+app.get('/api/clientes/:id/contacto', (req,res) => {
+ const id=positivo(req.params.id);
+ if(!id)return res.status(400).json({mensaje:'Cliente inválido.'});
+ consultarSP(res,'usp_API_Cliente_Contacto_Consultar',[id]);
+});
+app.put('/api/clientes/:id/contacto', (req,res) => {
+ const id=positivo(req.params.id),d=req.body||{};
+ const telefono=texto(d.telefono,15),direccion=texto(d.direccion,250);
+ if(!id)return res.status(400).json({mensaje:'Cliente inválido.'});
+ consultarSP(res,'usp_API_Cliente_Contacto_Guardar',[id,telefono||null,direccion||null]);
+});
+app.get('/api/referencias/:cliente',(req,res)=>{
+ const id=positivo(req.params.cliente);if(!id)return res.status(400).json({mensaje:'Cliente invalido.'});
+ consultarSP(res,'usp_API_Referencias_Listar',[id]);
+});
+app.post('/api/referencias',(req,res)=>{
+ const d=req.body||{},id=positivo(d.idCliente);
+ if(!id||!personaValida(d)||!texto(d.parentesco,50))return res.status(400).json({mensaje:'Completa cliente, DPI, nombre, telefono, direccion y parentesco.'});
+ consultarSP(res,'usp_API_Referencias_Crear',[id,texto(d.dpi),texto(d.nombre),texto(d.telefono,15),texto(d.direccion,250),texto(d.parentesco,50),texto(d.trabajo,150)||null,texto(d.nit,20)||null,texto(d.correo,100)||null],201);
+});
+app.delete('/api/referencias/:id',(req,res)=>{
+ const id=positivo(req.params.id);if(!id)return res.status(400).json({mensaje:'Referencia invalida.'});
+ consultarSP(res,'usp_API_Referencias_Eliminar',[id]);
+});
+app.get('/api/fiadores',(req,res)=>consultarSP(res,'usp_API_Fiadores_Listar'));
+app.post('/api/fiadores',(req,res)=>{
+ const d=req.body||{};if(!personaValida(d))return res.status(400).json({mensaje:'Completa DPI, nombre, telefono y direccion.'});
+ consultarSP(res,'usp_API_Fiadores_Crear',[texto(d.dpi),texto(d.nombre),texto(d.telefono,15),texto(d.direccion,250),texto(d.nit,20)||null,texto(d.correo,100)||null],201);
+});
+app.get('/api/creditos/:id/fiadores',(req,res)=>{
+ const id=positivo(req.params.id);if(!id)return res.status(400).json({mensaje:'Credito invalido.'});
+ consultarSP(res,'usp_API_CreditoFiadores_Listar',[id]);
+});
+app.post('/api/creditos/:id/fiadores',(req,res)=>{
+ const id=positivo(req.params.id),fiador=positivo(req.body?.idFiador);
+ if(!id||!fiador)return res.status(400).json({mensaje:'Selecciona credito y fiador.'});
+ consultarSP(res,'usp_API_CreditoFiadores_Asignar',[id,fiador],201);
+});
+app.delete('/api/creditos/:id/fiadores/:fiador',(req,res)=>{
+ const id=positivo(req.params.id),fiador=positivo(req.params.fiador);
+ if(!id||!fiador)return res.status(400).json({mensaje:'Datos incorrectos.'});
+ consultarSP(res,'usp_API_CreditoFiadores_Quitar',[id,fiador]);
+});
+app.get('/api/comisiones',(req,res)=>consultarSP(res,'usp_API_Comisiones_Listar'));
+app.get('/api/depreciacion',(req,res)=>{
+ const vin=texto(req.query.vin,17).toUpperCase();
+ if(vin&&!/^[A-Z0-9]{17}$/.test(vin))return res.status(400).json({mensaje:'VIN incorrecto.'});
+ consultarSP(res,'usp_API_Depreciacion_Listar',[vin||null]);
+});
+app.post('/api/depreciacion',(req,res)=>{
+ const d=req.body||{},vin=texto(d.vin,17).toUpperCase(),fecha=texto(d.fecha,10),valor=Number(d.valor);
+ if(!/^[A-Z0-9]{17}$/.test(vin)||!/^\d{4}-\d{2}-\d{2}$/.test(fecha)||!Number.isFinite(valor)||valor<0||valor>9999999999.99)
+ return res.status(400).json({mensaje:'Revisa VIN, fecha y valor.'});
+ consultarSP(res,'usp_API_Depreciacion_Registrar',[vin,fecha,valor,texto(d.observacion,250)||null],201);
+});
 
 // INICIAR SERVIDOR
 app.listen(3000, () => {

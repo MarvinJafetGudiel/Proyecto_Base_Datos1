@@ -1,322 +1,59 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MAGIS-AUTO | Administración</title>
-
-<style>
-* {
-    box-sizing: border-box;
-}
-
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f3f6fb;
-    color: #243047;
-}
-
-.contenedor {
-    display: flex;
-    min-height: 100vh;
-}
-
-.menu {
-    width: 240px;
-    background: #14233d;
-    color: white;
-    padding: 25px 18px;
-}
-
-.logo {
-    font-size: 25px;
-    font-weight: bold;
-    margin-bottom: 8px;
-}
-
-.subtitulo {
-    font-size: 12px;
-    color: #aabbd3;
-    margin-bottom: 40px;
-}
-
-.menu a {
-    display: block;
-    padding: 14px;
-    margin-bottom: 9px;
-    border-radius: 8px;
-    color: #dce6f5;
-    text-decoration: none;
-}
-
-.menu a.activo {
-    background: #2864dc;
-    color: white;
-}
-
-.menu a:hover {
-    background: #294264;
-}
-
-.principal {
-    flex: 1;
-    padding: 35px;
-    min-width: 0;
-}
-
-.encabezado {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 15px;
-}
-
-.encabezado h1 {
-    margin: 0;
-    font-size: 28px;
-}
-
-.encabezado p {
-    color: #718096;
-}
-
-.boton {
-    border: none;
-    background: #2864dc;
-    color: white;
-    padding: 12px 18px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.boton:hover {
-    background: #184bb1;
-}
-
-.bienvenida {
-    margin-top: 30px;
-    background: linear-gradient(110deg, #174a9b, #2875e6);
-    color: white;
-    padding: 30px;
-    border-radius: 15px;
-}
-
-.bienvenida h2 {
-    margin-top: 0;
-}
-
-.tarjetas {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    margin-top: 25px;
-}
-
-.tarjeta {
-    background: white;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 3px 12px #14233d0b;
-    border: 1px solid #e5ebf3;
-}
-
-.tarjeta .icono {
-    font-size: 29px;
-}
-
-.tarjeta h3 {
-    color: #68768a;
-    font-size: 15px;
-    font-weight: normal;
-}
-
-.tarjeta .numero {
-    font-size: 32px;
-    font-weight: bold;
-    color: #193c7a;
-}
-
-.informacion {
-    background: white;
-    margin-top: 28px;
-    padding: 24px;
-    border-radius: 12px;
-    border: 1px solid #e5ebf3;
-}
-
-.estado {
-    color: #16834a;
-    font-weight: bold;
-}
-
-@media (max-width: 900px) {
-    .tarjetas {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 650px) {
-    .contenedor {
-        display: block;
-    }
-
-    .menu {
-        width: 100%;
-    }
-
-    .principal {
-        padding: 20px;
-    }
-
-    .tarjetas {
-        grid-template-columns: 1fr;
-    }
-
-    .encabezado {
-        flex-wrap: wrap;
-    }
-}
-</style>
+<title>MAGIS-AUTO | Panel principal</title>
+<link rel="stylesheet" href="tema-oscuro.css?v=3">
+<link rel="stylesheet" href="dashboard.css?v=3">
+<script src="tema-oscuro.js?v=3" defer></script>
+<script src="dashboard.js?v=3" defer></script>
 </head>
-
-<body>
-
+<body class="magis-dashboard">
 <div class="contenedor">
-
-    <aside class="menu">
-        <div class="logo">🚗 MAGIS-AUTO</div>
-        <div class="subtitulo">Sistema de administración</div>
-
-        <a href="/" class="activo">📊 Panel principal</a>
-        <a href="/clientes.html">👥 Clientes</a>
-        <a href="vehiculos.html">🚗 Vehículos</a>
-        <a href="creditos.html">💰 Créditos</a>
-        <a href="nuevo_credito.html">💸Nuevo Financiamiento</a>
-        <a href="cuotas.html">💴 Cuotas y Pagos</a>
-        <a href="registrar_pago.html">💵 Registrar Pago</a>
-    </aside>
-
-    <main class="principal">
-
-        <div class="encabezado">
-            <div>
-                <h1>Panel principal</h1>
-                <p>Resumen general de MAGIS-AUTO</p>
-            </div>
-
-            <button class="boton" onclick="cargarDatos()">
-                Actualizar datos
-            </button>
+  <aside class="menu" aria-label="Menú de navegación"></aside>
+  <main class="principal">
+    <section class="db-hero">
+      <div class="db-hero-text">
+        <span class="db-eyebrow"><span class="db-pulse"></span> MAGIS-AUTO / CENTRO DE CONTROL</span>
+        <h1>Panel de <span>administración</span></h1>
+        <p>Gestiona clientes, vehículos, créditos y pagos desde un solo lugar.</p>
+        <div class="db-hero-actions">
+          <button id="actualizar" type="button" class="db-primary">↻ Actualizar información</button>
+          <span id="fechaActual" class="db-date"></span>
         </div>
+      </div>
+      <img src="auto-linea.svg" alt="Ilustración de automóvil" class="db-hero-car">
+    </section>
 
-        <section class="bienvenida">
-            <h2>Bienvenido a MAGIS-AUTO</h2>
-            <p>
-                Administra y consulta la información
-                de nuestra agencia de vehículos.
-            </p>
-        </section>
+    <div class="db-heading-row"><div><span class="db-section-tag">RESUMEN GENERAL</span><h2>Indicadores principales</h2></div><span class="db-live"><span></span> Datos de SQL Server</span></div>
+    <section class="db-kpis" aria-label="Indicadores">
+      <article class="db-kpi db-blue"><div class="db-kpi-top"><span class="db-kpi-icon">👥</span><span class="db-kpi-chip">Clientes</span></div><p>Clientes registrados</p><strong id="clientes">—</strong><small id="personasExtra">Personas registradas: —</small></article>
+      <article class="db-kpi db-teal"><div class="db-kpi-top"><span class="db-kpi-icon">🚙</span><span class="db-kpi-chip">Inventario</span></div><p>Vehículos registrados</p><strong id="vehiculos">—</strong><small>Vehículos en la base de datos</small></article>
+      <article class="db-kpi db-amber"><div class="db-kpi-top"><span class="db-kpi-icon">💳</span><span class="db-kpi-chip">Financiamiento</span></div><p>Créditos registrados</p><strong id="creditos">—</strong><small id="cuotasExtra">Cuotas programadas: —</small></article>
+      <article class="db-kpi db-violet"><div class="db-kpi-top"><span class="db-kpi-icon">💰</span><span class="db-kpi-chip" id="etiquetaAnio">Año actual</span></div><p>Recaudado en el año</p><strong id="recaudado">—</strong><small id="pagosExtra">Pagos del período: —</small></article>
+    </section>
 
-        <section class="tarjetas">
+    <section class="db-analytics" aria-label="Gráficas financieras">
+      <article class="db-panel db-month-panel">
+        <div class="db-panel-heading"><div><span class="db-panel-symbol db-symbol-blue">▥</span><div><h2>Recaudación mensual</h2><p>Pagos recibidos por mes, en quetzales</p></div></div><span class="db-year" id="anioGrafica">—</span></div>
+        <div class="db-month-chart"><div class="db-axis" id="ejeMeses"></div><div class="db-bars" id="graficaMeses" aria-label="Gráfico de barras de recaudación mensual"></div></div>
+        <div class="db-chart-footer"><span><i class="db-dot db-dot-blue"></i> Montos efectivamente pagados</span><strong id="totalGrafica">—</strong></div>
+      </article>
+      <article class="db-panel db-pay-panel">
+        <div class="db-panel-heading"><div><span class="db-panel-symbol db-symbol-purple">◉</span><div><h2>Medios de pago</h2><p>Distribución del total recaudado</p></div></div><span class="db-year" id="anioMedios">—</span></div>
+        <div class="db-donut-layout"><div class="db-donut" id="graficaMedios"><div class="db-donut-hole"><strong id="pagosDonut">—</strong><small>pagos</small></div></div><div class="db-legend" id="leyendaMedios"></div></div>
+      </article>
+    </section>
 
-            <div class="tarjeta">
-                <div class="icono">👥</div>
-                <h3>Personas registradas</h3>
-                <div class="numero" id="personas">--</div>
-            </div>
-
-            <div class="tarjeta">
-                <div class="icono">🧑‍💼</div>
-                <h3>Clientes</h3>
-                <div class="numero" id="clientes">--</div>
-            </div>
-
-            <div class="tarjeta">
-                <div class="icono">🚘</div>
-                <h3>Vehículos</h3>
-                <div class="numero" id="vehiculos">--</div>
-            </div>
-
-            <div class="tarjeta">
-                <div class="icono">💳</div>
-                <h3>Créditos</h3>
-                <div class="numero" id="creditos">--</div>
-            </div>
-
-            <div class="tarjeta">
-                <div class="icono">📅</div>
-                <h3>Cuotas</h3>
-                <div class="numero" id="cuotas">--</div>
-            </div>
-
-            <div class="tarjeta">
-                <div class="icono">💰</div>
-                <h3>Pagos registrados</h3>
-                <div class="numero" id="pagos">--</div>
-            </div>
-
-        </section>
-
-        <section class="informacion">
-            <h3>Estado del sistema</h3>
-            <p id="estado">Consultando la base de datos...</p>
-            <p>
-                Base de datos: <strong>MAGIS_AUTO</strong>
-            </p>
-        </section>
-
-    </main>
-
+    <section class="db-lower" aria-label="Resumen de actividad">
+      <article class="db-panel"><div class="db-panel-heading"><div><span class="db-panel-symbol db-symbol-green">◈</span><div><h2>Estado de los créditos</h2><p>Distribución por estado registrado</p></div></div></div><div class="db-credit-layout"><div class="db-donut db-credit-donut" id="graficaEstados"><div class="db-donut-hole"><strong id="creditosDonut">—</strong><small>créditos</small></div></div><div class="db-legend" id="leyendaEstados"></div></div></article>
+      <article class="db-panel"><div class="db-panel-heading"><div><span class="db-panel-symbol db-symbol-amber">🚘</span><div><h2>Vehículos financiados</h2><p>Modelos con más créditos registrados</p></div></div></div><div id="modelosPopulares" class="db-model-list"><p class="db-empty">Cargando modelos…</p></div></article>
+      <article class="db-panel"><div class="db-panel-heading"><div><span class="db-panel-symbol db-symbol-blue">♙</span><div><h2>Clientes recientes</h2><p>Últimos registros por identificador</p></div></div><a href="clientes.html" class="db-view-all">Ver todos →</a></div><div id="clientesRecientes" class="db-recent-list"><p class="db-empty">Cargando clientes…</p></div></article>
+    </section>
+    <div class="db-bottom"><div><span class="db-section-tag">ACCESOS RÁPIDOS</span><h2>Operaciones frecuentes</h2></div><div class="db-quick"><a href="clientes.html">👥 Ver clientes <span>↗</span></a><a href="nuevoCredito.html">➕ Nuevo crédito <span>↗</span></a><a href="registroPago.html">💵 Registrar pago <span>↗</span></a><a href="reportes.html">📊 Ver reportes <span>↗</span></a></div></div>
+    <p id="estado" class="db-status" role="status">Consultando información de la base de datos…</p>
+  </main>
 </div>
-
-<script>
-async function cargarDatos() {
-    const estado = document.getElementById('estado');
-
-    estado.textContent = 'Actualizando información...';
-
-    try {
-        const respuesta = await fetch('/api/resumen');
-
-        if (!respuesta.ok) {
-            throw new Error('No se pudo consultar la base de datos');
-        }
-
-        const datos = await respuesta.json();
-
-        const campos = [
-            'personas',
-            'clientes',
-            'vehiculos',
-            'creditos',
-            'cuotas',
-            'pagos'
-        ];
-
-        campos.forEach(campo => {
-            document.getElementById(campo).textContent =
-                Number(datos[campo]).toLocaleString('es-GT');
-        });
-
-        estado.textContent =
-            '● Sistema conectado correctamente a SQL Server';
-
-        estado.className = 'estado';
-
-    } catch (error) {
-        estado.textContent =
-            'Error de conexión: ' + error.message;
-
-        estado.className = '';
-        estado.style.color = '#dc2626';
-    }
-}
-
-cargarDatos();
-</script>
-
 </body>
 </html>

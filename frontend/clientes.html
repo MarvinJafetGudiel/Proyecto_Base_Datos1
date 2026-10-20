@@ -158,6 +158,8 @@ tr:hover { background: #f7faff; }
     .campos { grid-template-columns: 1fr; }
 }
 </style>
+<link rel="stylesheet" href="tema-oscuro.css?v=2">
+<script src="tema-oscuro.js?v=2" defer></script>
 </head>
 
 <body>
@@ -173,6 +175,7 @@ tr:hover { background: #f7faff; }
     <a href="nuevoCredito.html">➕ Nuevo Financiamiento</a>
     <a href="cuotas.html">🧮 Cuotas y Pagos</a>
     <a class="activo" href="registroPago.html">💵 Registrar Pago</a>
+        <a href="gestion.html">🛡️ Garantías y comisiones</a><a href="reportes.html">📈 Reportes financieros</a>
 </aside>
 
 <main class="principal">
@@ -224,6 +227,8 @@ tr:hover { background: #f7faff; }
                             maxlength="20">
                     </div>
 
+                    <div><label>Teléfono de contacto (opcional)</label><input class="campo" id="telefonoContacto" maxlength="15" placeholder="Ej. 55551234"></div>
+                    <div><label>Dirección (opcional)</label><input class="campo" id="direccionContacto" maxlength="250" placeholder="Dirección completa"></div>
                     <div>
                         <label>Correo electrónico</label>
                         <input class="campo" id="correo"
@@ -385,6 +390,9 @@ function editarCliente(id) {
     document.getElementById('dpi').value = cliente.DPI || '';
     document.getElementById('nit').value = cliente.NIT || '';
     document.getElementById('correo').value = cliente.CorreoElectronico || '';
+    document.getElementById('telefonoContacto').value = '';
+    document.getElementById('direccionContacto').value = '';
+    fetch('/api/clientes/' + id + '/contacto').then(r=>r.json()).then(f=>{if(f[0]){document.getElementById('telefonoContacto').value=f[0].Telefono||'';document.getElementById('direccionContacto').value=f[0].Direccion||'';}}).catch(()=>{});
     document.getElementById('tituloFormulario').textContent = 'Editar cliente #' + id;
     document.getElementById('formulario').style.display = 'block';
     document.getElementById('formulario').scrollIntoView({ behavior: 'smooth' });
@@ -434,6 +442,19 @@ async function guardarCliente(event) {
             throw new Error(resultado.mensaje || 'No se pudo guardar el cliente.');
         }
 
+        // Guardar contacto después del cliente; sin afectar el registro principal.
+        const idContacto = editando ? id : resultado.idCliente;
+        const telefonoContacto = document.getElementById('telefonoContacto').value.trim();
+        const direccionContacto = document.getElementById('direccionContacto').value.trim();
+        if (idContacto && (telefonoContacto || direccionContacto)) {
+            try {
+                const rc = await fetch('/api/clientes/' + idContacto + '/contacto', {
+                    method:'PUT',headers:{'Content-Type':'application/json'},
+                    body:JSON.stringify({telefono:telefonoContacto,direccion:direccionContacto})
+                });
+                if(!rc.ok) mensaje('Cliente guardado; revisa el contacto por separado.', true);
+            } catch(e) { mensaje('Cliente guardado; no se pudo guardar el contacto.', true); }
+        }
         cerrarFormulario();
         document.getElementById('buscar').value = '';
 

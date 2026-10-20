@@ -160,6 +160,8 @@ tr:hover { background: #f7faff; }
 #mensaje { min-height: 22px; }
 @media(max-width: 900px) { .menu { width: 210px; } .principal { padding: 20px; } }
 </style>
+<link rel="stylesheet" href="tema-oscuro.css?v=2">
+<script src="tema-oscuro.js?v=2" defer></script>
 </head>
 <body>
 <div class="contenedor">
@@ -173,6 +175,7 @@ tr:hover { background: #f7faff; }
     <a href="nuevoCredito.html">➕ Nuevo Financiamiento</a>
     <a href="cuotas.html">🧮 Cuotas y Pagos</a>
     <a class="activo" href="registroPago.html">💵 Registrar Pago</a>
+        <a href="gestion.html">🛡️ Garantías y comisiones</a><a href="reportes.html">📈 Reportes financieros</a>
 </aside>
 <main class="principal">
     <h1>Administración de vehículos</h1>
@@ -195,6 +198,8 @@ tr:hover { background: #f7faff; }
                     <div><label for="anio">Año de fabricación *</label><input class="campo" id="anio" type="number" min="1900" max="2100" required></div>
                     <div><label for="valor">Valor en agencia (Q) *</label><input class="campo" id="valor" type="number" min="0.01" max="9999999999.99" step="0.01" required></div>
                     <div><label for="placa">Placa (opcional)</label><input class="campo" id="placa" maxlength="15"></div>
+                    <div><label for="esNuevo">Condición del vehículo *</label><select class="campo" id="esNuevo" required><option value="">Selecciona condición</option><option value="1">Nuevo, sin uso</option><option value="0">Usado</option></select></div>
+                    <div><label for="agenciaOrigen">Agencia de origen (obligatoria para nuevo)</label><select class="campo" id="agenciaOrigen"><option value="">Sin agencia registrada</option></select></div>
                 </div>
                 <button class="verde" id="btnGuardar" type="submit">Guardar vehículo</button>
                 <button class="gris" type="button" onclick="cerrarFormulario()">Cancelar</button>
@@ -203,7 +208,7 @@ tr:hover { background: #f7faff; }
         <input class="buscador" id="buscar" placeholder="Buscar por marca, modelo, VIN o placa..." oninput="mostrarVehiculos()">
         <div class="tabla-contenedor">
             <table>
-                <thead><tr><th>VIN</th><th>Marca</th><th>Modelo</th><th>Año</th><th>Valor (Q)</th><th>Placa</th><th>Acciones</th></tr></thead>
+                <thead><tr><th>VIN</th><th>Marca</th><th>Modelo</th><th>Año</th><th>Valor (Q)</th><th>Placa</th><th>Condición</th><th>Agencia</th><th>Acciones</th></tr></thead>
                 <tbody id="tablaVehiculos"></tbody>
             </table>
         </div>
@@ -241,6 +246,13 @@ async function cargarMarcas() {
     });
 }
 
+async function cargarAgencias() {
+    const agencias = await pedirDatos('/api/agencias');
+    const select = document.getElementById('agenciaOrigen');
+    select.replaceChildren(new Option('Sin agencia registrada', ''));
+    agencias.forEach(a => select.add(new Option(a.NombreAgencia + ' (' + a.Region + ')', a.IdAgencia)));
+}
+
 async function cargarVehiculos() {
     const datos = await pedirDatos('/api/vehiculos');
     if (!Array.isArray(datos)) throw new Error('El servidor no devolvió una lista válida.');
@@ -261,7 +273,7 @@ function mostrarVehiculos() {
         const tr = document.createElement('tr');
         const valores = [v.VIN, v.NombreMarca, v.Modelo, v.AnioFabricacion,
             Number(v.ValorAgencia).toLocaleString('es-GT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
-            v.Placa || 'Sin placa'];
+            v.Placa || 'Sin placa', v.EsNuevo === null ? 'Sin verificar' : v.EsNuevo ? 'Nuevo' : 'Usado', v.AgenciaOrigen || 'Sin registrar'];
         valores.forEach(valor => {
             const td = document.createElement('td');
             td.textContent = valor;
@@ -286,7 +298,7 @@ function mostrarVehiculos() {
     if (!filtrados.length) {
         const tr = document.createElement('tr');
         const td = document.createElement('td');
-        td.colSpan = 7;
+        td.colSpan = 9;
         td.textContent = 'No se encontraron vehículos.';
         tr.appendChild(td);
         tabla.appendChild(tr);
@@ -317,6 +329,8 @@ function editarVehiculo(vin) {
     document.getElementById('anio').value = v.AnioFabricacion;
     document.getElementById('valor').value = v.ValorAgencia;
     document.getElementById('placa').value = v.Placa || '';
+    document.getElementById('esNuevo').value = v.EsNuevo === null ? '' : String(Number(v.EsNuevo));
+    document.getElementById('agenciaOrigen').value = v.IdAgenciaOrigen || '';
     document.getElementById('tituloFormulario').textContent = 'Editar vehículo';
     document.getElementById('formulario').style.display = 'block';
     document.getElementById('formulario').scrollIntoView({ behavior: 'smooth' });
@@ -337,8 +351,14 @@ async function guardarVehiculo(event) {
         modelo: document.getElementById('modelo').value.trim(),
         anio: document.getElementById('anio').value,
         valor: document.getElementById('valor').value,
-        placa: document.getElementById('placa').value.trim()
+        placa: document.getElementById('placa').value.trim(),
+        esNuevo: document.getElementById('esNuevo').value,
+        idAgencia: document.getElementById('agenciaOrigen').value
     };
+    if (!datos.esNuevo || (datos.esNuevo === '1' && !datos.idAgencia)) {
+        mensaje('Selecciona la condición y, si es nuevo, su agencia de origen.', true);
+        return;
+    }
     const editando = vinEditando !== null;
     const vinOriginal = vinEditando;
     procesando = true;
@@ -379,7 +399,7 @@ async function eliminarVehiculo(vin) {
 }
 
 document.getElementById('formVehiculo').addEventListener('submit', guardarVehiculo);
-Promise.all([cargarMarcas(), cargarVehiculos()]).catch(error => mensaje(error.message, true));
+Promise.all([cargarMarcas(), cargarAgencias(), cargarVehiculos()]).catch(error => mensaje(error.message, true));
 </script>
 </body>
 </html>
