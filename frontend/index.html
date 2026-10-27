@@ -1,59 +1,462 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MAGIS-AUTO | Panel principal</title>
-<link rel="stylesheet" href="tema-oscuro.css?v=3">
-<link rel="stylesheet" href="dashboard.css?v=3">
-<script src="tema-oscuro.js?v=3" defer></script>
-<script src="dashboard.js?v=3" defer></script>
-</head>
-<body class="magis-dashboard">
-<div class="contenedor">
-  <aside class="menu" aria-label="Menú de navegación"></aside>
-  <main class="principal">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   MAGIS-AUTO | Panel principal
+  </title>
+  <link href="tema-oscuro.css?v=3" rel="stylesheet"/>
+  <link href="dashboard.css?v=3" rel="stylesheet"/>
+  <script defer="" src="dashboard.js?v=3">
+  </script>
+ </head>
+ <body class="magis-dashboard">
+  <div class="contenedor">
+   <input aria-label="Mostrar men&uacute; de navegaci&oacute;n" class="magis-menu-check" id="menuMovil" type="checkbox"/>
+   <aside aria-label="Men&uacute; de navegaci&oacute;n" class="menu">
+    <div class="magis-brand">
+     <span class="magis-brand-icon">
+      🚗
+     </span>
+     <div>
+      <strong>
+       MAGIS
+       <span>
+        -AUTO
+       </span>
+      </strong>
+      <small>
+       SISTEMA DE FINANCIAMIENTO
+      </small>
+     </div>
+    </div>
+    <div class="magis-nav-label">
+     NAVEGACI&Oacute;N PRINCIPAL
+    </div>
+    <nav aria-label="Secciones de MAGIS-AUTO" class="magis-links">
+     <a aria-current="page" class="activo" href="index.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       ⌂
+      </span>
+      <span>
+       Panel principal
+      </span>
+     </a>
+     <a href="clientes.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       👥
+      </span>
+      <span>
+       Clientes
+      </span>
+     </a>
+     <a href="vehiculos.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       🚘
+      </span>
+      <span>
+       Veh&iacute;culos
+      </span>
+     </a>
+     <a href="creditos.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       💳
+      </span>
+      <span>
+       Cr&eacute;ditos y financiamiento
+      </span>
+     </a>
+     <a href="nuevoCredito.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       ➕
+      </span>
+      <span>
+       Nuevo financiamiento
+      </span>
+     </a>
+     <a href="cuotas.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       ▦
+      </span>
+      <span>
+       Cuotas y pagos
+      </span>
+     </a>
+     <a href="registroPago.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       💵
+      </span>
+      <span>
+       Registrar pago
+      </span>
+     </a>
+     <a href="gestion.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       🛡️
+      </span>
+      <span>
+       Garant&iacute;as y comisiones
+      </span>
+     </a>
+     <a href="reportes.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       📈
+      </span>
+      <span>
+       Reportes financieros
+      </span>
+     </a>
+    </nav>
+    <div class="magis-promo">
+     <strong>
+      MAGIS-AUTO
+     </strong>
+     <p>
+      Financiamientos bajo control, en un solo lugar.
+     </p>
+    </div>
+    <div class="magis-side-foot">
+     Panel de administraci&oacute;n &middot; Guatemala
+    </div>
+   </aside>
+   <label aria-label="Cerrar men&uacute;" class="magis-menu-overlay" for="menuMovil">
+   </label>
+   <main class="principal">
+    <div class="magis-topbar">
+     <div class="magis-top-left">
+      <label aria-label="Abrir men&uacute;" class="magis-mobile-btn" for="menuMovil">
+       ☰
+      </label>
+      <span class="magis-top-symbol">
+       🛡
+      </span>
+      <strong>
+       Panel principal
+      </strong>
+     </div>
+     <div class="magis-top-right">
+      <span class="magis-status-dot">
+      </span>
+      <span class="magis-status-label">
+       Panel administrativo
+      </span>
+      <span class="magis-avatar" title="MAGIS-AUTO">
+       M
+      </span>
+     </div>
+    </div>
     <section class="db-hero">
-      <div class="db-hero-text">
-        <span class="db-eyebrow"><span class="db-pulse"></span> MAGIS-AUTO / CENTRO DE CONTROL</span>
-        <h1>Panel de <span>administración</span></h1>
-        <p>Gestiona clientes, vehículos, créditos y pagos desde un solo lugar.</p>
-        <div class="db-hero-actions">
-          <button id="actualizar" type="button" class="db-primary">↻ Actualizar información</button>
-          <span id="fechaActual" class="db-date"></span>
-        </div>
+     <div class="db-hero-text">
+      <span class="db-eyebrow">
+       <span class="db-pulse">
+       </span>
+       MAGIS-AUTO / CENTRO DE CONTROL
+      </span>
+      <h1>
+       <span>
+        Panel principal
+       </span>
+      </h1>
+      <p>
+       Gestiona clientes, veh&iacute;culos, cr&eacute;ditos y pagos desde un solo lugar.
+      </p>
+      <div class="db-hero-actions">
+       <button class="db-primary" id="actualizar" type="button">
+        &orarr; Actualizar informaci&oacute;n
+       </button>
+       <span class="db-date" id="fechaActual">
+       </span>
       </div>
-      <img src="auto-linea.svg" alt="Ilustración de automóvil" class="db-hero-car">
+     </div>
+     <img alt="Ilustraci&oacute;n de autom&oacute;vil" class="db-hero-car" src="auto-linea.svg"/>
     </section>
-
-    <div class="db-heading-row"><div><span class="db-section-tag">RESUMEN GENERAL</span><h2>Indicadores principales</h2></div><span class="db-live"><span></span> Datos de SQL Server</span></div>
-    <section class="db-kpis" aria-label="Indicadores">
-      <article class="db-kpi db-blue"><div class="db-kpi-top"><span class="db-kpi-icon">👥</span><span class="db-kpi-chip">Clientes</span></div><p>Clientes registrados</p><strong id="clientes">—</strong><small id="personasExtra">Personas registradas: —</small></article>
-      <article class="db-kpi db-teal"><div class="db-kpi-top"><span class="db-kpi-icon">🚙</span><span class="db-kpi-chip">Inventario</span></div><p>Vehículos registrados</p><strong id="vehiculos">—</strong><small>Vehículos en la base de datos</small></article>
-      <article class="db-kpi db-amber"><div class="db-kpi-top"><span class="db-kpi-icon">💳</span><span class="db-kpi-chip">Financiamiento</span></div><p>Créditos registrados</p><strong id="creditos">—</strong><small id="cuotasExtra">Cuotas programadas: —</small></article>
-      <article class="db-kpi db-violet"><div class="db-kpi-top"><span class="db-kpi-icon">💰</span><span class="db-kpi-chip" id="etiquetaAnio">Año actual</span></div><p>Recaudado en el año</p><strong id="recaudado">—</strong><small id="pagosExtra">Pagos del período: —</small></article>
+    <div class="db-heading-row">
+     <div>
+      <span class="db-section-tag">
+       RESUMEN GENERAL
+      </span>
+      <h2>
+       Indicadores principales
+      </h2>
+     </div>
+     <span class="db-live">
+      <span>
+      </span>
+      Datos de SQL Server
+     </span>
+    </div>
+    <section aria-label="Indicadores" class="db-kpis">
+     <article class="db-kpi db-blue">
+      <div class="db-kpi-top">
+       <span class="db-kpi-icon">
+        👥
+       </span>
+       <span class="db-kpi-chip">
+        Clientes
+       </span>
+      </div>
+      <p>
+       Clientes registrados
+      </p>
+      <strong id="clientes">
+       &mdash;
+      </strong>
+      <small id="personasExtra">
+       Personas registradas: &mdash;
+      </small>
+     </article>
+     <article class="db-kpi db-teal">
+      <div class="db-kpi-top">
+       <span class="db-kpi-icon">
+        🚙
+       </span>
+       <span class="db-kpi-chip">
+        Inventario
+       </span>
+      </div>
+      <p>
+       Veh&iacute;culos registrados
+      </p>
+      <strong id="vehiculos">
+       &mdash;
+      </strong>
+      <small>
+       Veh&iacute;culos en la base de datos
+      </small>
+     </article>
+     <article class="db-kpi db-amber">
+      <div class="db-kpi-top">
+       <span class="db-kpi-icon">
+        💳
+       </span>
+       <span class="db-kpi-chip">
+        Financiamiento
+       </span>
+      </div>
+      <p>
+       Cr&eacute;ditos registrados
+      </p>
+      <strong id="creditos">
+       &mdash;
+      </strong>
+      <small id="cuotasExtra">
+       Cuotas programadas: &mdash;
+      </small>
+     </article>
+     <article class="db-kpi db-violet">
+      <div class="db-kpi-top">
+       <span class="db-kpi-icon">
+        💰
+       </span>
+       <span class="db-kpi-chip" id="etiquetaAnio">
+        A&ntilde;o actual
+       </span>
+      </div>
+      <p>
+       Recaudado en el a&ntilde;o
+      </p>
+      <strong id="recaudado">
+       &mdash;
+      </strong>
+      <small id="pagosExtra">
+       Pagos del per&iacute;odo: &mdash;
+      </small>
+     </article>
     </section>
-
-    <section class="db-analytics" aria-label="Gráficas financieras">
-      <article class="db-panel db-month-panel">
-        <div class="db-panel-heading"><div><span class="db-panel-symbol db-symbol-blue">▥</span><div><h2>Recaudación mensual</h2><p>Pagos recibidos por mes, en quetzales</p></div></div><span class="db-year" id="anioGrafica">—</span></div>
-        <div class="db-month-chart"><div class="db-axis" id="ejeMeses"></div><div class="db-bars" id="graficaMeses" aria-label="Gráfico de barras de recaudación mensual"></div></div>
-        <div class="db-chart-footer"><span><i class="db-dot db-dot-blue"></i> Montos efectivamente pagados</span><strong id="totalGrafica">—</strong></div>
-      </article>
-      <article class="db-panel db-pay-panel">
-        <div class="db-panel-heading"><div><span class="db-panel-symbol db-symbol-purple">◉</span><div><h2>Medios de pago</h2><p>Distribución del total recaudado</p></div></div><span class="db-year" id="anioMedios">—</span></div>
-        <div class="db-donut-layout"><div class="db-donut" id="graficaMedios"><div class="db-donut-hole"><strong id="pagosDonut">—</strong><small>pagos</small></div></div><div class="db-legend" id="leyendaMedios"></div></div>
-      </article>
+    <section aria-label="Gr&aacute;ficas financieras" class="db-analytics">
+     <article class="db-panel db-month-panel">
+      <div class="db-panel-heading">
+       <div>
+        <span class="db-panel-symbol db-symbol-blue">
+         ▥
+        </span>
+        <div>
+         <h2>
+          Recaudaci&oacute;n mensual
+         </h2>
+         <p>
+          Pagos recibidos por mes, en quetzales
+         </p>
+        </div>
+       </div>
+       <span class="db-year" id="anioGrafica">
+        &mdash;
+       </span>
+      </div>
+      <div class="db-month-chart">
+       <div class="db-axis" id="ejeMeses">
+       </div>
+       <div aria-label="Gr&aacute;fico de barras de recaudaci&oacute;n mensual" class="db-bars" id="graficaMeses">
+       </div>
+      </div>
+      <div class="db-chart-footer">
+       <span>
+        <i class="db-dot db-dot-blue">
+        </i>
+        Montos efectivamente pagados
+       </span>
+       <strong id="totalGrafica">
+        &mdash;
+       </strong>
+      </div>
+     </article>
+     <article class="db-panel db-pay-panel">
+      <div class="db-panel-heading">
+       <div>
+        <span class="db-panel-symbol db-symbol-purple">
+         ◉
+        </span>
+        <div>
+         <h2>
+          Medios de pago
+         </h2>
+         <p>
+          Distribuci&oacute;n del total recaudado
+         </p>
+        </div>
+       </div>
+       <span class="db-year" id="anioMedios">
+        &mdash;
+       </span>
+      </div>
+      <div class="db-donut-layout">
+       <div class="db-donut" id="graficaMedios">
+        <div class="db-donut-hole">
+         <strong id="pagosDonut">
+          &mdash;
+         </strong>
+         <small>
+          pagos
+         </small>
+        </div>
+       </div>
+       <div class="db-legend" id="leyendaMedios">
+       </div>
+      </div>
+     </article>
     </section>
-
-    <section class="db-lower" aria-label="Resumen de actividad">
-      <article class="db-panel"><div class="db-panel-heading"><div><span class="db-panel-symbol db-symbol-green">◈</span><div><h2>Estado de los créditos</h2><p>Distribución por estado registrado</p></div></div></div><div class="db-credit-layout"><div class="db-donut db-credit-donut" id="graficaEstados"><div class="db-donut-hole"><strong id="creditosDonut">—</strong><small>créditos</small></div></div><div class="db-legend" id="leyendaEstados"></div></div></article>
-      <article class="db-panel"><div class="db-panel-heading"><div><span class="db-panel-symbol db-symbol-amber">🚘</span><div><h2>Vehículos financiados</h2><p>Modelos con más créditos registrados</p></div></div></div><div id="modelosPopulares" class="db-model-list"><p class="db-empty">Cargando modelos…</p></div></article>
-      <article class="db-panel"><div class="db-panel-heading"><div><span class="db-panel-symbol db-symbol-blue">♙</span><div><h2>Clientes recientes</h2><p>Últimos registros por identificador</p></div></div><a href="clientes.html" class="db-view-all">Ver todos →</a></div><div id="clientesRecientes" class="db-recent-list"><p class="db-empty">Cargando clientes…</p></div></article>
+    <section aria-label="Resumen de actividad" class="db-lower">
+     <article class="db-panel">
+      <div class="db-panel-heading">
+       <div>
+        <span class="db-panel-symbol db-symbol-green">
+         ◈
+        </span>
+        <div>
+         <h2>
+          Estado de los cr&eacute;ditos
+         </h2>
+         <p>
+          Distribuci&oacute;n por estado registrado
+         </p>
+        </div>
+       </div>
+      </div>
+      <div class="db-credit-layout">
+       <div class="db-donut db-credit-donut" id="graficaEstados">
+        <div class="db-donut-hole">
+         <strong id="creditosDonut">
+          &mdash;
+         </strong>
+         <small>
+          cr&eacute;ditos
+         </small>
+        </div>
+       </div>
+       <div class="db-legend" id="leyendaEstados">
+       </div>
+      </div>
+     </article>
+     <article class="db-panel">
+      <div class="db-panel-heading">
+       <div>
+        <span class="db-panel-symbol db-symbol-amber">
+         🚘
+        </span>
+        <div>
+         <h2>
+          Veh&iacute;culos financiados
+         </h2>
+         <p>
+          Modelos con m&aacute;s cr&eacute;ditos registrados
+         </p>
+        </div>
+       </div>
+      </div>
+      <div class="db-model-list" id="modelosPopulares">
+       <p class="db-empty">
+        Cargando modelos&hellip;
+       </p>
+      </div>
+     </article>
+     <article class="db-panel">
+      <div class="db-panel-heading">
+       <div>
+        <span class="db-panel-symbol db-symbol-blue">
+         ♙
+        </span>
+        <div>
+         <h2>
+          Clientes recientes
+         </h2>
+         <p>
+          &Uacute;ltimos registros por identificador
+         </p>
+        </div>
+       </div>
+       <a class="db-view-all" href="clientes.html">
+        Ver todos &rarr;
+       </a>
+      </div>
+      <div class="db-recent-list" id="clientesRecientes">
+       <p class="db-empty">
+        Cargando clientes&hellip;
+       </p>
+      </div>
+     </article>
     </section>
-    <div class="db-bottom"><div><span class="db-section-tag">ACCESOS RÁPIDOS</span><h2>Operaciones frecuentes</h2></div><div class="db-quick"><a href="clientes.html">👥 Ver clientes <span>↗</span></a><a href="nuevoCredito.html">➕ Nuevo crédito <span>↗</span></a><a href="registroPago.html">💵 Registrar pago <span>↗</span></a><a href="reportes.html">📊 Ver reportes <span>↗</span></a></div></div>
-    <p id="estado" class="db-status" role="status">Consultando información de la base de datos…</p>
-  </main>
-</div>
-</body>
+    <div class="db-bottom">
+     <div>
+      <span class="db-section-tag">
+       ACCESOS R&Aacute;PIDOS
+      </span>
+      <h2>
+       Operaciones frecuentes
+      </h2>
+     </div>
+     <div class="db-quick">
+      <a href="clientes.html">
+       👥 Ver clientes
+       <span>
+        &nearrow;
+       </span>
+      </a>
+      <a href="nuevoCredito.html">
+       ➕ Nuevo cr&eacute;dito
+       <span>
+        &nearrow;
+       </span>
+      </a>
+      <a href="registroPago.html">
+       💵 Registrar pago
+       <span>
+        &nearrow;
+       </span>
+      </a>
+      <a href="reportes.html">
+       📊 Ver reportes
+       <span>
+        &nearrow;
+       </span>
+      </a>
+     </div>
+    </div>
+    <p class="db-status" id="estado" role="status">
+     Consultando informaci&oacute;n de la base de datos&hellip;
+    </p>
+   </main>
+  </div>
+ </body>
 </html>
+

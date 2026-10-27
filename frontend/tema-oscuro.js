@@ -51,7 +51,7 @@
         
         aside.classList.add('menu');
         principal.classList.add('principal');
-        const titulo = enlaces.find(x => x[0] === pagina)?.[1] || 'Panel principal';
+        const titulo = enlaces.find(x => x[0] === pagina)?.[1] || 'Panel pan';
         
         aside.innerHTML = `
             <div class="magis-brand"><span class="magis-brand-icon">${icono('carlogo', 29)}</span><div><strong>MAGIS<span>-AUTO</span></strong><small>SISTEMA DE FINANCIAMIENTO</small></div></div>

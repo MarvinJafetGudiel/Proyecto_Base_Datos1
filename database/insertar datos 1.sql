@@ -1,5 +1,7 @@
-USE MAGIS_AUTO;
+﻿USE MAGIS_AUTO;
+
 GO
+
 SET NOCOUNT ON;
 
 INSERT INTO TipoTelefono (Descripcion)
@@ -29,4 +31,5 @@ UNION ALL SELECT 'Marca',COUNT(*) FROM Marca
 UNION ALL SELECT 'Agencia',COUNT(*) FROM Agencia
 UNION ALL SELECT 'EstadoCredito',COUNT(*) FROM EstadoCredito
 UNION ALL SELECT 'MedioPago',COUNT(*) FROM MedioPago;
+
 GO

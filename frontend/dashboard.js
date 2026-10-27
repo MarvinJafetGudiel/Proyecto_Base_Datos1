@@ -143,8 +143,6 @@
       leyenda('leyendaMedios', medios, 'NombreMedio', 'TotalRecaudado', true);
     } else fallos.push('medios de pago');
 
-    // Reutilizamos el reporte financiero 3 para obtener los importes de cada mes.
-    // Así no se modifica el backend ni se necesita ejecutar SQL adicional.
     const consultasMes = meses.map((_, i) => {
       const m = String(i + 1).padStart(2, '0');
       const ultimo = new Date(anio, i + 1, 0).getDate();

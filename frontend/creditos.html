@@ -1,247 +1,214 @@
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Créditos | MAGIS-AUTO</title>
-        <style>
-            * {
-                box-sizing: border-box;
-            }
-            body {
-                margin: 0;
-                font-family: Arial, sans-serif;
-                background: #f2f5fa;
-                color: #1b2b45;
-            }
-            .layout {
-                display: flex;
-                min-height: 100vh;
-            }
-            aside {
-                width: 235px;
-                flex-shrink: 0;
-                background: #10294b;
-                color: white;
-                padding: 28px 18px;
-            }
-            .logo {
-                font-size: 23px;
-                font-weight: bold;
-                margin: 0 0 30px;
-            }
-            .logo span {
-                color: #64b7ff;
-            }
-            aside a {
-                display: block;
-                color: #dce8f8;
-                text-decoration: none;
-                padding: 13px 14px;
-                border-radius: 9px;
-                margin: 7px 0;
-            }
-            aside a:hover, aside a.activo {
-                background: #24598e;
-                color: white;
-            }
-            main {
-                padding: 30px;
-                min-width: 0;
-                flex: 1;
-            }
-            h1 {
-                margin: 0 0 8px;
-                font-size: 29px;
-            }
-            .sub {
-                color: #63748b;
-                margin: 0 0 26px;
-            }
-            .panel {
-                background: white;
-                padding: 22px;
-                border-radius: 15px;
-                box-shadow: 0 5px 20px #142f5510;
-            }
-            .barra {
-                display: flex;
-                gap: 14px;
-                align-items: center;
-                justify-content: space-between;
-                flex-wrap: wrap;
-                margin-bottom: 18px;
-            }
-            input {
-                padding: 13px 15px;
-                border: 1px solid #ccd6e2;
-                border-radius: 9px;
-                font-size: 15px;
-                width: min(440px, 100%);
-            }
-            .contador {
-                font-weight: bold;
-                color: #24598e;
-            }
-            .tabla {
-                overflow-x: auto;
-            }
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                white-space: nowrap;
-            }
-            th {
-                background: #eaf1f9;
-                color: #203e60;
-                text-align: left;
-                font-size: 13px;
-            }
-            td, th {
-                padding: 13px 12px;
-                border-bottom: 1px solid #edf0f5;
-            }
-            td {
-                font-size: 14px;
-            }
-            tr:hover td {
-                background: #f9fbff;
-            }
-            .estado {
-                display: inline-block;
-                background: #e5f4eb;
-                color: #187546;
-                padding: 5px 9px;
-                border-radius: 20px;
-                font-size: 12px;
-                font-weight: bold;
-            }
-            .mensaje {
-                margin: 12px 0;
-                color: #b32828;
-            }
-            @media (max-width: 720px) {
-                .layout {
-                    display: block;
-                }
-                aside {
-                    width: 100%;
-                    padding: 15px;
-                }
-                aside a {
-                    display: inline-block;
-                }
-                main {
-                    padding: 18px;
-                }
-            }
-        </style>
-    <link rel="stylesheet" href="tema-oscuro.css?v=2">
-<script src="tema-oscuro.js?v=2" defer></script>
-</head>
-    <body>
-        <div class="layout">
-            <aside>
-                <div class="logo">🚘MAGIS<span>-AUTO</span></div>
-                <a href="index.html">📊 Panel principal</a>
-                <a href="clientes.html">👥 Clientes</a>
-                <a href="vehiculos.html">🚘 Vehículos</a>
-                <a href="creditos.html">💳 Créditos y Financiamiento</a>
-                <a href="nuevoCredito.html">➕ Nuevo Financiamiento</a>
-                <a href="cuotas.html">🧮 Cuotas y Pagos</a>
-                <a class="activo" href="registroPago.html">💵 Registrar Pago</a>
-        <a href="gestion.html">🛡️ Garantías y comisiones</a><a href="reportes.html">📈 Reportes financieros</a>
-            </aside>
-            <main>
-                <h1>Administración de créditos</h1>
-                <p class="sub">Consulta los financiamientos registrados en MAGIS-AUTO.</p>
-                <section class="panel">
-                    <div class="barra">
-                        <input id="buscar" type="search" placeholder="Buscar cliente, obligación, vehículo o estado..." oninput="mostrarCreditos()">
-                        <span class="contador">Créditos mostrados: <span id="total">0</span></span>
-                    </div>
-                    <div id="mensaje" class="mensaje"></div>
-                    <div class="tabla">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Obligación</th>
-                                    <th>Cliente</th>
-                                    <th>Vehículo</th>
-                                    <th>Estado</th>
-                                    <th>Plazo</th>
-                                    <th>Enganche</th>
-                                    <th>Financiado</th>
-                                    <th>Intereses</th>
-                                    <th>Total a pagar</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tablaCreditos"></tbody>
-                        </table>
-                    </div>
-                </section>
-            </main>
-        </div>
-        <script>
-            let creditos = [];
-            const dinero = valor => 'Q ' + Number(valor || 0).toLocaleString('es-GT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-            async function cargarCreditos() {
-                const mensaje = document.getElementById('mensaje');
-                try {
-                    const respuesta = await fetch('/api/creditos?actualizar=' + Date.now(), { cache: 'no-store' });
-                    if (!respuesta.ok) throw new Error('No se pudieron cargar los créditos.');
-                    creditos = await respuesta.json();
-                    mostrarCreditos();
-                } catch (error) {
-                    mensaje.textContent = error.message;
-                }
-            }
-
-            function mostrarCreditos() {
-                const buscar = document.getElementById('buscar').value.toLowerCase().trim();
-                const tabla = document.getElementById('tablaCreditos');
-                tabla.innerHTML = '';
-                
-                const filtrados = creditos.filter(c =>
-                    [c.NumeroObligacion, c.Cliente, c.NombreMarca, c.Modelo, c.VIN, c.NombreEstado]
-                        .some(valor => String(valor || '').toLowerCase().includes(buscar))
-                );
-                
-                for (const c of filtrados) {
-                    const fila = document.createElement('tr');
-                    const valores = [
-                        c.NumeroObligacion,
-                        c.Cliente,
-                        c.NombreMarca + ' ' + c.Modelo,
-                        c.NombreEstado,
-                        c.PlazoMeses + ' meses',
-                        dinero(c.Enganche),
-                        dinero(c.MontoFinanciado),
-                        dinero(c.TotalIntereses),
-                        dinero(c.TotalRecaudable)
-                    ];
-                    
-                    valores.forEach((valor, indice) => {
-                        const celda = document.createElement('td');
-                        if (indice === 3) {
-                            const estado = document.createElement('span');
-                            estado.className = 'estado';
-                            estado.textContent = valor;
-                            celda.appendChild(estado);
-                        } else {
-                            celda.textContent = valor;
-                        }
-                        fila.appendChild(celda);
-                    });
-                    
-                    tabla.appendChild(fila);
-                }
-                
-                document.getElementById('total').textContent = filtrados.length;
-            }
-
-            cargarCreditos();
-        </script>
-    </body>
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   Cr&eacute;ditos | MAGIS-AUTO
+  </title>
+  <link href="creditos.css" rel="stylesheet"/>
+  <link href="tema-oscuro.css?v=2" rel="stylesheet"/>
+ </head>
+ <body>
+  <div class="contenedor">
+   <input aria-label="Mostrar men&uacute; de navegaci&oacute;n" class="magis-menu-check" id="menuMovil" type="checkbox"/>
+   <aside aria-label="Men&uacute; de navegaci&oacute;n" class="menu">
+    <div class="magis-brand">
+     <span class="magis-brand-icon">
+      🚗
+     </span>
+     <div>
+      <strong>
+       MAGIS
+       <span>
+        -AUTO
+       </span>
+      </strong>
+      <small>
+       SISTEMA DE FINANCIAMIENTO
+      </small>
+     </div>
+    </div>
+    <div class="magis-nav-label">
+     NAVEGACI&Oacute;N PRINCIPAL
+    </div>
+    <nav aria-label="Secciones de MAGIS-AUTO" class="magis-links">
+     <a href="index.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       ⌂
+      </span>
+      <span>
+       Panel principal
+      </span>
+     </a>
+     <a href="clientes.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       👥
+      </span>
+      <span>
+       Clientes
+      </span>
+     </a>
+     <a href="vehiculos.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       🚘
+      </span>
+      <span>
+       Veh&iacute;culos
+      </span>
+     </a>
+     <a aria-current="page" class="activo" href="creditos.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       💳
+      </span>
+      <span>
+       Cr&eacute;ditos y financiamiento
+      </span>
+     </a>
+     <a href="nuevoCredito.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       ➕
+      </span>
+      <span>
+       Nuevo financiamiento
+      </span>
+     </a>
+     <a href="cuotas.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       ▦
+      </span>
+      <span>
+       Cuotas y pagos
+      </span>
+     </a>
+     <a href="registroPago.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       💵
+      </span>
+      <span>
+       Registrar pago
+      </span>
+     </a>
+     <a href="gestion.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       🛡️
+      </span>
+      <span>
+       Garant&iacute;as y comisiones
+      </span>
+     </a>
+     <a href="reportes.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       📈
+      </span>
+      <span>
+       Reportes financieros
+      </span>
+     </a>
+    </nav>
+    <div class="magis-promo">
+     <strong>
+      MAGIS-AUTO
+     </strong>
+     <p>
+      Financiamientos bajo control, en un solo lugar.
+     </p>
+    </div>
+    <div class="magis-side-foot">
+     Panel de administraci&oacute;n &middot; Guatemala
+    </div>
+   </aside>
+   <label aria-label="Cerrar men&uacute;" class="magis-menu-overlay" for="menuMovil">
+   </label>
+   <main class="principal">
+    <div class="magis-topbar">
+     <div class="magis-top-left">
+      <label aria-label="Abrir men&uacute;" class="magis-mobile-btn" for="menuMovil">
+       ☰
+      </label>
+      <span class="magis-top-symbol">
+       🛡
+      </span>
+      <strong>
+       Cr&eacute;ditos y financiamiento
+      </strong>
+     </div>
+     <div class="magis-top-right">
+      <span class="magis-status-dot">
+      </span>
+      <span class="magis-status-label">
+       Panel administrativo
+      </span>
+      <span class="magis-avatar" title="MAGIS-AUTO">
+       M
+      </span>
+     </div>
+    </div>
+    <div class="magis-hero">
+     <div class="magis-eyebrow">
+      MAGIS-AUTO / GESTI&Oacute;N FINANCIERA
+     </div>
+     <h1>
+      Administraci&oacute;n de cr&eacute;ditos
+     </h1>
+     <p class="sub">
+      Consulta los financiamientos registrados en MAGIS-AUTO.
+     </p>
+    </div>
+    <section class="panel">
+     <div class="barra">
+      <input id="buscar" oninput="mostrarCreditos()" placeholder="Buscar cliente, obligaci&oacute;n, veh&iacute;culo o estado..." type="search"/>
+      <span class="contador">
+       Cr&eacute;ditos mostrados:
+       <span id="total">
+        0
+       </span>
+      </span>
+     </div>
+     <div class="mensaje" id="mensaje">
+     </div>
+     <div class="tabla">
+      <table>
+       <thead>
+        <tr>
+         <th>
+          Obligaci&oacute;n
+         </th>
+         <th>
+          Cliente
+         </th>
+         <th>
+          Veh&iacute;culo
+         </th>
+         <th>
+          Estado
+         </th>
+         <th>
+          Plazo
+         </th>
+         <th>
+          Enganche
+         </th>
+         <th>
+          Financiado
+         </th>
+         <th>
+          Intereses
+         </th>
+         <th>
+          Total a pagar
+         </th>
+        </tr>
+       </thead>
+       <tbody id="tablaCreditos">
+       </tbody>
+      </table>
+     </div>
+    </section>
+   </main>
+  </div>
+  <script defer="" src="creditos.js">
+  </script>
+ </body>
 </html>
+

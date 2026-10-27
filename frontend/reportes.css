@@ -1,0 +1,159 @@
+* {
+                box-sizing: border-box;
+            }
+            body {
+                margin: 0;
+                font-family: Arial, sans-serif;
+                background: #f2f5fa;
+                color: #14233d;
+            }
+            .contenedor {
+                display: flex;
+                min-height: 100vh;
+            }
+            .menu {
+                width: 250px;
+                background: #14233d;
+                color: #fff;
+                padding: 25px 18px;
+                flex-shrink: 0;
+            }
+            .logo {
+                font-size: 23px;
+                font-weight: bold;
+            }
+            .subtitulo {
+                font-size: 12px;
+                color: #aabbd3;
+                margin: 10px 0 28px;
+            }
+            .menu a {
+                display: block;
+                color: #dce6f5;
+                padding: 13px;
+                text-decoration: none;
+                border-radius: 8px;
+                margin-bottom: 8px;
+            }
+            .menu a:hover, .menu a.activo {
+                background: #2864dc;
+                color: white;
+            }
+            .principal {
+                flex: 1;
+                padding: 30px;
+                min-width: 0;
+                max-width: 100%;
+            }
+            h1 {
+                margin: 0 0 8px;
+            }
+            .sub {
+                color: #65748a;
+                margin: 0 0 22px;
+            }
+            .panel {
+                background: white;
+                border: 1px solid #e1e7f0;
+                border-radius: 12px;
+                padding: 22px;
+                margin-bottom: 18px;
+                box-shadow: 0 2px 12px #14233d0a;
+            }
+            .campos {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(140px, 1fr));
+                gap: 12px;
+                margin-top: 14px;
+            }
+            label {
+                display: block;
+                font-size: 13px;
+                font-weight: bold;
+                color: #52637d;
+                margin-bottom: 5px;
+            }
+            input, select {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ccd7e5;
+                border-radius: 7px;
+                background: white;
+                color: #14233d;
+            }
+            button {
+                background: #2864dc;
+                color: white;
+                border: 0;
+                padding: 12px 18px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: bold;
+            }
+            button:disabled {
+                opacity: .55;
+                cursor: wait;
+            }
+            .acciones {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+                flex-wrap: wrap;
+                margin-top: 16px;
+            }
+            #motivo {
+                background: #f1f6ff;
+                padding: 12px;
+                border-radius: 7px;
+                color: #274e82;
+                margin-top: 12px;
+            }
+            #estado {
+                font-size: 14px;
+                color: #52637d;
+            }
+            .tabla {
+                max-height: 70vh;
+                overflow: auto;
+                border: 1px solid #e2e8f0;
+                border-radius: 8px;
+            }
+            table {
+                border-collapse: collapse;
+                width: 100%;
+                font-size: 13px;
+            }
+            th, td {
+                padding: 11px 13px;
+                border-bottom: 1px solid #e8edf4;
+                text-align: left;
+                white-space: nowrap;
+            }
+            th {
+                position: sticky;
+                top: 0;
+                background: #eaf0fa;
+                color: #14233d;
+            }
+            tr:nth-child(even) {
+                background: #fafbfd;
+            }
+            @media (max-width: 1050px) {
+                .campos {
+                    grid-template-columns: repeat(2, minmax(140px, 1fr));
+                }
+            }
+            @media (max-width: 700px) {
+                .contenedor {
+                    display: block;
+                }
+                .menu {
+                    width: 100%;
+                }
+                .principal {
+                    padding: 18px;
+                }
+                .campos {
+                    grid-template-columns: 1fr;
+                }
+            }

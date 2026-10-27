@@ -1,5 +1,7 @@
 ﻿USE MAGIS_AUTO;
+
 GO
+
 SET NOCOUNT ON;
 
 DECLARE @R TABLE (Prueba VARCHAR(100), Estado VARCHAR(12), Detalle NVARCHAR(4000));
@@ -90,270 +92,302 @@ INSERT INTO @R SELECT 'usp_Pago_Insertar', CASE WHEN OBJECT_ID('dbo.usp_Pago_Ins
 INSERT INTO @R SELECT 'usp_Pago_Actualizar', CASE WHEN OBJECT_ID('dbo.usp_Pago_Actualizar','P') IS NOT NULL THEN 'OK' ELSE 'ERROR' END, 'Existencia del procedimiento';
 INSERT INTO @R SELECT 'usp_Pago_Eliminar', CASE WHEN OBJECT_ID('dbo.usp_Pago_Eliminar','P') IS NOT NULL THEN 'OK' ELSE 'ERROR' END, 'Existencia del procedimiento';
 
+BEGIN TRY
+    EXEC dbo.usp_Persona_Listar;
+    INSERT INTO @R VALUES ('Listar Persona','OK','Ejecutado');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar Persona','ERROR',ERROR_MESSAGE());
+END CATCH;
+BEGIN TRY
+    DECLARE @vPersona INT;
+    SELECT TOP (1) @vPersona=IdPersona FROM dbo.Persona;
+    IF @vPersona IS NOT NULL
+    BEGIN
+        EXEC dbo.usp_Persona_Buscar @IdPersona=@vPersona;
+        INSERT INTO @R VALUES ('Buscar Persona','OK','Ejecutado');
+    END
+ELSE INSERT INTO @R VALUES ('Buscar Persona','OMITIDA','Sin registros');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar Persona','ERROR',ERROR_MESSAGE());
+END CATCH;
+BEGIN TRY
+    EXEC dbo.usp_TipoTelefono_Listar;
+    INSERT INTO @R VALUES ('Listar TipoTelefono','OK','Ejecutado');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar TipoTelefono','ERROR',ERROR_MESSAGE());
+END CATCH;
+BEGIN TRY
+    DECLARE @vTipoTelefono INT;
+    SELECT TOP (1) @vTipoTelefono=IdTipoTelefono FROM dbo.TipoTelefono;
+    IF @vTipoTelefono IS NOT NULL
+    BEGIN
+        EXEC dbo.usp_TipoTelefono_Buscar @IdTipoTelefono=@vTipoTelefono;
+        INSERT INTO @R VALUES ('Buscar TipoTelefono','OK','Ejecutado');
+    END
+ELSE INSERT INTO @R VALUES ('Buscar TipoTelefono','OMITIDA','Sin registros');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar TipoTelefono','ERROR',ERROR_MESSAGE());
+END CATCH;
+BEGIN TRY
+    EXEC dbo.usp_TelefonoPersona_Listar;
+    INSERT INTO @R VALUES ('Listar TelefonoPersona','OK','Ejecutado');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar TelefonoPersona','ERROR',ERROR_MESSAGE());
+END CATCH;
+BEGIN TRY
+    DECLARE @vTelefonoPersona INT;
+    SELECT TOP (1) @vTelefonoPersona=IdTelefono FROM dbo.TelefonoPersona;
+    IF @vTelefonoPersona IS NOT NULL
+    BEGIN
+        EXEC dbo.usp_TelefonoPersona_Buscar @IdTelefono=@vTelefonoPersona;
+        INSERT INTO @R VALUES ('Buscar TelefonoPersona','OK','Ejecutado');
+    END
+ELSE INSERT INTO @R VALUES ('Buscar TelefonoPersona','OMITIDA','Sin registros');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar TelefonoPersona','ERROR',ERROR_MESSAGE());
+END CATCH;
+BEGIN TRY
+    EXEC dbo.usp_DireccionPersona_Listar;
+    INSERT INTO @R VALUES ('Listar DireccionPersona','OK','Ejecutado');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar DireccionPersona','ERROR',ERROR_MESSAGE());
+END CATCH;
+BEGIN TRY
+    DECLARE @vDireccionPersona INT;
+    SELECT TOP (1) @vDireccionPersona=IdDireccion FROM dbo.DireccionPersona;
+    IF @vDireccionPersona IS NOT NULL
+    BEGIN
+        EXEC dbo.usp_DireccionPersona_Buscar @IdDireccion=@vDireccionPersona;
+        INSERT INTO @R VALUES ('Buscar DireccionPersona','OK','Ejecutado');
+    END
+ELSE INSERT INTO @R VALUES ('Buscar DireccionPersona','OMITIDA','Sin registros');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar DireccionPersona','ERROR',ERROR_MESSAGE());
+END CATCH;
+BEGIN TRY
+    EXEC dbo.usp_Cliente_Listar;
+    INSERT INTO @R VALUES ('Listar Cliente','OK','Ejecutado');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar Cliente','ERROR',ERROR_MESSAGE());
+END CATCH;
+BEGIN TRY
+    DECLARE @vCliente INT;
+    SELECT TOP (1) @vCliente=IdCliente FROM dbo.Cliente;
+    IF @vCliente IS NOT NULL
+    BEGIN
+        EXEC dbo.usp_Cliente_Buscar @IdCliente=@vCliente;
+        INSERT INTO @R VALUES ('Buscar Cliente','OK','Ejecutado');
+    END
+ELSE INSERT INTO @R VALUES ('Buscar Cliente','OMITIDA','Sin registros');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar Cliente','ERROR',ERROR_MESSAGE());
+END CATCH;
+BEGIN TRY
+    EXEC dbo.usp_ReferenciaPersonal_Listar;
+    INSERT INTO @R VALUES ('Listar ReferenciaPersonal','OK','Ejecutado');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar ReferenciaPersonal','ERROR',ERROR_MESSAGE());
+END CATCH;
+BEGIN TRY
+    DECLARE @vReferenciaPersonal INT;
+    SELECT TOP (1) @vReferenciaPersonal=IdReferencia FROM dbo.ReferenciaPersonal;
+    IF @vReferenciaPersonal IS NOT NULL
+    BEGIN
+        EXEC dbo.usp_ReferenciaPersonal_Buscar @IdReferencia=@vReferenciaPersonal;
+        INSERT INTO @R VALUES ('Buscar ReferenciaPersonal','OK','Ejecutado');
+    END
+ELSE INSERT INTO @R VALUES ('Buscar ReferenciaPersonal','OMITIDA','Sin registros');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar ReferenciaPersonal','ERROR',ERROR_MESSAGE());
+END CATCH;
+BEGIN TRY
+    EXEC dbo.usp_Marca_Listar;
+    INSERT INTO @R VALUES ('Listar Marca','OK','Ejecutado');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar Marca','ERROR',ERROR_MESSAGE());
+END CATCH;
+BEGIN TRY
+    DECLARE @vMarca INT;
+    SELECT TOP (1) @vMarca=IdMarca FROM dbo.Marca;
+    IF @vMarca IS NOT NULL
+    BEGIN
+        EXEC dbo.usp_Marca_Buscar @IdMarca=@vMarca;
+        INSERT INTO @R VALUES ('Buscar Marca','OK','Ejecutado');
+    END
+ELSE INSERT INTO @R VALUES ('Buscar Marca','OMITIDA','Sin registros');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar Marca','ERROR',ERROR_MESSAGE());
+END CATCH;
+BEGIN TRY
+    EXEC dbo.usp_Vehiculo_Listar;
+    INSERT INTO @R VALUES ('Listar Vehiculo','OK','Ejecutado');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar Vehiculo','ERROR',ERROR_MESSAGE());
+END CATCH;
+BEGIN TRY
+    DECLARE @vVehiculo VARCHAR(17);
+    SELECT TOP (1) @vVehiculo=VIN FROM dbo.Vehiculo;
+    IF @vVehiculo IS NOT NULL
+    BEGIN
+        EXEC dbo.usp_Vehiculo_Buscar @VIN=@vVehiculo;
+        INSERT INTO @R VALUES ('Buscar Vehiculo','OK','Ejecutado');
+    END
+ELSE INSERT INTO @R VALUES ('Buscar Vehiculo','OMITIDA','Sin registros');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar Vehiculo','ERROR',ERROR_MESSAGE());
+END CATCH;
+BEGIN TRY
+    EXEC dbo.usp_Agencia_Listar;
+    INSERT INTO @R VALUES ('Listar Agencia','OK','Ejecutado');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar Agencia','ERROR',ERROR_MESSAGE());
+END CATCH;
+BEGIN TRY
+    DECLARE @vAgencia INT;
+    SELECT TOP (1) @vAgencia=IdAgencia FROM dbo.Agencia;
+    IF @vAgencia IS NOT NULL
+    BEGIN
+        EXEC dbo.usp_Agencia_Buscar @IdAgencia=@vAgencia;
+        INSERT INTO @R VALUES ('Buscar Agencia','OK','Ejecutado');
+    END
+ELSE INSERT INTO @R VALUES ('Buscar Agencia','OMITIDA','Sin registros');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar Agencia','ERROR',ERROR_MESSAGE());
+END CATCH;
+BEGIN TRY
+    EXEC dbo.usp_Vendedor_Listar;
+    INSERT INTO @R VALUES ('Listar Vendedor','OK','Ejecutado');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar Vendedor','ERROR',ERROR_MESSAGE());
+END CATCH;
+BEGIN TRY
+    DECLARE @vVendedor INT;
+    SELECT TOP (1) @vVendedor=IdVendedor FROM dbo.Vendedor;
+    IF @vVendedor IS NOT NULL
+    BEGIN
+        EXEC dbo.usp_Vendedor_Buscar @IdVendedor=@vVendedor;
+        INSERT INTO @R VALUES ('Buscar Vendedor','OK','Ejecutado');
+    END
+ELSE INSERT INTO @R VALUES ('Buscar Vendedor','OMITIDA','Sin registros');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar Vendedor','ERROR',ERROR_MESSAGE());
+END CATCH;
+BEGIN TRY
+    EXEC dbo.usp_Fiador_Listar;
+    INSERT INTO @R VALUES ('Listar Fiador','OK','Ejecutado');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar Fiador','ERROR',ERROR_MESSAGE());
+END CATCH;
+BEGIN TRY
+    DECLARE @vFiador INT;
+    SELECT TOP (1) @vFiador=IdFiador FROM dbo.Fiador;
+    IF @vFiador IS NOT NULL
+    BEGIN
+        EXEC dbo.usp_Fiador_Buscar @IdFiador=@vFiador;
+        INSERT INTO @R VALUES ('Buscar Fiador','OK','Ejecutado');
+    END
+ELSE INSERT INTO @R VALUES ('Buscar Fiador','OMITIDA','Sin registros');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar Fiador','ERROR',ERROR_MESSAGE());
+END CATCH;
+BEGIN TRY
+    EXEC dbo.usp_EstadoCredito_Listar;
+    INSERT INTO @R VALUES ('Listar EstadoCredito','OK','Ejecutado');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar EstadoCredito','ERROR',ERROR_MESSAGE());
+END CATCH;
+BEGIN TRY
+    DECLARE @vEstadoCredito INT;
+    SELECT TOP (1) @vEstadoCredito=IdEstadoCredito FROM dbo.EstadoCredito;
+    IF @vEstadoCredito IS NOT NULL
+    BEGIN
+        EXEC dbo.usp_EstadoCredito_Buscar @IdEstadoCredito=@vEstadoCredito;
+        INSERT INTO @R VALUES ('Buscar EstadoCredito','OK','Ejecutado');
+    END
+ELSE INSERT INTO @R VALUES ('Buscar EstadoCredito','OMITIDA','Sin registros');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar EstadoCredito','ERROR',ERROR_MESSAGE());
+END CATCH;
+BEGIN TRY
+    EXEC dbo.usp_Credito_Listar;
+    INSERT INTO @R VALUES ('Listar Credito','OK','Ejecutado');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar Credito','ERROR',ERROR_MESSAGE());
+END CATCH;
+BEGIN TRY
+    DECLARE @vCredito INT;
+    SELECT TOP (1) @vCredito=IdCredito FROM dbo.Credito;
+    IF @vCredito IS NOT NULL
+    BEGIN
+        EXEC dbo.usp_Credito_Buscar @IdCredito=@vCredito;
+        INSERT INTO @R VALUES ('Buscar Credito','OK','Ejecutado');
+    END
+ELSE INSERT INTO @R VALUES ('Buscar Credito','OMITIDA','Sin registros');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar Credito','ERROR',ERROR_MESSAGE());
+END CATCH;
+BEGIN TRY
+    EXEC dbo.usp_CreditoFiador_Listar;
+    INSERT INTO @R VALUES ('Listar CreditoFiador','OK','Ejecutado');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar CreditoFiador','ERROR',ERROR_MESSAGE());
+END CATCH;
 
 BEGIN TRY
-  EXEC dbo.usp_Persona_Listar;
-  INSERT INTO @R VALUES ('Listar Persona','OK','Ejecutado');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar Persona','ERROR',ERROR_MESSAGE()); END CATCH;
+    DECLARE @cfCredito INT, @cfFiador INT;
+    SELECT TOP (1) @cfCredito=IdCredito,@cfFiador=IdFiador FROM dbo.CreditoFiador;
+    IF @cfCredito IS NOT NULL
+    BEGIN
+        EXEC dbo.usp_CreditoFiador_Buscar @IdCredito=@cfCredito,@IdFiador=@cfFiador;
+        INSERT INTO @R VALUES ('Buscar CreditoFiador','OK','Ejecutado');
+    END
+ELSE INSERT INTO @R VALUES ('Buscar CreditoFiador','OMITIDA','Sin registros');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar CreditoFiador','ERROR',ERROR_MESSAGE());
+END CATCH;
 BEGIN TRY
-  DECLARE @vPersona INT;
-  SELECT TOP (1) @vPersona=IdPersona FROM dbo.Persona;
-  IF @vPersona IS NOT NULL
-  BEGIN
-    EXEC dbo.usp_Persona_Buscar @IdPersona=@vPersona;
-    INSERT INTO @R VALUES ('Buscar Persona','OK','Ejecutado');
-  END
-  ELSE INSERT INTO @R VALUES ('Buscar Persona','OMITIDA','Sin registros');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar Persona','ERROR',ERROR_MESSAGE()); END CATCH;
+    EXEC dbo.usp_Cuota_Listar;
+    INSERT INTO @R VALUES ('Listar Cuota','OK','Ejecutado');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar Cuota','ERROR',ERROR_MESSAGE());
+END CATCH;
 BEGIN TRY
-  EXEC dbo.usp_TipoTelefono_Listar;
-  INSERT INTO @R VALUES ('Listar TipoTelefono','OK','Ejecutado');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar TipoTelefono','ERROR',ERROR_MESSAGE()); END CATCH;
+    DECLARE @vCuota INT;
+    SELECT TOP (1) @vCuota=IdCuota FROM dbo.Cuota;
+    IF @vCuota IS NOT NULL
+    BEGIN
+        EXEC dbo.usp_Cuota_Buscar @IdCuota=@vCuota;
+        INSERT INTO @R VALUES ('Buscar Cuota','OK','Ejecutado');
+    END
+ELSE INSERT INTO @R VALUES ('Buscar Cuota','OMITIDA','Sin registros');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar Cuota','ERROR',ERROR_MESSAGE());
+END CATCH;
 BEGIN TRY
-  DECLARE @vTipoTelefono INT;
-  SELECT TOP (1) @vTipoTelefono=IdTipoTelefono FROM dbo.TipoTelefono;
-  IF @vTipoTelefono IS NOT NULL
-  BEGIN
-    EXEC dbo.usp_TipoTelefono_Buscar @IdTipoTelefono=@vTipoTelefono;
-    INSERT INTO @R VALUES ('Buscar TipoTelefono','OK','Ejecutado');
-  END
-  ELSE INSERT INTO @R VALUES ('Buscar TipoTelefono','OMITIDA','Sin registros');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar TipoTelefono','ERROR',ERROR_MESSAGE()); END CATCH;
+    EXEC dbo.usp_MedioPago_Listar;
+    INSERT INTO @R VALUES ('Listar MedioPago','OK','Ejecutado');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar MedioPago','ERROR',ERROR_MESSAGE());
+END CATCH;
 BEGIN TRY
-  EXEC dbo.usp_TelefonoPersona_Listar;
-  INSERT INTO @R VALUES ('Listar TelefonoPersona','OK','Ejecutado');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar TelefonoPersona','ERROR',ERROR_MESSAGE()); END CATCH;
+    DECLARE @vMedioPago INT;
+    SELECT TOP (1) @vMedioPago=IdMedioPago FROM dbo.MedioPago;
+    IF @vMedioPago IS NOT NULL
+    BEGIN
+        EXEC dbo.usp_MedioPago_Buscar @IdMedioPago=@vMedioPago;
+        INSERT INTO @R VALUES ('Buscar MedioPago','OK','Ejecutado');
+    END
+ELSE INSERT INTO @R VALUES ('Buscar MedioPago','OMITIDA','Sin registros');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar MedioPago','ERROR',ERROR_MESSAGE());
+END CATCH;
 BEGIN TRY
-  DECLARE @vTelefonoPersona INT;
-  SELECT TOP (1) @vTelefonoPersona=IdTelefono FROM dbo.TelefonoPersona;
-  IF @vTelefonoPersona IS NOT NULL
-  BEGIN
-    EXEC dbo.usp_TelefonoPersona_Buscar @IdTelefono=@vTelefonoPersona;
-    INSERT INTO @R VALUES ('Buscar TelefonoPersona','OK','Ejecutado');
-  END
-  ELSE INSERT INTO @R VALUES ('Buscar TelefonoPersona','OMITIDA','Sin registros');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar TelefonoPersona','ERROR',ERROR_MESSAGE()); END CATCH;
+    EXEC dbo.usp_Pago_Listar;
+    INSERT INTO @R VALUES ('Listar Pago','OK','Ejecutado');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar Pago','ERROR',ERROR_MESSAGE());
+END CATCH;
 BEGIN TRY
-  EXEC dbo.usp_DireccionPersona_Listar;
-  INSERT INTO @R VALUES ('Listar DireccionPersona','OK','Ejecutado');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar DireccionPersona','ERROR',ERROR_MESSAGE()); END CATCH;
-BEGIN TRY
-  DECLARE @vDireccionPersona INT;
-  SELECT TOP (1) @vDireccionPersona=IdDireccion FROM dbo.DireccionPersona;
-  IF @vDireccionPersona IS NOT NULL
-  BEGIN
-    EXEC dbo.usp_DireccionPersona_Buscar @IdDireccion=@vDireccionPersona;
-    INSERT INTO @R VALUES ('Buscar DireccionPersona','OK','Ejecutado');
-  END
-  ELSE INSERT INTO @R VALUES ('Buscar DireccionPersona','OMITIDA','Sin registros');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar DireccionPersona','ERROR',ERROR_MESSAGE()); END CATCH;
-BEGIN TRY
-  EXEC dbo.usp_Cliente_Listar;
-  INSERT INTO @R VALUES ('Listar Cliente','OK','Ejecutado');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar Cliente','ERROR',ERROR_MESSAGE()); END CATCH;
-BEGIN TRY
-  DECLARE @vCliente INT;
-  SELECT TOP (1) @vCliente=IdCliente FROM dbo.Cliente;
-  IF @vCliente IS NOT NULL
-  BEGIN
-    EXEC dbo.usp_Cliente_Buscar @IdCliente=@vCliente;
-    INSERT INTO @R VALUES ('Buscar Cliente','OK','Ejecutado');
-  END
-  ELSE INSERT INTO @R VALUES ('Buscar Cliente','OMITIDA','Sin registros');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar Cliente','ERROR',ERROR_MESSAGE()); END CATCH;
-BEGIN TRY
-  EXEC dbo.usp_ReferenciaPersonal_Listar;
-  INSERT INTO @R VALUES ('Listar ReferenciaPersonal','OK','Ejecutado');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar ReferenciaPersonal','ERROR',ERROR_MESSAGE()); END CATCH;
-BEGIN TRY
-  DECLARE @vReferenciaPersonal INT;
-  SELECT TOP (1) @vReferenciaPersonal=IdReferencia FROM dbo.ReferenciaPersonal;
-  IF @vReferenciaPersonal IS NOT NULL
-  BEGIN
-    EXEC dbo.usp_ReferenciaPersonal_Buscar @IdReferencia=@vReferenciaPersonal;
-    INSERT INTO @R VALUES ('Buscar ReferenciaPersonal','OK','Ejecutado');
-  END
-  ELSE INSERT INTO @R VALUES ('Buscar ReferenciaPersonal','OMITIDA','Sin registros');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar ReferenciaPersonal','ERROR',ERROR_MESSAGE()); END CATCH;
-BEGIN TRY
-  EXEC dbo.usp_Marca_Listar;
-  INSERT INTO @R VALUES ('Listar Marca','OK','Ejecutado');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar Marca','ERROR',ERROR_MESSAGE()); END CATCH;
-BEGIN TRY
-  DECLARE @vMarca INT;
-  SELECT TOP (1) @vMarca=IdMarca FROM dbo.Marca;
-  IF @vMarca IS NOT NULL
-  BEGIN
-    EXEC dbo.usp_Marca_Buscar @IdMarca=@vMarca;
-    INSERT INTO @R VALUES ('Buscar Marca','OK','Ejecutado');
-  END
-  ELSE INSERT INTO @R VALUES ('Buscar Marca','OMITIDA','Sin registros');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar Marca','ERROR',ERROR_MESSAGE()); END CATCH;
-BEGIN TRY
-  EXEC dbo.usp_Vehiculo_Listar;
-  INSERT INTO @R VALUES ('Listar Vehiculo','OK','Ejecutado');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar Vehiculo','ERROR',ERROR_MESSAGE()); END CATCH;
-BEGIN TRY
-  DECLARE @vVehiculo VARCHAR(17);
-  SELECT TOP (1) @vVehiculo=VIN FROM dbo.Vehiculo;
-  IF @vVehiculo IS NOT NULL
-  BEGIN
-    EXEC dbo.usp_Vehiculo_Buscar @VIN=@vVehiculo;
-    INSERT INTO @R VALUES ('Buscar Vehiculo','OK','Ejecutado');
-  END
-  ELSE INSERT INTO @R VALUES ('Buscar Vehiculo','OMITIDA','Sin registros');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar Vehiculo','ERROR',ERROR_MESSAGE()); END CATCH;
-BEGIN TRY
-  EXEC dbo.usp_Agencia_Listar;
-  INSERT INTO @R VALUES ('Listar Agencia','OK','Ejecutado');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar Agencia','ERROR',ERROR_MESSAGE()); END CATCH;
-BEGIN TRY
-  DECLARE @vAgencia INT;
-  SELECT TOP (1) @vAgencia=IdAgencia FROM dbo.Agencia;
-  IF @vAgencia IS NOT NULL
-  BEGIN
-    EXEC dbo.usp_Agencia_Buscar @IdAgencia=@vAgencia;
-    INSERT INTO @R VALUES ('Buscar Agencia','OK','Ejecutado');
-  END
-  ELSE INSERT INTO @R VALUES ('Buscar Agencia','OMITIDA','Sin registros');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar Agencia','ERROR',ERROR_MESSAGE()); END CATCH;
-BEGIN TRY
-  EXEC dbo.usp_Vendedor_Listar;
-  INSERT INTO @R VALUES ('Listar Vendedor','OK','Ejecutado');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar Vendedor','ERROR',ERROR_MESSAGE()); END CATCH;
-BEGIN TRY
-  DECLARE @vVendedor INT;
-  SELECT TOP (1) @vVendedor=IdVendedor FROM dbo.Vendedor;
-  IF @vVendedor IS NOT NULL
-  BEGIN
-    EXEC dbo.usp_Vendedor_Buscar @IdVendedor=@vVendedor;
-    INSERT INTO @R VALUES ('Buscar Vendedor','OK','Ejecutado');
-  END
-  ELSE INSERT INTO @R VALUES ('Buscar Vendedor','OMITIDA','Sin registros');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar Vendedor','ERROR',ERROR_MESSAGE()); END CATCH;
-BEGIN TRY
-  EXEC dbo.usp_Fiador_Listar;
-  INSERT INTO @R VALUES ('Listar Fiador','OK','Ejecutado');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar Fiador','ERROR',ERROR_MESSAGE()); END CATCH;
-BEGIN TRY
-  DECLARE @vFiador INT;
-  SELECT TOP (1) @vFiador=IdFiador FROM dbo.Fiador;
-  IF @vFiador IS NOT NULL
-  BEGIN
-    EXEC dbo.usp_Fiador_Buscar @IdFiador=@vFiador;
-    INSERT INTO @R VALUES ('Buscar Fiador','OK','Ejecutado');
-  END
-  ELSE INSERT INTO @R VALUES ('Buscar Fiador','OMITIDA','Sin registros');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar Fiador','ERROR',ERROR_MESSAGE()); END CATCH;
-BEGIN TRY
-  EXEC dbo.usp_EstadoCredito_Listar;
-  INSERT INTO @R VALUES ('Listar EstadoCredito','OK','Ejecutado');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar EstadoCredito','ERROR',ERROR_MESSAGE()); END CATCH;
-BEGIN TRY
-  DECLARE @vEstadoCredito INT;
-  SELECT TOP (1) @vEstadoCredito=IdEstadoCredito FROM dbo.EstadoCredito;
-  IF @vEstadoCredito IS NOT NULL
-  BEGIN
-    EXEC dbo.usp_EstadoCredito_Buscar @IdEstadoCredito=@vEstadoCredito;
-    INSERT INTO @R VALUES ('Buscar EstadoCredito','OK','Ejecutado');
-  END
-  ELSE INSERT INTO @R VALUES ('Buscar EstadoCredito','OMITIDA','Sin registros');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar EstadoCredito','ERROR',ERROR_MESSAGE()); END CATCH;
-BEGIN TRY
-  EXEC dbo.usp_Credito_Listar;
-  INSERT INTO @R VALUES ('Listar Credito','OK','Ejecutado');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar Credito','ERROR',ERROR_MESSAGE()); END CATCH;
-BEGIN TRY
-  DECLARE @vCredito INT;
-  SELECT TOP (1) @vCredito=IdCredito FROM dbo.Credito;
-  IF @vCredito IS NOT NULL
-  BEGIN
-    EXEC dbo.usp_Credito_Buscar @IdCredito=@vCredito;
-    INSERT INTO @R VALUES ('Buscar Credito','OK','Ejecutado');
-  END
-  ELSE INSERT INTO @R VALUES ('Buscar Credito','OMITIDA','Sin registros');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar Credito','ERROR',ERROR_MESSAGE()); END CATCH;
-BEGIN TRY
-  EXEC dbo.usp_CreditoFiador_Listar;
-  INSERT INTO @R VALUES ('Listar CreditoFiador','OK','Ejecutado');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar CreditoFiador','ERROR',ERROR_MESSAGE()); END CATCH;
-
+    DECLARE @vPago INT;
+    SELECT TOP (1) @vPago=IdPago FROM dbo.Pago;
+    IF @vPago IS NOT NULL
+    BEGIN
+        EXEC dbo.usp_Pago_Buscar @IdPago=@vPago;
+        INSERT INTO @R VALUES ('Buscar Pago','OK','Ejecutado');
+    END
+ELSE INSERT INTO @R VALUES ('Buscar Pago','OMITIDA','Sin registros');
+END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar Pago','ERROR',ERROR_MESSAGE());
+END CATCH;
 
 BEGIN TRY
-  DECLARE @cfCredito INT, @cfFiador INT;
-  SELECT TOP (1) @cfCredito=IdCredito,@cfFiador=IdFiador FROM dbo.CreditoFiador;
-  IF @cfCredito IS NOT NULL
-  BEGIN
-    EXEC dbo.usp_CreditoFiador_Buscar @IdCredito=@cfCredito,@IdFiador=@cfFiador;
-    INSERT INTO @R VALUES ('Buscar CreditoFiador','OK','Ejecutado');
-  END
-  ELSE INSERT INTO @R VALUES ('Buscar CreditoFiador','OMITIDA','Sin registros');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar CreditoFiador','ERROR',ERROR_MESSAGE()); END CATCH;
-BEGIN TRY
-  EXEC dbo.usp_Cuota_Listar;
-  INSERT INTO @R VALUES ('Listar Cuota','OK','Ejecutado');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar Cuota','ERROR',ERROR_MESSAGE()); END CATCH;
-BEGIN TRY
-  DECLARE @vCuota INT;
-  SELECT TOP (1) @vCuota=IdCuota FROM dbo.Cuota;
-  IF @vCuota IS NOT NULL
-  BEGIN
-    EXEC dbo.usp_Cuota_Buscar @IdCuota=@vCuota;
-    INSERT INTO @R VALUES ('Buscar Cuota','OK','Ejecutado');
-  END
-  ELSE INSERT INTO @R VALUES ('Buscar Cuota','OMITIDA','Sin registros');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar Cuota','ERROR',ERROR_MESSAGE()); END CATCH;
-BEGIN TRY
-  EXEC dbo.usp_MedioPago_Listar;
-  INSERT INTO @R VALUES ('Listar MedioPago','OK','Ejecutado');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar MedioPago','ERROR',ERROR_MESSAGE()); END CATCH;
-BEGIN TRY
-  DECLARE @vMedioPago INT;
-  SELECT TOP (1) @vMedioPago=IdMedioPago FROM dbo.MedioPago;
-  IF @vMedioPago IS NOT NULL
-  BEGIN
-    EXEC dbo.usp_MedioPago_Buscar @IdMedioPago=@vMedioPago;
-    INSERT INTO @R VALUES ('Buscar MedioPago','OK','Ejecutado');
-  END
-  ELSE INSERT INTO @R VALUES ('Buscar MedioPago','OMITIDA','Sin registros');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar MedioPago','ERROR',ERROR_MESSAGE()); END CATCH;
-BEGIN TRY
-  EXEC dbo.usp_Pago_Listar;
-  INSERT INTO @R VALUES ('Listar Pago','OK','Ejecutado');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Listar Pago','ERROR',ERROR_MESSAGE()); END CATCH;
-BEGIN TRY
-  DECLARE @vPago INT;
-  SELECT TOP (1) @vPago=IdPago FROM dbo.Pago;
-  IF @vPago IS NOT NULL
-  BEGIN
-    EXEC dbo.usp_Pago_Buscar @IdPago=@vPago;
-    INSERT INTO @R VALUES ('Buscar Pago','OK','Ejecutado');
-  END
-  ELSE INSERT INTO @R VALUES ('Buscar Pago','OMITIDA','Sin registros');
-END TRY BEGIN CATCH INSERT INTO @R VALUES ('Buscar Pago','ERROR',ERROR_MESSAGE()); END CATCH;
-
-
-BEGIN TRY
- BEGIN TRANSACTION;
- IF EXISTS (SELECT 1 FROM dbo.Persona WHERE DPI='8999999999999')
+    BEGIN TRANSACTION;
+    IF EXISTS (SELECT 1 FROM dbo.Persona WHERE DPI='8999999999999')
     THROW 51000, 'DPI de prueba ocupado. No se modificaron datos.', 1;
- EXEC dbo.usp_Persona_Insertar @DPI='8999999999999', @NIT='S15-TEST-UNICO', @NombreCompleto='Prueba Script 15', @CorreoElectronico='s15@example.com', @FechaNacimiento='2000-01-01';
- SELECT @id=IdPersona FROM dbo.Persona WHERE DPI='8999999999999';
- IF @id IS NULL THROW 51001, 'Insercion no comprobada', 1;
- INSERT INTO @R VALUES ('Persona Insertar','OK','Comprobado');
- EXEC dbo.usp_Persona_Actualizar @IdPersona=@id, @DPI='8999999999999', @NIT='S15-TEST-UNICO', @NombreCompleto='Prueba Actualizada', @CorreoElectronico='s15@example.com', @FechaNacimiento='2000-01-01';
- IF NOT EXISTS (SELECT 1 FROM dbo.Persona WHERE IdPersona=@id AND NombreCompleto='Prueba Actualizada') THROW 51002, 'Actualizacion no comprobada', 1;
- INSERT INTO @R VALUES ('Persona Actualizar','OK','Comprobado');
- EXEC dbo.usp_Persona_Eliminar @IdPersona=@id;
- IF EXISTS (SELECT 1 FROM dbo.Persona WHERE IdPersona=@id) THROW 51003, 'Eliminacion no comprobada', 1;
- INSERT INTO @R VALUES ('Persona Eliminar','OK','Comprobado');
- ROLLBACK TRANSACTION;
+    EXEC dbo.usp_Persona_Insertar @DPI='8999999999999', @NIT='S15-TEST-UNICO', @NombreCompleto='Prueba Script 15', @CorreoElectronico='s15@example.com', @FechaNacimiento='2000-01-01';
+    SELECT @id=IdPersona FROM dbo.Persona WHERE DPI='8999999999999';
+    IF @id IS NULL THROW 51001, 'Insercion no comprobada', 1;
+    INSERT INTO @R VALUES ('Persona Insertar','OK','Comprobado');
+    EXEC dbo.usp_Persona_Actualizar @IdPersona=@id, @DPI='8999999999999', @NIT='S15-TEST-UNICO', @NombreCompleto='Prueba Actualizada', @CorreoElectronico='s15@example.com', @FechaNacimiento='2000-01-01';
+    IF NOT EXISTS (SELECT 1 FROM dbo.Persona WHERE IdPersona=@id AND NombreCompleto='Prueba Actualizada') THROW 51002, 'Actualizacion no comprobada', 1;
+    INSERT INTO @R VALUES ('Persona Actualizar','OK','Comprobado');
+    EXEC dbo.usp_Persona_Eliminar @IdPersona=@id;
+    IF EXISTS (SELECT 1 FROM dbo.Persona WHERE IdPersona=@id) THROW 51003, 'Eliminacion no comprobada', 1;
+    INSERT INTO @R VALUES ('Persona Eliminar','OK','Comprobado');
+    ROLLBACK TRANSACTION;
 END TRY
 BEGIN CATCH
- IF @@TRANCOUNT>0 ROLLBACK TRANSACTION;
- INSERT INTO @R VALUES ('Escritura Persona','ERROR',ERROR_MESSAGE());
+    IF @@TRANCOUNT>0 ROLLBACK TRANSACTION;
+    INSERT INTO @R VALUES ('Escritura Persona','ERROR',ERROR_MESSAGE());
 END CATCH;
 
 SELECT Prueba,Estado,Detalle FROM @R ORDER BY CASE WHEN Estado='ERROR' THEN 0 WHEN Estado='OMITIDA' THEN 1 ELSE 2 END, Prueba;
 SELECT Estado,COUNT(*) AS Cantidad FROM @R GROUP BY Estado;
+
 GO

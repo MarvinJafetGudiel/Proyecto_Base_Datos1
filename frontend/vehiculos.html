@@ -1,405 +1,303 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vehículos | MAGIS-AUTO</title>
-<style>
-
-* { box-sizing: border-box; }
-
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f3f6fb;
-    color: #243047;
-}
-
-.contenedor { display: flex; min-height: 100vh; }
-
-.menu {
-    width: 240px;
-    background: #14233d;
-    color: white;
-    padding: 25px 18px;
-}
-
-.logo { font-size: 24px; font-weight: bold; }
-
-.menu p {
-    color: #aabbd3;
-    font-size: 12px;
-    margin-bottom: 40px;
-}
-
-.menu a {
-    display: block;
-    padding: 14px;
-    color: #dce6f5;
-    text-decoration: none;
-    border-radius: 8px;
-    margin-bottom: 9px;
-}
-
-.menu a:hover, .menu a.activo {
-    background: #2864dc;
-    color: white;
-}
-
-.principal {
-    flex: 1;
-    padding: 35px;
-    min-width: 0;
-}
-
-h1 { margin-bottom: 8px; }
-
-.descripcion { color: #718096; }
-
-.panel {
-    background: white;
-    border-radius: 12px;
-    padding: 25px;
-    margin-top: 25px;
-    border: 1px solid #e5ebf3;
-}
-
-.barra {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 15px;
-}
-
-button {
-    border: none;
-    padding: 11px 16px;
-    border-radius: 7px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.azul { background: #2864dc; color: white; }
-.verde { background: #16834a; color: white; }
-.rojo { background: #dc3545; color: white; }
-.gris { background: #e8edf4; color: #243047; }
-
-button:hover { opacity: 0.85; }
-
-.buscador, .campo {
-    padding: 12px;
-    border: 1px solid #d6deea;
-    border-radius: 8px;
-    font-size: 14px;
-    width: 100%;
-}
-
-.buscador {
-    max-width: 450px;
-    margin: 20px 0;
-}
-
-.formulario {
-    display: none;
-    margin-top: 20px;
-    padding: 22px;
-    background: #f7faff;
-    border-radius: 10px;
-}
-
-.campos {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: bold;
-    font-size: 14px;
-}
-
-.tabla-contenedor { overflow-x: auto; }
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 850px;
-}
-
-th {
-    background: #edf3ff;
-    color: #234d91;
-    text-align: left;
-    padding: 13px;
-}
-
-td {
-    padding: 12px;
-    border-bottom: 1px solid #e8edf4;
-}
-
-tr:hover { background: #f7faff; }
-
-.acciones { display: flex; gap: 7px; }
-.acciones button { padding: 8px 10px; }
-
-.total { font-weight: bold; color: #2864dc; }
-#mensaje { font-weight: bold; margin-top: 15px; }
-
-@media(max-width: 700px) {
-    .contenedor { display: block; }
-    .menu { width: 100%; }
-    .principal { padding: 20px; }
-    .campos { grid-template-columns: 1fr; }
-}
-
-#mensaje { min-height: 22px; }
-@media(max-width: 900px) { .menu { width: 210px; } .principal { padding: 20px; } }
-</style>
-<link rel="stylesheet" href="tema-oscuro.css?v=2">
-<script src="tema-oscuro.js?v=2" defer></script>
-</head>
-<body>
-<div class="contenedor">
-<aside class="menu">
-    <div class="logo">🚗 MAGIS-AUTO</div>
-    <p>Sistema de administración</p>
-    <a href="/">📊 Panel principal</a>
-    <a href="clientes.html">👥 Clientes</a>
-    <a href="vehiculos.html">🚘 Vehículos</a>
-    <a href="creditos.html">💳 Créditos y Financiamiento</a>
-    <a href="nuevoCredito.html">➕ Nuevo Financiamiento</a>
-    <a href="cuotas.html">🧮 Cuotas y Pagos</a>
-    <a class="activo" href="registroPago.html">💵 Registrar Pago</a>
-        <a href="gestion.html">🛡️ Garantías y comisiones</a><a href="reportes.html">📈 Reportes financieros</a>
-</aside>
-<main class="principal">
-    <h1>Administración de vehículos</h1>
-    <p class="descripcion">Consulta y administra los vehículos de MAGIS-AUTO.</p>
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   Veh&iacute;culos | MAGIS-AUTO
+  </title>
+  <link href="vehiculos.css" rel="stylesheet"/>
+  <link href="tema-oscuro.css?v=2" rel="stylesheet"/>
+ </head>
+ <body>
+  <div class="contenedor">
+   <input aria-label="Mostrar men&uacute; de navegaci&oacute;n" class="magis-menu-check" id="menuMovil" type="checkbox"/>
+   <aside aria-label="Men&uacute; de navegaci&oacute;n" class="menu">
+    <div class="magis-brand">
+     <span class="magis-brand-icon">
+      🚗
+     </span>
+     <div>
+      <strong>
+       MAGIS
+       <span>
+        -AUTO
+       </span>
+      </strong>
+      <small>
+       SISTEMA DE FINANCIAMIENTO
+      </small>
+     </div>
+    </div>
+    <div class="magis-nav-label">
+     NAVEGACI&Oacute;N PRINCIPAL
+    </div>
+    <nav aria-label="Secciones de MAGIS-AUTO" class="magis-links">
+     <a href="index.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       ⌂
+      </span>
+      <span>
+       Panel principal
+      </span>
+     </a>
+     <a href="clientes.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       👥
+      </span>
+      <span>
+       Clientes
+      </span>
+     </a>
+     <a aria-current="page" class="activo" href="vehiculos.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       🚘
+      </span>
+      <span>
+       Veh&iacute;culos
+      </span>
+     </a>
+     <a href="creditos.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       💳
+      </span>
+      <span>
+       Cr&eacute;ditos y financiamiento
+      </span>
+     </a>
+     <a href="nuevoCredito.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       ➕
+      </span>
+      <span>
+       Nuevo financiamiento
+      </span>
+     </a>
+     <a href="cuotas.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       ▦
+      </span>
+      <span>
+       Cuotas y pagos
+      </span>
+     </a>
+     <a href="registroPago.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       💵
+      </span>
+      <span>
+       Registrar pago
+      </span>
+     </a>
+     <a href="gestion.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       🛡️
+      </span>
+      <span>
+       Garant&iacute;as y comisiones
+      </span>
+     </a>
+     <a href="reportes.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       📈
+      </span>
+      <span>
+       Reportes financieros
+      </span>
+     </a>
+    </nav>
+    <div class="magis-promo">
+     <strong>
+      MAGIS-AUTO
+     </strong>
+     <p>
+      Financiamientos bajo control, en un solo lugar.
+     </p>
+    </div>
+    <div class="magis-side-foot">
+     Panel de administraci&oacute;n &middot; Guatemala
+    </div>
+   </aside>
+   <label aria-label="Cerrar men&uacute;" class="magis-menu-overlay" for="menuMovil">
+   </label>
+   <main class="principal">
+    <div class="magis-topbar">
+     <div class="magis-top-left">
+      <label aria-label="Abrir men&uacute;" class="magis-mobile-btn" for="menuMovil">
+       ☰
+      </label>
+      <span class="magis-top-symbol">
+       🛡
+      </span>
+      <strong>
+       Veh&iacute;culos
+      </strong>
+     </div>
+     <div class="magis-top-right">
+      <span class="magis-status-dot">
+      </span>
+      <span class="magis-status-label">
+       Panel administrativo
+      </span>
+      <span class="magis-avatar" title="MAGIS-AUTO">
+       M
+      </span>
+     </div>
+    </div>
+    <div class="magis-hero">
+     <div class="magis-eyebrow">
+      MAGIS-AUTO / GESTI&Oacute;N FINANCIERA
+     </div>
+     <h1>
+      Administraci&oacute;n de veh&iacute;culos
+     </h1>
+     <p class="descripcion">
+      Consulta y administra los veh&iacute;culos de MAGIS-AUTO.
+     </p>
+    </div>
     <section class="panel">
-        <div class="barra">
-            <div>
-                <h2>Listado de vehículos</h2>
-                <p>Vehículos encontrados: <span class="total" id="total">0</span></p>
-            </div>
-            <button class="azul" type="button" onclick="nuevoVehiculo()">+ Nuevo vehículo</button>
+     <div class="barra">
+      <div>
+       <h2>
+        Listado de veh&iacute;culos
+       </h2>
+       <p>
+        Veh&iacute;culos encontrados:
+        <span class="total" id="total">
+         0
+        </span>
+       </p>
+      </div>
+      <button class="azul" onclick="nuevoVehiculo()" type="button">
+       + Nuevo veh&iacute;culo
+      </button>
+     </div>
+     <div class="formulario" id="formulario">
+      <h3 id="tituloFormulario">
+       Registrar veh&iacute;culo
+      </h3>
+      <form id="formVehiculo">
+       <div class="campos">
+        <div>
+         <label for="vin">
+          VIN (17 caracteres) *
+         </label>
+         <input class="campo" id="vin" maxlength="17" minlength="17" pattern="[A-Za-z0-9]{17}" required=""/>
         </div>
-        <div class="formulario" id="formulario">
-            <h3 id="tituloFormulario">Registrar vehículo</h3>
-            <form id="formVehiculo">
-                <div class="campos">
-                    <div><label for="vin">VIN (17 caracteres) *</label><input class="campo" id="vin" maxlength="17" minlength="17" pattern="[A-Za-z0-9]{17}" required></div>
-                    <div><label for="marca">Marca *</label><select class="campo" id="marca" required><option value="">Selecciona una marca</option></select></div>
-                    <div><label for="modelo">Modelo *</label><input class="campo" id="modelo" maxlength="100" required></div>
-                    <div><label for="anio">Año de fabricación *</label><input class="campo" id="anio" type="number" min="1900" max="2100" required></div>
-                    <div><label for="valor">Valor en agencia (Q) *</label><input class="campo" id="valor" type="number" min="0.01" max="9999999999.99" step="0.01" required></div>
-                    <div><label for="placa">Placa (opcional)</label><input class="campo" id="placa" maxlength="15"></div>
-                    <div><label for="esNuevo">Condición del vehículo *</label><select class="campo" id="esNuevo" required><option value="">Selecciona condición</option><option value="1">Nuevo, sin uso</option><option value="0">Usado</option></select></div>
-                    <div><label for="agenciaOrigen">Agencia de origen (obligatoria para nuevo)</label><select class="campo" id="agenciaOrigen"><option value="">Sin agencia registrada</option></select></div>
-                </div>
-                <button class="verde" id="btnGuardar" type="submit">Guardar vehículo</button>
-                <button class="gris" type="button" onclick="cerrarFormulario()">Cancelar</button>
-            </form>
+        <div>
+         <label for="marca">
+          Marca *
+         </label>
+         <select class="campo" id="marca" required="">
+          <option value="">
+           Selecciona una marca
+          </option>
+         </select>
         </div>
-        <input class="buscador" id="buscar" placeholder="Buscar por marca, modelo, VIN o placa..." oninput="mostrarVehiculos()">
-        <div class="tabla-contenedor">
-            <table>
-                <thead><tr><th>VIN</th><th>Marca</th><th>Modelo</th><th>Año</th><th>Valor (Q)</th><th>Placa</th><th>Condición</th><th>Agencia</th><th>Acciones</th></tr></thead>
-                <tbody id="tablaVehiculos"></tbody>
-            </table>
+        <div>
+         <label for="modelo">
+          Modelo *
+         </label>
+         <input class="campo" id="modelo" maxlength="100" required=""/>
         </div>
-        <p id="mensaje" role="status"></p>
+        <div>
+         <label for="anio">
+          A&ntilde;o de fabricaci&oacute;n *
+         </label>
+         <input class="campo" id="anio" max="2100" min="1900" required="" type="number"/>
+        </div>
+        <div>
+         <label for="valor">
+          Valor en agencia (Q) *
+         </label>
+         <input class="campo" id="valor" max="9999999999.99" min="0.01" required="" step="0.01" type="number"/>
+        </div>
+        <div>
+         <label for="placa">
+          Placa (opcional)
+         </label>
+         <input class="campo" id="placa" maxlength="15"/>
+        </div>
+        <div>
+         <label for="esNuevo">
+          Condici&oacute;n del veh&iacute;culo *
+         </label>
+         <select class="campo" id="esNuevo" required="">
+          <option value="">
+           Selecciona condici&oacute;n
+          </option>
+          <option value="1">
+           Nuevo, sin uso
+          </option>
+          <option value="0">
+           Usado
+          </option>
+         </select>
+        </div>
+        <div>
+         <label for="agenciaOrigen">
+          Agencia de origen (obligatoria para nuevo)
+         </label>
+         <select class="campo" id="agenciaOrigen">
+          <option value="">
+           Sin agencia registrada
+          </option>
+         </select>
+        </div>
+       </div>
+       <button class="verde" id="btnGuardar" type="submit">
+        Guardar veh&iacute;culo
+       </button>
+       <button class="gris" onclick="cerrarFormulario()" type="button">
+        Cancelar
+       </button>
+      </form>
+     </div>
+     <input class="buscador" id="buscar" oninput="mostrarVehiculos()" placeholder="Buscar por marca, modelo, VIN o placa..."/>
+     <div class="tabla-contenedor">
+      <table>
+       <thead>
+        <tr>
+         <th>
+          VIN
+         </th>
+         <th>
+          Marca
+         </th>
+         <th>
+          Modelo
+         </th>
+         <th>
+          A&ntilde;o
+         </th>
+         <th>
+          Valor (Q)
+         </th>
+         <th>
+          Placa
+         </th>
+         <th>
+          Condici&oacute;n
+         </th>
+         <th>
+          Agencia
+         </th>
+         <th>
+          Acciones
+         </th>
+        </tr>
+       </thead>
+       <tbody id="tablaVehiculos">
+       </tbody>
+      </table>
+     </div>
+     <p id="mensaje" role="status">
+     </p>
     </section>
-</main>
-</div>
-<script>
-let vehiculos = [];
-let vinEditando = null;
-let procesando = false;
-
-function mensaje(texto, error = false) {
-    const el = document.getElementById('mensaje');
-    el.textContent = texto;
-    el.style.color = error ? '#dc3545' : '#16834a';
-}
-
-async function pedirDatos(url, opciones = {}) {
-    const respuesta = await fetch(url, { cache: 'no-store', ...opciones });
-    const datos = await respuesta.json();
-    if (!respuesta.ok) throw new Error(datos.mensaje || 'Ocurrió un error.');
-    return datos;
-}
-
-async function cargarMarcas() {
-    const marcas = await pedirDatos('/api/marcas');
-    const select = document.getElementById('marca');
-    select.innerHTML = '<option value="">Selecciona una marca</option>';
-    marcas.forEach(m => {
-        const opcion = document.createElement('option');
-        opcion.value = m.IdMarca;
-        opcion.textContent = m.NombreMarca;
-        select.appendChild(opcion);
-    });
-}
-
-async function cargarAgencias() {
-    const agencias = await pedirDatos('/api/agencias');
-    const select = document.getElementById('agenciaOrigen');
-    select.replaceChildren(new Option('Sin agencia registrada', ''));
-    agencias.forEach(a => select.add(new Option(a.NombreAgencia + ' (' + a.Region + ')', a.IdAgencia)));
-}
-
-async function cargarVehiculos() {
-    const datos = await pedirDatos('/api/vehiculos');
-    if (!Array.isArray(datos)) throw new Error('El servidor no devolvió una lista válida.');
-    vehiculos = datos;
-    mostrarVehiculos();
-}
-
-function mostrarVehiculos() {
-    const filtro = document.getElementById('buscar').value.trim().toLowerCase();
-    const filtrados = vehiculos.filter(v =>
-        [v.VIN, v.NombreMarca, v.Modelo, v.Placa].some(valor =>
-            String(valor || '').toLowerCase().includes(filtro)
-        )
-    );
-    const tabla = document.getElementById('tablaVehiculos');
-    tabla.innerHTML = '';
-    filtrados.forEach(v => {
-        const tr = document.createElement('tr');
-        const valores = [v.VIN, v.NombreMarca, v.Modelo, v.AnioFabricacion,
-            Number(v.ValorAgencia).toLocaleString('es-GT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
-            v.Placa || 'Sin placa', v.EsNuevo === null ? 'Sin verificar' : v.EsNuevo ? 'Nuevo' : 'Usado', v.AgenciaOrigen || 'Sin registrar'];
-        valores.forEach(valor => {
-            const td = document.createElement('td');
-            td.textContent = valor;
-            tr.appendChild(td);
-        });
-        const td = document.createElement('td');
-        const acciones = document.createElement('div');
-        acciones.className = 'acciones';
-        const editar = document.createElement('button');
-        editar.className = 'azul';
-        editar.textContent = 'Editar';
-        editar.onclick = () => editarVehiculo(v.VIN);
-        const eliminar = document.createElement('button');
-        eliminar.className = 'rojo';
-        eliminar.textContent = 'Eliminar';
-        eliminar.onclick = () => eliminarVehiculo(v.VIN);
-        acciones.append(editar, eliminar);
-        td.appendChild(acciones);
-        tr.appendChild(td);
-        tabla.appendChild(tr);
-    });
-    if (!filtrados.length) {
-        const tr = document.createElement('tr');
-        const td = document.createElement('td');
-        td.colSpan = 9;
-        td.textContent = 'No se encontraron vehículos.';
-        tr.appendChild(td);
-        tabla.appendChild(tr);
-    }
-    document.getElementById('total').textContent = filtrados.length;
-}
-
-function nuevoVehiculo() {
-    if (procesando) return;
-    vinEditando = null;
-    document.getElementById('formVehiculo').reset();
-    document.getElementById('vin').readOnly = false;
-    document.getElementById('tituloFormulario').textContent = 'Registrar nuevo vehículo';
-    document.getElementById('formulario').style.display = 'block';
-    document.getElementById('formulario').scrollIntoView({ behavior: 'smooth' });
-    mensaje('');
-}
-
-function editarVehiculo(vin) {
-    if (procesando) return;
-    const v = vehiculos.find(x => x.VIN === vin);
-    if (!v) return;
-    vinEditando = vin;
-    document.getElementById('vin').value = v.VIN;
-    document.getElementById('vin').readOnly = true;
-    document.getElementById('marca').value = v.IdMarca;
-    document.getElementById('modelo').value = v.Modelo;
-    document.getElementById('anio').value = v.AnioFabricacion;
-    document.getElementById('valor').value = v.ValorAgencia;
-    document.getElementById('placa').value = v.Placa || '';
-    document.getElementById('esNuevo').value = v.EsNuevo === null ? '' : String(Number(v.EsNuevo));
-    document.getElementById('agenciaOrigen').value = v.IdAgenciaOrigen || '';
-    document.getElementById('tituloFormulario').textContent = 'Editar vehículo';
-    document.getElementById('formulario').style.display = 'block';
-    document.getElementById('formulario').scrollIntoView({ behavior: 'smooth' });
-    mensaje('');
-}
-
-function cerrarFormulario() {
-    document.getElementById('formulario').style.display = 'none';
-    vinEditando = null;
-}
-
-async function guardarVehiculo(event) {
-    event.preventDefault();
-    if (procesando) return;
-    const datos = {
-        vin: document.getElementById('vin').value.trim().toUpperCase(),
-        idMarca: document.getElementById('marca').value,
-        modelo: document.getElementById('modelo').value.trim(),
-        anio: document.getElementById('anio').value,
-        valor: document.getElementById('valor').value,
-        placa: document.getElementById('placa').value.trim(),
-        esNuevo: document.getElementById('esNuevo').value,
-        idAgencia: document.getElementById('agenciaOrigen').value
-    };
-    if (!datos.esNuevo || (datos.esNuevo === '1' && !datos.idAgencia)) {
-        mensaje('Selecciona la condición y, si es nuevo, su agencia de origen.', true);
-        return;
-    }
-    const editando = vinEditando !== null;
-    const vinOriginal = vinEditando;
-    procesando = true;
-    document.getElementById('btnGuardar').disabled = true;
-    mensaje('Guardando vehículo...');
-    try {
-        const respuesta = await pedirDatos(editando ? '/api/vehiculos/' + encodeURIComponent(vinOriginal) : '/api/vehiculos', {
-            method: editando ? 'PUT' : 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(datos)
-        });
-        cerrarFormulario();
-        document.getElementById('buscar').value = '';
-        await cargarVehiculos();
-        mensaje(respuesta.mensaje);
-    } catch (error) {
-        mensaje(error.message, true);
-    } finally {
-        procesando = false;
-        document.getElementById('btnGuardar').disabled = false;
-    }
-}
-
-async function eliminarVehiculo(vin) {
-    if (procesando || !confirm('¿Deseas eliminar el vehículo ' + vin + '?')) return;
-    procesando = true;
-    mensaje('Eliminando vehículo...');
-    try {
-        const respuesta = await pedirDatos('/api/vehiculos/' + encodeURIComponent(vin), { method: 'DELETE' });
-        document.getElementById('buscar').value = '';
-        await cargarVehiculos();
-        mensaje(respuesta.mensaje);
-    } catch (error) {
-        mensaje(error.message, true);
-    } finally {
-        procesando = false;
-    }
-}
-
-document.getElementById('formVehiculo').addEventListener('submit', guardarVehiculo);
-Promise.all([cargarMarcas(), cargarAgencias(), cargarVehiculos()]).catch(error => mensaje(error.message, true));
-</script>
-</body>
+   </main>
+  </div>
+  <script defer="" src="vehiculos.js">
+  </script>
+ </body>
 </html>
+

@@ -796,9 +796,7 @@ body.magis-credit-page main > section {
         z-index: 100;
     }
 
-    body.magis-menu-open .menu,
-    body.magis-menu-open .layout > aside,
-    body.magis-menu-open .contenedor > aside {
+    .magis-menu-check:checked ~ .menu {
         transform: translateX(0);
     }
 
@@ -810,7 +808,7 @@ body.magis-credit-page main > section {
         z-index: 90;
     }
 
-    body.magis-menu-open .magis-menu-overlay {
+    .magis-menu-check:checked ~ .magis-menu-overlay {
         display: block;
     }
 
@@ -885,4 +883,28 @@ body.magis-credit-page main > section {
         transition: none !important;
         scroll-behavior: auto !important;
     }
+}
+.magis-menu-check {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.magis-link-icon {
+    width: 19px;
+    min-width: 19px;
+    display: inline-flex;
+    justify-content: center;
+    font-size: 17px;
+}
+.magis-top-symbol {
+    color: #69a8ff;
+}
+.magis-mobile-btn {
+    cursor: pointer;
+    font-size: 22px;
+    line-height: 1;
+}
+.magis-menu-check:focus-visible ~ .principal .magis-mobile-btn {
+    outline: 2px solid #69a8ff;
 }
