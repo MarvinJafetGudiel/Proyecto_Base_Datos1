@@ -1,408 +1,337 @@
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Reportes financieros | MAGIS-AUTO</title>
-        <style>
-            * {
-                box-sizing: border-box;
-            }
-            body {
-                margin: 0;
-                font-family: Arial, sans-serif;
-                background: #f2f5fa;
-                color: #14233d;
-            }
-            .contenedor {
-                display: flex;
-                min-height: 100vh;
-            }
-            .menu {
-                width: 250px;
-                background: #14233d;
-                color: #fff;
-                padding: 25px 18px;
-                flex-shrink: 0;
-            }
-            .logo {
-                font-size: 23px;
-                font-weight: bold;
-            }
-            .subtitulo {
-                font-size: 12px;
-                color: #aabbd3;
-                margin: 10px 0 28px;
-            }
-            .menu a {
-                display: block;
-                color: #dce6f5;
-                padding: 13px;
-                text-decoration: none;
-                border-radius: 8px;
-                margin-bottom: 8px;
-            }
-            .menu a:hover, .menu a.activo {
-                background: #2864dc;
-                color: white;
-            }
-            .principal {
-                flex: 1;
-                padding: 30px;
-                min-width: 0;
-                max-width: 100%;
-            }
-            h1 {
-                margin: 0 0 8px;
-            }
-            .sub {
-                color: #65748a;
-                margin: 0 0 22px;
-            }
-            .panel {
-                background: white;
-                border: 1px solid #e1e7f0;
-                border-radius: 12px;
-                padding: 22px;
-                margin-bottom: 18px;
-                box-shadow: 0 2px 12px #14233d0a;
-            }
-            .campos {
-                display: grid;
-                grid-template-columns: repeat(4, minmax(140px, 1fr));
-                gap: 12px;
-                margin-top: 14px;
-            }
-            label {
-                display: block;
-                font-size: 13px;
-                font-weight: bold;
-                color: #52637d;
-                margin-bottom: 5px;
-            }
-            input, select {
-                width: 100%;
-                padding: 10px;
-                border: 1px solid #ccd7e5;
-                border-radius: 7px;
-                background: white;
-                color: #14233d;
-            }
-            button {
-                background: #2864dc;
-                color: white;
-                border: 0;
-                padding: 12px 18px;
-                border-radius: 8px;
-                cursor: pointer;
-                font-weight: bold;
-            }
-            button:disabled {
-                opacity: .55;
-                cursor: wait;
-            }
-            .acciones {
-                display: flex;
-                gap: 10px;
-                align-items: center;
-                flex-wrap: wrap;
-                margin-top: 16px;
-            }
-            #motivo {
-                background: #f1f6ff;
-                padding: 12px;
-                border-radius: 7px;
-                color: #274e82;
-                margin-top: 12px;
-            }
-            #estado {
-                font-size: 14px;
-                color: #52637d;
-            }
-            .tabla {
-                max-height: 70vh;
-                overflow: auto;
-                border: 1px solid #e2e8f0;
-                border-radius: 8px;
-            }
-            table {
-                border-collapse: collapse;
-                width: 100%;
-                font-size: 13px;
-            }
-            th, td {
-                padding: 11px 13px;
-                border-bottom: 1px solid #e8edf4;
-                text-align: left;
-                white-space: nowrap;
-            }
-            th {
-                position: sticky;
-                top: 0;
-                background: #eaf0fa;
-                color: #14233d;
-            }
-            tr:nth-child(even) {
-                background: #fafbfd;
-            }
-            @media (max-width: 1050px) {
-                .campos {
-                    grid-template-columns: repeat(2, minmax(140px, 1fr));
-                }
-            }
-            @media (max-width: 700px) {
-                .contenedor {
-                    display: block;
-                }
-                .menu {
-                    width: 100%;
-                }
-                .principal {
-                    padding: 18px;
-                }
-                .campos {
-                    grid-template-columns: 1fr;
-                }
-            }
-        </style>
-        <link rel="stylesheet" href="tema-oscuro.css?v=2">
-        <script src="tema-oscuro.js?v=2" defer></script>
-    </head>
-    <body>
-        <div class="contenedor">
-            <aside class="menu">
-                <div class="logo">🚗 MAGIS-AUTO</div>
-                <div class="subtitulo">Sistema de administración</div>
-                <a href="index.html">📊 Panel principal</a>
-                <a href="clientes.html">👥 Clientes</a>
-                <a href="vehiculos.html">🚘 Vehículos</a>
-                <a href="creditos.html">💳 Créditos y Financiamiento</a>
-                <a href="nuevoCredito.html">➕ Nuevo Financiamiento</a>
-                <a href="cuotas.html">🧮 Cuotas y Pagos</a>
-                <a href="registroPago.html">💵 Registrar Pago</a>
-                <a href="gestion.html">🛡️ Garantías y comisiones</a>
-                <a class="activo" href="reportes.html">📈 Reportes financieros</a>
-            </aside>
-            <main class="principal">
-                <h1>Reportes financieros</h1>
-                <p class="sub">20 consultas para analizar cartera, cobros, créditos y clientes.</p>
-                
-                <section class="panel">
-                    <label for="reporte">Selecciona un reporte</label>
-                    <select id="reporte">
-                        <option value="1">1: Créditos emitidos en un período</option>
-                        <option value="2">2: Cartera en mora</option>
-                        <option value="3">3: Pagos por medio y período</option>
-                        <option value="4">4: Ventas por vendedor</option>
-                        <option value="5">5: Cumpleañeros del mes</option>
-                        <option value="6">6: Estado de cuenta por cliente</option>
-                        <option value="7">7: Plan de pagos por crédito</option>
-                        <option value="8">8: CREDITOS POR ESTADO</option>
-                        <option value="9">9: SALDO PENDIENTE POR CREDITO</option>
-                        <option value="10">10: HISTORIAL DE PAGOS POR CLIENTE</option>
-                        <option value="11">11: CREDITOS POR AGENCIA</option>
-                        <option value="12">12: VEHICULOS FINANCIADOS POR MARCA</option>
-                        <option value="13">13: INTERESES POR CREDITO</option>
-                        <option value="14">14: CREDITOS CON FIADORES</option>
-                        <option value="15">15: CUOTAS CON SALDO PENDIENTE</option>
-                        <option value="16">16: CUOTAS PAGADAS COMPLETAMENTE</option>
-                        <option value="17">17: CUOTAS CON ABONOS PARCIALES</option>
-                        <option value="18">18: RECAUDACION MENSUAL</option>
-                        <option value="19">19: CLIENTES CON MAYOR MONTO FINANCIADO</option>
-                        <option value="20">20: RESUMEN GENERAL DE CARTERA</option>
-                    </select>
-                    
-                    <div id="motivo"></div>
-                    
-                    <div class="campos">
-                        <div>
-                            <label for="inicio">Desde</label>
-                            <input type="date" id="inicio">
-                        </div>
-                        <div>
-                            <label for="fin">Hasta</label>
-                            <input type="date" id="fin">
-                        </div>
-                        <div>
-                            <label for="fechaCorte">Fecha de corte (mora)</label>
-                            <input type="date" id="fechaCorte">
-                        </div>
-                        <div>
-                            <label for="minDias">Días mínimos de mora</label>
-                            <input type="number" id="minDias" value="1" min="0">
-                        </div>
-                        <div>
-                            <label for="mes">Mes de cumpleaños</label>
-                            <select id="mes">
-                                <option value="">Mes actual</option>
-                                <option value="1">Enero</option>
-                                <option value="2">Febrero</option>
-                                <option value="3">Marzo</option>
-                                <option value="4">Abril</option>
-                                <option value="5">Mayo</option>
-                                <option value="6">Junio</option>
-                                <option value="7">Julio</option>
-                                <option value="8">Agosto</option>
-                                <option value="9">Septiembre</option>
-                                <option value="10">Octubre</option>
-                                <option value="11">Noviembre</option>
-                                <option value="12">Diciembre</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="idCliente">ID de cliente (opcional)</label>
-                            <input id="idCliente" type="number" min="1" placeholder="Todos">
-                        </div>
-                        <div>
-                            <label for="numeroCredito">Número de crédito (opcional)</label>
-                            <input id="numeroCredito" maxlength="30" placeholder="Todos">
-                        </div>
-                    </div>
-                    
-                    <div class="acciones">
-                        <button id="generar">Generar reporte</button>
-                        <button id="csv" disabled>Exportar CSV</button>
-                        <span id="estado" role="status"></span>
-                    </div>
-                </section>
-                
-                <section class="panel">
-                    <h2 id="tituloResultado">Resultados</h2>
-                    <div class="tabla" id="tabla">
-                        <p>Selecciona un reporte y presiona «Generar reporte».</p>
-                    </div>
-                </section>
-            </main>
-        </div>
-        
-        <script>
-            const reportes = [
-                {"id": 1, "title": "Créditos emitidos en un período", "reason": "medir volumen de colocaciones"},
-                {"id": 2, "title": "Cartera en mora", "reason": "priorizar cobros por días de atraso y saldo vencido"},
-                {"id": 3, "title": "Pagos por medio y período", "reason": "identificar el canal de cobro más utilizado"},
-                {"id": 4, "title": "Ventas por vendedor", "reason": "comparar colocaciones de crédito"},
-                {"id": 5, "title": "Cumpleañeros del mes", "reason": "preparar felicitaciones para clientes"},
-                {"id": 6, "title": "Estado de cuenta por cliente", "reason": "consultar obligaciones y saldo por crédito"},
-                {"id": 7, "title": "Plan de pagos por crédito", "reason": "visualizar calendario de cuotas y abonos"},
-                {"id": 8, "title": "CREDITOS POR ESTADO", "reason": "permite conocer la distribucion de la cartera"},
-                {"id": 9, "title": "SALDO PENDIENTE POR CREDITO", "reason": "total de cuotas menos pagos registrados"},
-                {"id": 10, "title": "HISTORIAL DE PAGOS POR CLIENTE", "reason": "detalle de recibos y abonos"},
-                {"id": 11, "title": "CREDITOS POR AGENCIA", "reason": "compara la actividad comercial"},
-                {"id": 12, "title": "VEHICULOS FINANCIADOS POR MARCA", "reason": "identifica marcas mas financiadas"},
-                {"id": 13, "title": "INTERESES POR CREDITO", "reason": "facilita revisar el costo financiero"},
-                {"id": 14, "title": "CREDITOS CON FIADORES", "reason": "permite revisar las garantias personales"},
-                {"id": 15, "title": "CUOTAS CON SALDO PENDIENTE", "reason": "Consulta financiera para control y seguimiento"},
-                {"id": 16, "title": "CUOTAS PAGADAS COMPLETAMENTE", "reason": "Consulta financiera para control y seguimiento"},
-                {"id": 17, "title": "CUOTAS CON ABONOS PARCIALES", "reason": "Consulta financiera para control y seguimiento"},
-                {"id": 18, "title": "RECAUDACION MENSUAL", "reason": "Consulta financiera para control y seguimiento"},
-                {"id": 19, "title": "CLIENTES CON MAYOR MONTO FINANCIADO", "reason": "Consulta financiera para control y seguimiento"},
-                {"id": 20, "title": "RESUMEN GENERAL DE CARTERA", "reason": "Consulta financiera para control y seguimiento"}
-            ];
-            
-            const $ = id => document.getElementById(id);
-            let filasActuales = [];
-            
-            function cambiarReporte() {
-                const r = reportes.find(x => x.id === Number($('reporte').value));$('motivo').textContent = '¿Para qué sirve? ' + r.reason;
-                $('tituloResultado').textContent = r.id + '. ' + r.title;
-            }
-            
-            $('reporte').addEventListener('change', cambiarReporte);
-            cambiarReporte();
-            
-            function formatear(valor) {
-                if (valor === null || valor === undefined) return '';
-                if (typeof valor === 'object') return JSON.stringify(valor);
-                return String(valor);
-            }
-            
-            function mostrarCelda(clave, valor) {
-                if (valor === null || valor === undefined) return '';
-                const s = String(valor);
-                if (/fecha|vencimiento/i.test(clave) && /^\d{4}-\d{2}-\d{2}/.test(s)) {
-                    const [a, m, d] = s.slice(0, 10).split('-');
-                    return `${d}/${m}/${a}`;
-                }
-                if (typeof valor === 'number' && /monto|saldo|capital|interes|recaud|cuota|pagado|comision|valor|totalfinanciado/i.test(clave)
-                    && !/cantidad|numero|id|dias|plazo|porcentaje/i.test(clave)) {
-                    return 'Q ' + valor.toLocaleString('es-GT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                }
-                return s;
-            }
-            
-            $('generar').addEventListener('click', async () => {$('generar').disabled = true;
-                $('csv').disabled = true;
-                $('estado').textContent = 'Consultando SQL Server...';
-                
-                const parametros = new URLSearchParams();
-                ['inicio', 'fin', 'fechaCorte', 'minDias', 'mes', 'idCliente', 'numeroCredito'].forEach(id => {
-                    if ($(id).value.trim()) parametros.set(id,$(id).value.trim());
-                });
-                
-                try {
-                    const r = await fetch('/api/reportes/' + $('reporte').value + '?' + parametros.toString(), { cache: 'no-store' });
-                    const data = await r.json();
-                    if (!r.ok) throw Error(data.mensaje || 'Error al consultar.');
-                    
-                    filasActuales = Array.isArray(data) ? data : [];
-                    const cont = $('tabla');
-                    cont.replaceChildren();
-                    
-                    if (!filasActuales.length) {
-                        const p = document.createElement('p');
-                        p.textContent = 'Sin resultados para los filtros seleccionados.';
-                        cont.append(p);
-                    } else {
-                        const keys = Object.keys(filasActuales[0]);
-                        const table = document.createElement('table');
-                        const head = document.createElement('thead');
-                        const tr = document.createElement('tr');
-                        
-                        keys.forEach(k => {
-                            const th = document.createElement('th');
-                            th.textContent = k;
-                            tr.append(th);
-                        });
-                        head.append(tr);
-                        table.append(head);
-                        
-                        const tbody = document.createElement('tbody');
-                        filasActuales.forEach(f => {
-                            const tr = document.createElement('tr');
-                            keys.forEach(k => {
-                                const td = document.createElement('td');
-                                td.textContent = mostrarCelda(k, f[k]);
-                                tr.append(td);
-                            });
-                            tbody.append(tr);
-                        });
-                        table.append(tbody);
-                        cont.append(table);
-                        $('csv').disabled = false;
-                    }
-                    $('estado').textContent = filasActuales.length + ' registro(s).';
-                } catch (e) {
-                    filasActuales = [];
-                    $('tabla').textContent = e.message;
-                    $('estado').textContent = 'Error.';
-                } finally {
-                    $('generar').disabled = false;
-                }
-            });
-            
-            $('csv').addEventListener('click', () => {
-                if (!filasActuales.length) return;
-                const keys = Object.keys(filasActuales[0]);
-                const cell = v => '"' + formatear(v).replace(/"/g, '""') + '"';
-                const lines = [keys.map(cell).join(',')].concat(filasActuales.map(f => keys.map(k => cell(f[k])).join(',')));
-                const blob = new Blob(['\ufeff' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'MAGIS_AUTO_reporte_' + $('reporte').value + '.csv';
-                a.click();
-                URL.revokeObjectURL(url);
-            });
-        </script>
-    </body>
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   Reportes financieros | MAGIS-AUTO
+  </title>
+  <link href="reportes.css" rel="stylesheet"/>
+  <link href="tema-oscuro.css?v=2" rel="stylesheet"/>
+ </head>
+ <body>
+  <div class="contenedor">
+   <input aria-label="Mostrar men&uacute; de navegaci&oacute;n" class="magis-menu-check" id="menuMovil" type="checkbox"/>
+   <aside aria-label="Men&uacute; de navegaci&oacute;n" class="menu">
+    <div class="magis-brand">
+     <span class="magis-brand-icon">
+      🚗
+     </span>
+     <div>
+      <strong>
+       MAGIS
+       <span>
+        -AUTO
+       </span>
+      </strong>
+      <small>
+       SISTEMA DE FINANCIAMIENTO
+      </small>
+     </div>
+    </div>
+    <div class="magis-nav-label">
+     NAVEGACI&Oacute;N PRINCIPAL
+    </div>
+    <nav aria-label="Secciones de MAGIS-AUTO" class="magis-links">
+     <a href="index.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       ⌂
+      </span>
+      <span>
+       Panel principal
+      </span>
+     </a>
+     <a href="clientes.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       👥
+      </span>
+      <span>
+       Clientes
+      </span>
+     </a>
+     <a href="vehiculos.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       🚘
+      </span>
+      <span>
+       Veh&iacute;culos
+      </span>
+     </a>
+     <a href="creditos.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       💳
+      </span>
+      <span>
+       Cr&eacute;ditos y financiamiento
+      </span>
+     </a>
+     <a href="nuevoCredito.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       ➕
+      </span>
+      <span>
+       Nuevo financiamiento
+      </span>
+     </a>
+     <a href="cuotas.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       ▦
+      </span>
+      <span>
+       Cuotas y pagos
+      </span>
+     </a>
+     <a href="registroPago.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       💵
+      </span>
+      <span>
+       Registrar pago
+      </span>
+     </a>
+     <a href="gestion.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       🛡️
+      </span>
+      <span>
+       Garant&iacute;as y comisiones
+      </span>
+     </a>
+     <a aria-current="page" class="activo" href="reportes.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       📈
+      </span>
+      <span>
+       Reportes financieros
+      </span>
+     </a>
+    </nav>
+    <div class="magis-promo">
+     <strong>
+      MAGIS-AUTO
+     </strong>
+     <p>
+      Financiamientos bajo control, en un solo lugar.
+     </p>
+    </div>
+    <div class="magis-side-foot">
+     Panel de administraci&oacute;n &middot; Guatemala
+    </div>
+   </aside>
+   <label aria-label="Cerrar men&uacute;" class="magis-menu-overlay" for="menuMovil">
+   </label>
+   <main class="principal">
+    <div class="magis-topbar">
+     <div class="magis-top-left">
+      <label aria-label="Abrir men&uacute;" class="magis-mobile-btn" for="menuMovil">
+       ☰
+      </label>
+      <span class="magis-top-symbol">
+       🛡
+      </span>
+      <strong>
+       Reportes financieros
+      </strong>
+     </div>
+     <div class="magis-top-right">
+      <span class="magis-status-dot">
+      </span>
+      <span class="magis-status-label">
+       Panel administrativo
+      </span>
+      <span class="magis-avatar" title="MAGIS-AUTO">
+       M
+      </span>
+     </div>
+    </div>
+    <div class="magis-hero">
+     <div class="magis-eyebrow">
+      MAGIS-AUTO / GESTI&Oacute;N FINANCIERA
+     </div>
+     <h1>
+      Reportes financieros
+     </h1>
+     <p class="sub">
+      20 consultas para analizar cartera, cobros, cr&eacute;ditos y clientes.
+     </p>
+    </div>
+    <section class="panel">
+     <label for="reporte">
+      Selecciona un reporte
+     </label>
+     <select id="reporte">
+      <option value="1">
+       1: Cr&eacute;ditos emitidos en un per&iacute;odo
+      </option>
+      <option value="2">
+       2: Cartera en mora
+      </option>
+      <option value="3">
+       3: Pagos por medio y per&iacute;odo
+      </option>
+      <option value="4">
+       4: Ventas por vendedor
+      </option>
+      <option value="5">
+       5: Cumplea&ntilde;eros del mes
+      </option>
+      <option value="6">
+       6: Estado de cuenta por cliente
+      </option>
+      <option value="7">
+       7: Plan de pagos por cr&eacute;dito
+      </option>
+      <option value="8">
+       8: CREDITOS POR ESTADO
+      </option>
+      <option value="9">
+       9: SALDO PENDIENTE POR CREDITO
+      </option>
+      <option value="10">
+       10: HISTORIAL DE PAGOS POR CLIENTE
+      </option>
+      <option value="11">
+       11: CREDITOS POR AGENCIA
+      </option>
+      <option value="12">
+       12: VEHICULOS FINANCIADOS POR MARCA
+      </option>
+      <option value="13">
+       13: INTERESES POR CREDITO
+      </option>
+      <option value="14">
+       14: CREDITOS CON FIADORES
+      </option>
+      <option value="15">
+       15: CUOTAS CON SALDO PENDIENTE
+      </option>
+      <option value="16">
+       16: CUOTAS PAGADAS COMPLETAMENTE
+      </option>
+      <option value="17">
+       17: CUOTAS CON ABONOS PARCIALES
+      </option>
+      <option value="18">
+       18: RECAUDACION MENSUAL
+      </option>
+      <option value="19">
+       19: CLIENTES CON MAYOR MONTO FINANCIADO
+      </option>
+      <option value="20">
+       20: RESUMEN GENERAL DE CARTERA
+      </option>
+     </select>
+     <div id="motivo">
+     </div>
+     <div class="campos">
+      <div>
+       <label for="inicio">
+        Desde
+       </label>
+       <input id="inicio" type="date"/>
+      </div>
+      <div>
+       <label for="fin">
+        Hasta
+       </label>
+       <input id="fin" type="date"/>
+      </div>
+      <div>
+       <label for="fechaCorte">
+        Fecha de corte (mora)
+       </label>
+       <input id="fechaCorte" type="date"/>
+      </div>
+      <div>
+       <label for="minDias">
+        D&iacute;as m&iacute;nimos de mora
+       </label>
+       <input id="minDias" min="0" type="number" value="1"/>
+      </div>
+      <div>
+       <label for="mes">
+        Mes de cumplea&ntilde;os
+       </label>
+       <select id="mes">
+        <option value="">
+         Mes actual
+        </option>
+        <option value="1">
+         Enero
+        </option>
+        <option value="2">
+         Febrero
+        </option>
+        <option value="3">
+         Marzo
+        </option>
+        <option value="4">
+         Abril
+        </option>
+        <option value="5">
+         Mayo
+        </option>
+        <option value="6">
+         Junio
+        </option>
+        <option value="7">
+         Julio
+        </option>
+        <option value="8">
+         Agosto
+        </option>
+        <option value="9">
+         Septiembre
+        </option>
+        <option value="10">
+         Octubre
+        </option>
+        <option value="11">
+         Noviembre
+        </option>
+        <option value="12">
+         Diciembre
+        </option>
+       </select>
+      </div>
+      <div>
+       <label for="idCliente">
+        ID de cliente (opcional)
+       </label>
+       <input id="idCliente" min="1" placeholder="Todos" type="number"/>
+      </div>
+      <div>
+       <label for="numeroCredito">
+        N&uacute;mero de cr&eacute;dito (opcional)
+       </label>
+       <input id="numeroCredito" maxlength="30" placeholder="Todos"/>
+      </div>
+     </div>
+     <div class="acciones">
+      <button id="generar">
+       Generar reporte
+      </button>
+      <button disabled="" id="csv">
+       Exportar CSV
+      </button>
+      <span id="estado" role="status">
+      </span>
+     </div>
+    </section>
+    <section class="panel">
+     <h2 id="tituloResultado">
+      Resultados
+     </h2>
+     <div class="tabla" id="tabla">
+      <p>
+       Selecciona un reporte y presiona &laquo;Generar reporte&raquo;.
+      </p>
+     </div>
+    </section>
+   </main>
+  </div>
+  <script defer="" src="reportes.js">
+  </script>
+ </body>
 </html>
+

@@ -1,445 +1,266 @@
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Registrar pago | MAGIS-AUTO</title>
-        <style>
-            * {
-                box-sizing: border-box;
-            }
-            body {
-                margin: 0;
-                font-family: Arial, sans-serif;
-                background: #f1f5fa;
-                color: #102c51;
-            }
-            .layout {
-                display: flex;
-                min-height: 100vh;
-            }
-            .menu {
-                width: 280px;
-                background: #112a4d;
-                color: #fff;
-                padding: 28px 20px;
-                flex-shrink: 0;
-            }
-            .logo {
-                font-size: 26px;
-                font-weight: bold;
-                margin-bottom: 10px;
-            }
-            .subtitulo {
-                color: #bfd2e9;
-                font-size: 14px;
-                margin-bottom: 42px;
-            }
-            .menu a {
-                display: block;
-                padding: 15px 14px;
-                margin: 7px 0;
-                color: #fff;
-                text-decoration: none;
-                border-radius: 12px;
-            }
-            .menu a:hover, .menu a.activo {
-                background: #295e96;
-            }
-            .principal {
-                flex: 1;
-                min-width: 0;
-                padding: 34px;
-                max-width: 1250px;
-            }
-            h1 {
-                font-size: 34px;
-                margin: 0 0 12px;
-            }
-            p {
-                color: #58708d;
-                line-height: 1.5;
-            }
-            .panel {
-                background: #fff;
-                border-radius: 20px;
-                padding: 28px;
-                margin-top: 25px;
-                box-shadow: 0 4px 18px #152d4a0a;
-            }
-            .grid {
-                display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                gap: 20px;
-            }
-            .campo {
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-            }
-            label {
-                font-weight: 700;
-                color: #183f70;
-            }
-            input, select {
-                width: 100%;
-                padding: 14px;
-                border: 1px solid #c7d4e5;
-                border-radius: 10px;
-                font-size: 16px;
-                background: #fff;
-                color: #183f70;
-            }
-            input:focus, select:focus {
-                outline: 2px solid #77a9df;
-            }
-            .resumen {
-                display: grid;
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-                gap: 14px;
-                margin: 24px 0;
-            }
-            .dato {
-                background: #eef4fb;
-                padding: 18px;
-                border-radius: 13px;
-            }
-            .dato small {
-                display: block;
-                color: #54708f;
-                margin-bottom: 10px;
-            }
-            .dato strong {
-                font-size: 23px;
-            }
-            .btn {
-                background: #1765bc;
-                color: white;
-                border: 0;
-                border-radius: 11px;
-                padding: 16px 26px;
-                font-size: 16px;
-                font-weight: bold;
-                cursor: pointer;
-            }
-            .btn:hover {
-                background: #0c4e97;
-            }
-            .btn:disabled {
-                opacity: .5;
-                cursor: not-allowed;
-            }
-            .aviso {
-                margin-top: 18px;
-                padding: 14px;
-                border-radius: 9px;
-                display: none;
-            }
-            .aviso.ok {
-                display: block;
-                background: #e8f8ee;
-                color: #17683a;
-            }
-            .aviso.error {
-                display: block;
-                background: #fff0ee;
-                color: #a02721;
-            }
-            .nota {
-                font-size: 14px;
-            }
-            .enlace {
-                color: #1765bc;
-                font-weight: 700;
-                text-decoration: none;
-            }
-            @media (max-width: 850px) {
-                .layout {
-                    display: block;
-                }
-                .menu {
-                    width: 100%;
-                    padding: 18px;
-                }
-                .subtitulo {
-                    margin-bottom: 10px;
-                }
-                .menu a {
-                    display: inline-block;
-                    padding: 10px;
-                }
-                .principal {
-                    padding: 18px;
-                }
-                .grid, .resumen {
-                    grid-template-columns: 1fr;
-                }
-                h1 {
-                    font-size: 28px;
-                }
-            }
-        </style>
-    <link rel="stylesheet" href="tema-oscuro.css?v=2">
-<script src="tema-oscuro.js?v=2" defer></script>
-</head>
-    <body>
-        <div class="layout">
-            <aside class="menu">
-                <div class="logo">🚗 MAGIS-AUTO</div>
-                <div class="subtitulo">Sistema de administración</div>
-                <a href="/">📊 Panel principal</a>
-                <a href="clientes.html">👥 Clientes</a>
-                <a href="vehiculos.html">🚘 Vehículos</a>
-                <a href="creditos.html">💳 Créditos y Financiamiento</a>
-                <a href="nuevoCredito.html">➕ Nuevo Financiamiento</a>
-                <a href="cuotas.html">🧮 Cuotas y Pagos</a>
-                <a class="activo" href="registroPago.html">💵 Registrar Pago</a>
-        <a href="gestion.html">🛡️ Garantías y comisiones</a><a href="reportes.html">📈 Reportes financieros</a>
-            </aside>
-            <main class="principal">
-                <h1>Registrar pago</h1>
-                <p>Selecciona el financiamiento y la cuota que deseas abonar. Los datos se guardan directamente en SQL Server.</p>
-                <section class="panel">
-                    <form id="formulario">
-                        <div class="grid">
-                            <div class="campo">
-                                <label for="buscarCredito">Buscar crédito por obligación o cliente</label>
-                                <input id="buscarCredito" type="search" placeholder="" autocomplete="off">
-                                <label for="credito">Seleccionar crédito</label>
-                                <select id="credito" required>
-                                    <option value="">Cargando créditos...</option>
-                                </select>
-                            </div>
-                            <div class="campo">
-                                <label for="buscarCuota">Buscar cuota por número</label>
-                                <input id="buscarCuota" type="search" placeholder="" inputmode="numeric" autocomplete="off">
-                                <label for="cuota">Seleccionar cuota</label>
-                                <select id="cuota" required>
-                                    <option value="">Selecciona un crédito</option>
-                                </select>
-                            </div>
-                            <div class="campo">
-                                <label for="medio">Medio de pago</label>
-                                <select id="medio" required>
-                                    <option value="">Cargando medios...</option>
-                                </select>
-                            </div>
-                            <div class="campo">
-                                <label for="monto">Monto del pago (Q)</label>
-                                <input id="monto" type="number" min="0.01" step="0.01"  required>
-                            </div>
-                            <div class="campo">
-                                <label for="recibo">Número de recibo (único)</label>
-                                <input id="recibo" maxlength="30"  required>
-                            </div>
-                            <div class="campo">
-                                <label for="referencia">Referencia bancaria (opcional)</label>
-                                <input id="referencia" maxlength="100" >
-                            </div>
-                        </div>
-                        <div class="resumen">
-                            <div class="dato">
-                                <small>Total de la cuota</small>
-                                <strong id="total">Q 0.00</strong>
-                            </div>
-                            <div class="dato">
-                                <small>Pagado hasta ahora</small>
-                                <strong id="pagado">Q 0.00</strong>
-                            </div>
-                            <div class="dato">
-                                <small>Saldo disponible para abonar</small>
-                                <strong id="saldo">Q 0.00</strong>
-                            </div>
-                        </div>
-                        <button class="btn" id="guardar" type="submit">Registrar pago</button>
-                        <div id="mensaje" class="aviso" role="status" aria-live="polite"></div>
-                    </form>
-                </section>
-                <section class="panel">
-                    <p class="nota">El pago puede ser parcial. Después de registrarlo, puedes comprobar el saldo actualizado en <a class="enlace" href="cuotas.html">Cuotas y Pagos</a>. Usa un número de recibo diferente en cada operación.</p>
-                </section>
-            </main>
-        </div>
-        <script>
-            const $ = id => document.getElementById(id);
-            let cuotas = [];
-            let creditosDisponibles = [];
-            let solicitudCuotas = 0;
-
-            const normalizar = texto => String(texto || '').normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
-
-            function filtrarCreditos() {
-                const texto = normalizar($('buscarCredito').value);
-                const anterior = $('credito').value;
-                $('credito').innerHTML = '<option value="">Selecciona un crédito</option>';
-                const encontrados = creditosDisponibles.filter(c =>
-                    normalizar(c.NumeroObligacion + ' ' + c.Cliente).includes(texto));
-
-                for (const c of encontrados) {
-                    const op = document.createElement('option');
-                    op.value = c.IdCredito;
-                    op.textContent = c.NumeroObligacion + ' - ' + c.Cliente;
-                    $('credito').appendChild(op);
-                }
-                if (encontrados.some(c => String(c.IdCredito) === anterior)) {
-                    $('credito').value = anterior;
-                } else if (encontrados.length === 1) {
-                    $('credito').value = String(encontrados[0].IdCredito);
-                } else {
-                    $('credito').value = '';
-                }
-                if ($('credito').value !== anterior) {
-                    $('buscarCuota').value = '';
-                    cargarCuotas();
-                }
-            }
-
-            function filtrarCuotas() {
-                const texto = $('buscarCuota').value.trim();
-                const anterior = $('cuota').value;
-                $('cuota').innerHTML = '<option value="">Selecciona una cuota</option>';
-                const encontradas = cuotas.filter(c => !texto || String(c.NumeroCuota).includes(texto));
-
-                for (const c of encontradas) {
-                    const saldo = Math.max(0, Math.round((Number(c.TotalCuota) - Number(c.TotalPagado)) * 100) / 100);
-                    const op = document.createElement('option');
-                    op.value = c.IdCuota;
-                    op.textContent = `Cuota ${c.NumeroCuota} - Saldo ${moneda(saldo)}${saldo === 0 ? ' (Pagada)' : ''}`;
-                    op.disabled = saldo === 0;
-                    $('cuota').appendChild(op);
-                }
-                const disponible = Array.from($('cuota').options).find(o => o.value && !o.disabled);
-                if (encontradas.some(c => String(c.IdCuota) === anterior) &&
-                    !$('cuota').querySelector(`option[value="${anterior}"]`)?.disabled) {
-                    $('cuota').value = anterior;
-                } else if (disponible) {
-                    $('cuota').value = disponible.value;
-                }
-                actualizarResumen();
-            }
-            
-            const moneda = n => 'Q ' + Number(n || 0).toLocaleString('es-GT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            
-            function aviso(texto, error = false) {
-                $('mensaje').textContent = texto;
-                $('mensaje').className = 'aviso ' + (error ? 'error' : 'ok');
-            }
-            
-            async function obtener(url) {
-                const r = await fetch(url, { cache: 'no-store' });
-                const d = await r.json();
-                if (!r.ok) throw new Error(d.mensaje || 'No se pudo consultar.');
-                return d;
-            }
-            
-            function actualizarResumen() {
-                const c = cuotas.find(x => String(x.IdCuota) === $('cuota').value);
-                const total = Number(c?.TotalCuota || 0),
-                      pagado = Number(c?.TotalPagado || 0);
-                const saldo = Math.max(0, Math.round((total - pagado) * 100) / 100);
-                
-                $('total').textContent = moneda(total);
-                $('pagado').textContent = moneda(pagado);$('saldo').textContent = moneda(saldo);
-                $('monto').max = saldo.toFixed(2);$('guardar').disabled = !c || saldo <= 0;
-            }
-            
-            async function cargarCuotas() {
-                const solicitud = ++solicitudCuotas;
-                const credito = $('credito').value;
-                $('cuota').innerHTML = '<option value="">Cargando cuotas...</option>';
-                cuotas = [];
-                actualizarResumen();
-
-                if (!credito) {
-                    $('cuota').innerHTML = '<option value="">Selecciona un crédito</option>';
-                    return;
-                }
-                try {
-                    const datos = await obtener('/api/cuotas?credito=' + encodeURIComponent(credito));
-                    if (solicitud !== solicitudCuotas) return;
-                    cuotas = datos;
-                    filtrarCuotas();
-                } catch (e) {
-                    if (solicitud !== solicitudCuotas) return;
-                    $('cuota').innerHTML = '<option value="">Error al cargar</option>';
-                    aviso(e.message, true);
-                }
-            }
-
-            async function iniciar() {
-                $('guardar').disabled = true;
-                try {
-                    const [creditos, medios] = await Promise.all([obtener('/api/creditos'), obtener('/api/medios-pago')]);
-                    
-                    creditosDisponibles = creditos;
-                    filtrarCreditos();
-
-                    $('medio').innerHTML = '<option value="">Selecciona un medio</option>';
-                    for (const m of medios) {
-                        const o = document.createElement('option');
-                        o.value = m.IdMedioPago;
-                        o.textContent = m.NombreMedio;
-                        $('medio').append(o);
-                    }
-
-                    if (creditos.length) {
-                        $('credito').value = String(creditos[0].IdCredito);
-                        await cargarCuotas();
-                    }
-                } catch (e) {
-                    aviso('No se pudieron cargar los datos: ' + e.message, true);
-                }
-            }
-            
-            $('buscarCredito').addEventListener('input', filtrarCreditos);
-            $('buscarCuota').addEventListener('input', filtrarCuotas);
-            $('credito').addEventListener('change', () => {
-                $('buscarCuota').value = '';
-                cargarCuotas();
-            });
-            $('cuota').addEventListener('change', actualizarResumen);$('formulario').addEventListener('submit', async e => {
-                e.preventDefault();
-                const c = cuotas.find(x => String(x.IdCuota) === $('cuota').value);
-                const monto = Number($('monto').value),
-                      saldo = c ? Math.round((Number(c.TotalCuota) - Number(c.TotalPagado)) * 100) / 100 : 0;
-                
-                if (!c || !$('credito').value || !Number.isFinite(monto) || monto <= 0 || monto > saldo) {
-                    aviso('El monto debe ser mayor a cero y no superar el saldo de la cuota.', true);
-                    return;
-                }
-                
-                if (!confirm('¿Registrar el pago de ' + moneda(monto) + '?')) return;
-                
-                $('guardar').disabled = true;
-                try {
-                    const r = await fetch('/api/pagos', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            idCuota: c.IdCuota,
-                            idMedioPago: Number($('medio').value),
-                            numeroRecibo: $('recibo').value.trim(),
-                            monto: $('monto').value,
-                            referencia: $('referencia').value.trim()
-                        })
-                    });
-                    
-                    const d = await r.json();
-                    if (!r.ok) throw new Error(d.mensaje || 'No se pudo registrar el pago.');
-                    
-                    $('monto').value = '';
-                    $('recibo').value = '';$('referencia').value = '';
-                    await cargarCuotas();
-                    aviso(d.mensaje);
-                } catch (err) {
-                    aviso(err.message, true);
-                } finally {
-                    actualizarResumen();
-                }
-            });
-            
-            iniciar();
-        </script>
-    </body>
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   Registrar pago | MAGIS-AUTO
+  </title>
+  <link href="registroPago.css" rel="stylesheet"/>
+  <link href="tema-oscuro.css?v=2" rel="stylesheet"/>
+ </head>
+ <body>
+  <div class="contenedor">
+   <input aria-label="Mostrar men&uacute; de navegaci&oacute;n" class="magis-menu-check" id="menuMovil" type="checkbox"/>
+   <aside aria-label="Men&uacute; de navegaci&oacute;n" class="menu">
+    <div class="magis-brand">
+     <span class="magis-brand-icon">
+      🚗
+     </span>
+     <div>
+      <strong>
+       MAGIS
+       <span>
+        -AUTO
+       </span>
+      </strong>
+      <small>
+       SISTEMA DE FINANCIAMIENTO
+      </small>
+     </div>
+    </div>
+    <div class="magis-nav-label">
+     NAVEGACI&Oacute;N PRINCIPAL
+    </div>
+    <nav aria-label="Secciones de MAGIS-AUTO" class="magis-links">
+     <a href="index.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       ⌂
+      </span>
+      <span>
+       Panel principal
+      </span>
+     </a>
+     <a href="clientes.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       👥
+      </span>
+      <span>
+       Clientes
+      </span>
+     </a>
+     <a href="vehiculos.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       🚘
+      </span>
+      <span>
+       Veh&iacute;culos
+      </span>
+     </a>
+     <a href="creditos.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       💳
+      </span>
+      <span>
+       Cr&eacute;ditos y financiamiento
+      </span>
+     </a>
+     <a href="nuevoCredito.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       ➕
+      </span>
+      <span>
+       Nuevo financiamiento
+      </span>
+     </a>
+     <a href="cuotas.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       ▦
+      </span>
+      <span>
+       Cuotas y pagos
+      </span>
+     </a>
+     <a aria-current="page" class="activo" href="registroPago.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       💵
+      </span>
+      <span>
+       Registrar pago
+      </span>
+     </a>
+     <a href="gestion.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       🛡️
+      </span>
+      <span>
+       Garant&iacute;as y comisiones
+      </span>
+     </a>
+     <a href="reportes.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       📈
+      </span>
+      <span>
+       Reportes financieros
+      </span>
+     </a>
+    </nav>
+    <div class="magis-promo">
+     <strong>
+      MAGIS-AUTO
+     </strong>
+     <p>
+      Financiamientos bajo control, en un solo lugar.
+     </p>
+    </div>
+    <div class="magis-side-foot">
+     Panel de administraci&oacute;n &middot; Guatemala
+    </div>
+   </aside>
+   <label aria-label="Cerrar men&uacute;" class="magis-menu-overlay" for="menuMovil">
+   </label>
+   <main class="principal">
+    <div class="magis-topbar">
+     <div class="magis-top-left">
+      <label aria-label="Abrir men&uacute;" class="magis-mobile-btn" for="menuMovil">
+       ☰
+      </label>
+      <span class="magis-top-symbol">
+       🛡
+      </span>
+      <strong>
+       Registrar pago
+      </strong>
+     </div>
+     <div class="magis-top-right">
+      <span class="magis-status-dot">
+      </span>
+      <span class="magis-status-label">
+       Panel administrativo
+      </span>
+      <span class="magis-avatar" title="MAGIS-AUTO">
+       M
+      </span>
+     </div>
+    </div>
+    <div class="magis-hero">
+     <div class="magis-eyebrow">
+      MAGIS-AUTO / GESTI&Oacute;N FINANCIERA
+     </div>
+     <h1>
+      Registrar pago
+     </h1>
+     <p>
+      Selecciona el financiamiento y la cuota que deseas abonar. Los datos se guardan directamente en SQL Server.
+     </p>
+    </div>
+    <section class="panel">
+     <form id="formulario">
+      <div class="grid">
+       <div class="campo">
+        <label for="buscarCredito">
+         Buscar cr&eacute;dito por obligaci&oacute;n o cliente
+        </label>
+        <input autocomplete="off" id="buscarCredito" placeholder="" type="search"/>
+        <label for="credito">
+         Seleccionar cr&eacute;dito
+        </label>
+        <select id="credito" required="">
+         <option value="">
+          Cargando cr&eacute;ditos...
+         </option>
+        </select>
+       </div>
+       <div class="campo">
+        <label for="buscarCuota">
+         Buscar cuota por n&uacute;mero
+        </label>
+        <input autocomplete="off" id="buscarCuota" inputmode="numeric" placeholder="" type="search"/>
+        <label for="cuota">
+         Seleccionar cuota
+        </label>
+        <select id="cuota" required="">
+         <option value="">
+          Selecciona un cr&eacute;dito
+         </option>
+        </select>
+       </div>
+       <div class="campo">
+        <label for="medio">
+         Medio de pago
+        </label>
+        <select id="medio" required="">
+         <option value="">
+          Cargando medios...
+         </option>
+        </select>
+       </div>
+       <div class="campo">
+        <label for="monto">
+         Monto del pago (Q)
+        </label>
+        <input id="monto" min="0.01" required="" step="0.01" type="number"/>
+       </div>
+       <div class="campo">
+        <label for="recibo">
+         N&uacute;mero de recibo (&uacute;nico)
+        </label>
+        <input id="recibo" maxlength="30" required=""/>
+       </div>
+       <div class="campo">
+        <label for="referencia">
+         Referencia bancaria (opcional)
+        </label>
+        <input id="referencia" maxlength="100"/>
+       </div>
+      </div>
+      <div class="resumen">
+       <div class="dato">
+        <small>
+         Total de la cuota
+        </small>
+        <strong id="total">
+         Q 0.00
+        </strong>
+       </div>
+       <div class="dato">
+        <small>
+         Pagado hasta ahora
+        </small>
+        <strong id="pagado">
+         Q 0.00
+        </strong>
+       </div>
+       <div class="dato">
+        <small>
+         Saldo disponible para abonar
+        </small>
+        <strong id="saldo">
+         Q 0.00
+        </strong>
+       </div>
+      </div>
+      <button class="btn" id="guardar" type="submit">
+       Registrar pago
+      </button>
+      <div aria-live="polite" class="aviso" id="mensaje" role="status">
+      </div>
+     </form>
+    </section>
+    <section class="panel">
+     <p class="nota">
+      El pago puede ser parcial. Despu&eacute;s de registrarlo, puedes comprobar el saldo actualizado en
+      <a class="enlace" href="cuotas.html">
+       Cuotas y Pagos
+      </a>
+      . Usa un n&uacute;mero de recibo diferente en cada operaci&oacute;n.
+     </p>
+    </section>
+   </main>
+  </div>
+  <script defer="" src="registroPago.js">
+  </script>
+ </body>
 </html>
+

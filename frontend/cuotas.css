@@ -1,0 +1,181 @@
+* {
+                box-sizing: border-box;
+            }
+            body {
+                margin: 0;
+                font-family: Arial, Helvetica, sans-serif;
+                background: #f2f5fa;
+                color: #102b4e;
+            }
+            .contenedor {
+                display: flex;
+                min-height: 100vh;
+            }
+            .menu {
+                width: 275px;
+                background: #11294a;
+                color: white;
+                padding: 26px 18px;
+                flex-shrink: 0;
+            }
+            .logo {
+                font-size: 25px;
+                font-weight: bold;
+                margin-bottom: 8px;
+            }
+            .subtitulo {
+                font-size: 13px;
+                color: #bbd0e5;
+                margin-bottom: 40px;
+            }
+            .menu a {
+                display: block;
+                text-decoration: none;
+                color: white;
+                padding: 14px 15px;
+                margin: 6px 0;
+                border-radius: 10px;
+                font-size: 16px;
+            }
+            .menu a:hover, .menu a.activo {
+                background: #285b91;
+            }
+            .principal {
+                flex: 1;
+                min-width: 0;
+                padding: 35px 32px;
+            }
+            .principal h1 {
+                font-size: 32px;
+                margin: 0 0 10px;
+            }
+            .descripcion {
+                color: #5c708a;
+                margin: 0 0 26px;
+            }
+            .panel {
+                background: white;
+                border-radius: 17px;
+                padding: 28px;
+                margin-bottom: 22px;
+                box-shadow: 0 5px 18px #102b4e0b;
+            }
+            label {
+                display: block;
+                font-weight: bold;
+                margin-bottom: 10px;
+            }
+            select, input {
+                width: 100%;
+                padding: 14px;
+                border: 1px solid #c8d4e2;
+                border-radius: 9px;
+                background: white;
+                font-size: 15px;
+                color: #102b4e;
+            }
+            .controles {
+                display: grid;
+                grid-template-columns: 2fr 1fr;
+                gap: 15px;
+            }
+            .estadisticas {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 14px;
+                margin-top: 20px;
+            }
+            .dato {
+                background: #f0f5fb;
+                border-radius: 11px;
+                padding: 17px;
+            }
+            .dato span {
+                display: block;
+                color: #58718d;
+                font-size: 13px;
+                margin-bottom: 8px;
+            }
+            .dato strong {
+                font-size: 21px;
+            }
+            .tabla-wrap {
+                overflow-x: auto;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                min-width: 850px;
+            }
+            th {
+                background: #e9f0f8;
+                text-align: left;
+                padding: 15px;
+                color: #123a62;
+            }
+            td {
+                padding: 14px;
+                border-bottom: 1px solid #e7edf4;
+            }
+            tr:nth-child(even) {
+                background: #fafcff;
+            }
+            .estado {
+                border-radius: 30px;
+                padding: 6px 10px;
+                font-size: 12px;
+                font-weight: bold;
+                display: inline-block;
+            }
+            .pagada {
+                background: #e1f4e8;
+                color: #16763b;
+            }
+            .parcial {
+                background: #fff2d6;
+                color: #8a5900;
+            }
+            .pendiente {
+                background: #eaf0f7;
+                color: #52687f;
+            }
+            .mensaje {
+                color: #5c708a;
+                margin: 14px 0;
+            }
+            .error {
+                color: #bb3030;
+            }
+            @media(max-width: 900px) {
+                .contenedor {
+                    display: block;
+                }
+                .menu {
+                    width: auto;
+                    padding: 17px;
+                }
+                .menu a {
+                    display: inline-block;
+                    font-size: 13px;
+                }
+                .subtitulo {
+                    margin-bottom: 10px;
+                }
+                .principal {
+                    padding: 20px;
+                }
+                .estadisticas {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+            @media(max-width: 540px) {
+                .controles {
+                    grid-template-columns: 1fr;
+                }
+                .estadisticas {
+                    grid-template-columns: 1fr 1fr;
+                }
+                .dato strong {
+                    font-size: 16px;
+                }
+            }

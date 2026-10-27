@@ -1,594 +1,396 @@
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Garantías y comisiones | MAGIS-AUTO</title>
-        <style>
-            * {
-                box-sizing: border-box;
-            }
-            body {
-                margin: 0;
-                font-family: Arial, sans-serif;
-                background: #f2f5fa;
-                color: #14233d;
-            }
-            .contenedor {
-                display: flex;
-                min-height: 100vh;
-            }
-            .menu {
-                width: 250px;
-                background: #14233d;
-                color: white;
-                padding: 25px 18px;
-                flex-shrink: 0;
-            }
-            .logo {
-                font-size: 23px;
-                font-weight: bold;
-            }
-            .sub {
-                font-size: 12px;
-                color: #b2c4dc;
-                margin: 10px 0 25px;
-            }
-            .menu a {
-                display: block;
-                padding: 12px;
-                color: #e1e9f7;
-                text-decoration: none;
-                border-radius: 8px;
-                margin: 4px 0;
-            }
-            .menu a:hover, .menu a.activo {
-                background: #2864dc;
-                color: white;
-            }
-            .principal {
-                flex: 1;
-                padding: 28px;
-                min-width: 0;
-            }
-            .panel {
-                background: white;
-                border: 1px solid #e1e7f0;
-                border-radius: 12px;
-                padding: 22px;
-                margin: 18px 0;
-                box-shadow: 0 2px 12px #14233d0a;
-            }
-            .grid {
-                display: grid;
-                grid-template-columns: repeat(3, minmax(160px, 1fr));
-                gap: 12px;
-            }
-            .grid div {
-                min-width: 0;
-            }
-            label {
-                display: block;
-                font-weight: bold;
-                font-size: 13px;
-                margin-bottom: 6px;
-                color: #53657f;
-            }
-            input, select {
-                width: 100%;
-                padding: 10px;
-                border: 1px solid #cbd6e4;
-                border-radius: 7px;
-                font: inherit;
-            }
-            button {
-                border: 0;
-                background: #2864dc;
-                color: white;
-                padding: 11px 16px;
-                border-radius: 7px;
-                cursor: pointer;
-                margin-top: 13px;
-                font-weight: bold;
-            }
-            button.alt {
-                background: #5b6c85;
-            }
-            button.danger {
-                background: #b83838;
-                margin: 0;
-                padding: 6px 9px;
-            }
-            .table {
-                overflow: auto;
-                max-height: 340px;
-                margin-top: 14px;
-            }
-            table {
-                border-collapse: collapse;
-                width: 100%;
-                font-size: 13px;
-            }
-            th, td {
-                padding: 10px;
-                border-bottom: 1px solid #e4eaf3;
-                text-align: left;
-                white-space: nowrap;
-            }
-            th {
-                background: #eaf0fa;
-                position: sticky;
-                top: 0;
-            }
-            .msg {
-                min-height: 20px;
-                margin: 8px 0;
-                color: #275780;
-            }
-            .ayuda {
-                color: #52637d;
-                font-size: 14px;
-                line-height: 1.5;
-            }
-            h1 {
-                margin: 0 0 5px;
-            }
-            h2 {
-                margin: 0 0 8px;
-            }
-            form {
-                margin-top: 15px;
-            }
-            @media (max-width: 1000px) {
-                .grid {
-                    grid-template-columns: repeat(2, 1fr);
-                }
-            }
-            @media (max-width: 750px) {
-                .contenedor {
-                    display: block;
-                }
-                .menu {
-                    width: 100%;
-                }
-                .principal {
-                    padding: 15px;
-                }
-                .grid {
-                    grid-template-columns: 1fr;
-                }
-            }
-        </style>
-        <link rel="stylesheet" href="tema-oscuro.css?v=2">
-        <script src="tema-oscuro.js?v=2" defer></script>
-    </head>
-    <body>
-        <div class="contenedor">
-            <aside class="menu">
-                <div class="logo">🚗 MAGIS-AUTO</div>
-                <div class="sub">Sistema de administración</div>
-                <a href="index.html">📊 Panel principal</a>
-                <a href="clientes.html">👥 Clientes</a>
-                <a href="vehiculos.html">🚘 Vehículos</a>
-                <a href="creditos.html">💳 Créditos y Financiamiento</a>
-                <a href="nuevoCredito.html">➕ Nuevo Financiamiento</a>
-                <a href="cuotas.html">🧮 Cuotas y Pagos</a>
-                <a href="registroPago.html">💵 Registrar Pago</a>
-                <a class="activo" href="gestion.html">🛡️ Garantías y comisiones</a>
-                <a href="reportes.html">📈 Reportes financieros</a>
-            </aside>
-            
-            <main class="principal">
-                <h1>Garantías y control financiero</h1>
-                <p class="ayuda">Referencias, fiadores, comisiones efectivamente devengadas y depreciación. Los créditos y pagos anteriores no se modifican.</p>
-                
-                <section class="panel">
-                    <h2>1. Referencias personales del cliente</h2>
-                    <p class="ayuda">Selecciona el cliente. Se requieren al menos tres referencias antes de emitir un crédito nuevo.</p>
-                    
-                    <label for="cliente">Cliente</label>
-                    <select id="cliente"></select>
-                    
-                    <p id="contador" class="msg"></p>
-                    <div id="tablaReferencias" class="table"></div>
-                    
-                    <form id="formReferencia">
-                        <h3>Agregar referencia</h3>
-                        <div class="grid">
-                            <div>
-                                <label>Nombre completo</label>
-                                <input name="nombre" required maxlength="150">
-                            </div>
-                            <div>
-                                <label>DPI (13 dígitos)</label>
-                                <input name="dpi" required pattern="[0-9]{13}" maxlength="13">
-                            </div>
-                            <div>
-                                <label>Teléfono</label>
-                                <input name="telefono" required maxlength="15">
-                            </div>
-                            <div>
-                                <label>Dirección</label>
-                                <input name="direccion" required maxlength="250">
-                            </div>
-                            <div>
-                                <label>Parentesco / relación</label>
-                                <input name="parentesco" required maxlength="50">
-                            </div>
-                            <div>
-                                <label>Lugar de trabajo</label>
-                                <input name="trabajo" maxlength="150">
-                            </div>
-                            <div>
-                                <label>NIT (opcional)</label>
-                                <input name="nit" maxlength="20">
-                            </div>
-                            <div>
-                                <label>Correo (opcional)</label>
-                                <input name="correo" type="email" maxlength="100">
-                            </div>
-                        </div>
-                        <button>Guardar referencia</button>
-                    </form>
-                    <p id="msgRef" class="msg" role="status"></p>
-                </section>
-                
-                <section class="panel">
-                    <h2>2. Fiadores y garantías personales</h2>
-                    <p class="ayuda">Una persona puede respaldar varios créditos; un crédito puede tener varios fiadores.</p>
-                    
-                    <form id="formFiador">
-                        <h3>Registrar fiador</h3>
-                        <div class="grid">
-                            <div>
-                                <label>Nombre completo</label>
-                                <input name="nombre" required maxlength="150">
-                            </div>
-                            <div>
-                                <label>DPI (13 dígitos)</label>
-                                <input name="dpi" required pattern="[0-9]{13}" maxlength="13">
-                            </div>
-                            <div>
-                                <label>NIT</label>
-                                <input name="nit" maxlength="20">
-                            </div>
-                            <div>
-                                <label>Correo</label>
-                                <input name="correo" type="email" maxlength="100">
-                            </div>
-                            <div>
-                                <label>Teléfono</label>
-                                <input name="telefono" required maxlength="15">
-                            </div>
-                            <div>
-                                <label>Dirección</label>
-                                <input name="direccion" required maxlength="250">
-                            </div>
-                        </div>
-                        <button>Registrar fiador</button>
-                    </form>
-                    <p id="msgFiador" class="msg" role="status"></p>
-                    
-                    <h3>Asignar fiador a un crédito</h3>
-                    <div class="grid">
-                        <div>
-                            <label>Crédito</label>
-                            <select id="credito"></select>
-                        </div>
-                        <div>
-                            <label>Fiador</label>
-                            <select id="fiador"></select>
-                        </div>
-                    </div>
-                    <button id="asignar" type="button">Asignar fiador</button>
-                    <p id="msgAsignar" class="msg" role="status"></p>
-                    
-                    <h3>Fiadores asignados</h3>
-                    <div id="tablaAsignados" class="table"></div>
-                </section>
-                
-                <section class="panel">
-                    <h2>3. Comisiones de vendedores</h2>
-                    <p class="ayuda">Comisión devengada = suma de cada pago recibido × porcentaje de comisión del crédito. No se calcula sobre cuotas aún no pagadas.</p>
-                    <button type="button" id="cargarComisiones">Actualizar comisiones</button>
-                    <div id="tablaComisiones" class="table"></div>
-                </section>
-                
-                <section class="panel">
-                    <h2>4. Depreciación del vehículo</h2>
-                    <p class="ayuda">Se muestra la estimación de salida de agencia (15%–20%) y se permite registrar valoraciones históricas reales. No modifica el precio original ni las garantías existentes.</p>
-                    
-                    <div class="grid">
-                        <div>
-                            <label>Filtrar por VIN (opcional)</label>
-                            <input id="vinFiltro" maxlength="17" placeholder="Dejar vacío para todos">
-                        </div>
-                    </div>
-                    
-                    <button id="consultarDepreciacion" type="button">Consultar depreciación</button>
-                    <div id="tablaDepreciacion" class="table"></div>
-                    
-                    <form id="formValoracion">
-                        <h3>Registrar valoración histórica</h3>
-                        <div class="grid">
-                            <div>
-                                <label>VIN</label>
-                                <input name="vin" required maxlength="17" minlength="17">
-                            </div>
-                            <div>
-                                <label>Fecha de valoración</label>
-                                <input name="fecha" type="date" required>
-                            </div>
-                            <div>
-                                <label>Valor estimado actual (Q)</label>
-                                <input name="valor" type="number" step="0.01" min="0" required>
-                            </div>
-                            <div>
-                                <label>Observación</label>
-                                <input name="observacion" maxlength="250">
-                            </div>
-                        </div>
-                        <button>Guardar valoración</button>
-                    </form>
-                    <p id="msgDep" class="msg" role="status"></p>
-                </section>
-            </main>
-        </div>
-        
-        <script>
-            const $ = id => document.getElementById(id);
-            const money = x => 'Q ' + Number(x || 0).toLocaleString('es-GT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            
-            async function api(url, options) {
-                const r = await fetch(url, { cache: 'no-store', ...options });
-                const d = await r.json();
-                if (!r.ok) throw Error(d.mensaje || 'Error de servidor');
-                return d;
-            }
-            
-            function msg(id, txt) {
-                $(id).textContent = txt;
-            }
-            
-            function opciones(id, items, clave, etiqueta) {
-                const s = $(id), anterior = s.value;
-                s.replaceChildren();
-                for (const x of items) {
-                    const o = document.createElement('option');
-                    o.value = x[clave];
-                    o.textContent = etiqueta(x);
-                    s.append(o);
-                }
-                if (items.some(x => String(x[clave]) === anterior)) s.value = anterior;
-            }
-            
-            function tabla(id, rows, cols, action) {
-                const cont = $(id);
-                cont.replaceChildren();
-                if (!rows.length) {
-                    cont.textContent = 'Sin registros.';
-                    return;
-                }
-                const t = document.createElement('table'),
-                      thead = document.createElement('thead'),
-                      h = document.createElement('tr');
-                
-                for (const [k, n] of cols) {
-                    const th = document.createElement('th');
-                    th.textContent = n;
-                    h.append(th);
-                }
-                if (action) {
-                    const th = document.createElement('th');
-                    th.textContent = 'Acción';
-                    h.append(th);
-                }
-                thead.append(h);
-                t.append(thead);
-                
-                const body = document.createElement('tbody');
-                for (const r of rows) {
-                    const tr = document.createElement('tr');
-                    for (const [k] of cols) {
-                        const td = document.createElement('td');
-                        td.textContent = r[k] ?? '';
-                        tr.append(td);
-                    }
-                    if (action) {
-                        const td = document.createElement('td'),
-                              b = document.createElement('button');
-                        b.className = 'danger';
-                        b.textContent = 'Quitar';
-                        b.onclick = () => action(r);
-                        td.append(b);
-                        tr.append(td);
-                    }
-                    body.append(tr);
-                }
-                t.append(body);
-                cont.append(t);
-            }
-            
-            function datos(form) {
-                return Object.fromEntries(new FormData(form).entries());
-            }
-            
-            async function cargarBase() {
-                try {
-                    const [cl, cr, fi] = await Promise.all(['/api/clientes', '/api/creditos', '/api/fiadores'].map(u => api(u)));
-                    opciones('cliente', cl, 'IdCliente', x => x.IdCliente + ' · ' + x.NombreCompleto);
-                    opciones('credito', cr, 'IdCredito', x => x.IdCredito + ' · ' + x.NumeroObligacion);
-                    opciones('fiador', fi, 'IdFiador', x => x.IdFiador + ' · ' + x.NombreCompleto);
-                    await Promise.all([cargarReferencias(), cargarAsignados()]);
-                } catch (e) {
-                    msg('msgRef', e.message);
-                }
-            }
-            
-            async function cargarReferencias() {
-                const id = $('cliente').value;
-                if (!id) return;
-                try {
-                    const a = await api('/api/referencias/' + id);
-                    msg('contador', a.length + ' referencia(s) · ' + (a.length >= 3 ? 'Mínimo cumplido' : 'Faltan ' + (3 - a.length)));
-                    tabla('tablaReferencias', a, [
-                        ['NombreCompleto', 'Nombre'],
-                        ['DPI', 'DPI'],
-                        ['Telefonos', 'Teléfonos'],
-                        ['Direcciones', 'Direcciones'],
-                        ['Parentesco', 'Relación'],
-                        ['LugarTrabajo', 'Trabajo']
-                    ], async x => {
-                        if (!confirm('¿Quitar esta referencia?')) return;
-                        try {
-                            await api('/api/referencias/' + x.IdReferencia, { method: 'DELETE' });
-                            await cargarReferencias();
-                        } catch (e) {
-                            msg('msgRef', e.message);
-                        }
-                    });
-                } catch (e) {
-                    msg('msgRef', e.message);
-                }
-            }
-            
-            async function cargarAsignados() {
-                const id = $('credito').value;
-                if (!id) return;
-                try {
-                    const a = await api('/api/creditos/' + id + '/fiadores');
-                    tabla('tablaAsignados', a, [
-                        ['IdFiador', 'ID'],
-                        ['NombreCompleto', 'Fiador'],
-                        ['DPI', 'DPI']
-                    ], async x => {
-                        if (!confirm('¿Quitar este fiador del crédito?')) return;
-                        try {
-                            await api('/api/creditos/' + id + '/fiadores/' + x.IdFiador, { method: 'DELETE' });
-                            await cargarAsignados();
-                        } catch (e) {
-                            msg('msgAsignar', e.message);
-                        }
-                    });
-                } catch (e) {
-                    msg('msgAsignar', e.message);
-                }
-            }
-            
-            $('cliente').onchange = cargarReferencias;
-            $('credito').onchange = cargarAsignados;
-            
-            $('formReferencia').onsubmit = async e => {
-                e.preventDefault();
-                try {
-                    await api('/api/referencias', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ ...datos(e.target), idCliente: $('cliente').value })
-                    });
-                    e.target.reset();
-                    msg('msgRef', 'Referencia guardada.');
-                    await cargarReferencias();
-                } catch (x) {
-                    msg('msgRef', x.message);
-                }
-            };
-            
-            $('formFiador').onsubmit = async e => {
-                e.preventDefault();
-                try {
-                    await api('/api/fiadores', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(datos(e.target))
-                    });
-                    e.target.reset();
-                    msg('msgFiador', 'Fiador registrado.');
-                    await cargarBase();
-                } catch (x) {
-                    msg('msgFiador', x.message);
-                }
-            };
-            
-            $('asignar').onclick = async () => {
-                try {
-                    await api('/api/creditos/' + $('credito').value + '/fiadores', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ idFiador: $('fiador').value })
-                    });
-                    msg('msgAsignar', 'Fiador asignado.');
-                    await cargarAsignados();
-                } catch (e) {
-                    msg('msgAsignar', e.message);
-                }
-            };
-            
-            $('cargarComisiones').onclick = async () => {
-                try {
-                    const a = await api('/api/comisiones');
-                    tabla('tablaComisiones', a.map(x => ({
-                        ...x,
-                        TotalCobrado: money(x.TotalCobrado),
-                        ComisionDevengada: money(x.ComisionDevengada)
-                    })), [
-                        ['Vendedor', 'Vendedor'],
-                        ['Creditos', 'Créditos'],
-                        ['PagosRecibidos', 'Pagos'],
-                        ['TotalCobrado', 'Cobrado'],
-                        ['ComisionDevengada', 'Comisión']
-                    ]);
-                } catch (e) {
-                    $('tablaComisiones').textContent = e.message;
-                }
-            };
-            
-            async function cargarDepreciacion() {
-                try {
-                    const vin = $('vinFiltro').value.trim().toUpperCase();
-                    const a = await api('/api/depreciacion' + (vin ? '?vin=' + encodeURIComponent(vin) : ''));
-                    tabla('tablaDepreciacion', a.map(x => ({
-                        ...x,
-                        ValorAgencia: money(x.ValorAgencia),
-                        EstimadoDepreciacion15: money(x.EstimadoDepreciacion15),
-                        EstimadoDepreciacion20: money(x.EstimadoDepreciacion20),
-                        ValorEstimado: x.ValorEstimado === null ? '' : money(x.ValorEstimado),
-                        FechaValoracion: x.FechaValoracion ? String(x.FechaValoracion).slice(0, 10) : ''
-                    })), [
-                        ['VIN', 'VIN'],
-                        ['NombreMarca', 'Marca'],
-                        ['Modelo', 'Modelo'],
-                        ['ValorAgencia', 'Valor agencia'],
-                        ['EstimadoDepreciacion15', '-15%'],
-                        ['EstimadoDepreciacion20', '-20%'],
-                        ['FechaValoracion', 'Fecha valoración'],
-                        ['ValorEstimado', 'Valoración'],
-                        ['DepreciacionRealPorcentaje', 'Depreciación %']
-                    ]);
-                } catch (e) {
-                    $('tablaDepreciacion').textContent = e.message;
-                }
-            }
-            
-            $('consultarDepreciacion').onclick = cargarDepreciacion;
-            
-            $('formValoracion').onsubmit = async e => {
-                e.preventDefault();
-                try {
-                    await api('/api/depreciacion', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(datos(e.target))
-                    });
-                    e.target.reset();
-                    msg('msgDep', 'Valoración histórica guardada.');
-                    await cargarDepreciacion();
-                } catch (x) {
-                    msg('msgDep', x.message);
-                }
-            };
-            
-            cargarBase();
-        </script>
-    </body>
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   Garant&iacute;as y comisiones | MAGIS-AUTO
+  </title>
+  <link href="gestion.css" rel="stylesheet"/>
+  <link href="tema-oscuro.css?v=2" rel="stylesheet"/>
+ </head>
+ <body>
+  <div class="contenedor">
+   <input aria-label="Mostrar men&uacute; de navegaci&oacute;n" class="magis-menu-check" id="menuMovil" type="checkbox"/>
+   <aside aria-label="Men&uacute; de navegaci&oacute;n" class="menu">
+    <div class="magis-brand">
+     <span class="magis-brand-icon">
+      🚗
+     </span>
+     <div>
+      <strong>
+       MAGIS
+       <span>
+        -AUTO
+       </span>
+      </strong>
+      <small>
+       SISTEMA DE FINANCIAMIENTO
+      </small>
+     </div>
+    </div>
+    <div class="magis-nav-label">
+     NAVEGACI&Oacute;N PRINCIPAL
+    </div>
+    <nav aria-label="Secciones de MAGIS-AUTO" class="magis-links">
+     <a href="index.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       ⌂
+      </span>
+      <span>
+       Panel principal
+      </span>
+     </a>
+     <a href="clientes.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       👥
+      </span>
+      <span>
+       Clientes
+      </span>
+     </a>
+     <a href="vehiculos.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       🚘
+      </span>
+      <span>
+       Veh&iacute;culos
+      </span>
+     </a>
+     <a href="creditos.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       💳
+      </span>
+      <span>
+       Cr&eacute;ditos y financiamiento
+      </span>
+     </a>
+     <a href="nuevoCredito.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       ➕
+      </span>
+      <span>
+       Nuevo financiamiento
+      </span>
+     </a>
+     <a href="cuotas.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       ▦
+      </span>
+      <span>
+       Cuotas y pagos
+      </span>
+     </a>
+     <a href="registroPago.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       💵
+      </span>
+      <span>
+       Registrar pago
+      </span>
+     </a>
+     <a aria-current="page" class="activo" href="gestion.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       🛡️
+      </span>
+      <span>
+       Garant&iacute;as y comisiones
+      </span>
+     </a>
+     <a href="reportes.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       📈
+      </span>
+      <span>
+       Reportes financieros
+      </span>
+     </a>
+    </nav>
+    <div class="magis-promo">
+     <strong>
+      MAGIS-AUTO
+     </strong>
+     <p>
+      Financiamientos bajo control, en un solo lugar.
+     </p>
+    </div>
+    <div class="magis-side-foot">
+     Panel de administraci&oacute;n &middot; Guatemala
+    </div>
+   </aside>
+   <label aria-label="Cerrar men&uacute;" class="magis-menu-overlay" for="menuMovil">
+   </label>
+   <main class="principal">
+    <div class="magis-topbar">
+     <div class="magis-top-left">
+      <label aria-label="Abrir men&uacute;" class="magis-mobile-btn" for="menuMovil">
+       ☰
+      </label>
+      <span class="magis-top-symbol">
+       🛡
+      </span>
+      <strong>
+       Garant&iacute;as y comisiones
+      </strong>
+     </div>
+     <div class="magis-top-right">
+      <span class="magis-status-dot">
+      </span>
+      <span class="magis-status-label">
+       Panel administrativo
+      </span>
+      <span class="magis-avatar" title="MAGIS-AUTO">
+       M
+      </span>
+     </div>
+    </div>
+    <div class="magis-hero">
+     <div class="magis-eyebrow">
+      MAGIS-AUTO / GESTI&Oacute;N FINANCIERA
+     </div>
+     <h1>
+      Garant&iacute;as y control financiero
+     </h1>
+     <p class="ayuda">
+      Referencias, fiadores, comisiones efectivamente devengadas y depreciaci&oacute;n. Los cr&eacute;ditos y pagos anteriores no se modifican.
+     </p>
+    </div>
+    <section class="panel">
+     <h2>
+      1. Referencias personales del cliente
+     </h2>
+     <p class="ayuda">
+      Selecciona el cliente. Se requieren al menos tres referencias antes de emitir un cr&eacute;dito nuevo.
+     </p>
+     <label for="cliente">
+      Cliente
+     </label>
+     <select id="cliente">
+     </select>
+     <p class="msg" id="contador">
+     </p>
+     <div class="table" id="tablaReferencias">
+     </div>
+     <form id="formReferencia">
+      <h3>
+       Agregar referencia
+      </h3>
+      <div class="grid">
+       <div>
+        <label>
+         Nombre completo
+        </label>
+        <input maxlength="150" name="nombre" required=""/>
+       </div>
+       <div>
+        <label>
+         DPI (13 d&iacute;gitos)
+        </label>
+        <input maxlength="13" name="dpi" pattern="[0-9]{13}" required=""/>
+       </div>
+       <div>
+        <label>
+         Tel&eacute;fono
+        </label>
+        <input maxlength="15" name="telefono" required=""/>
+       </div>
+       <div>
+        <label>
+         Direcci&oacute;n
+        </label>
+        <input maxlength="250" name="direccion" required=""/>
+       </div>
+       <div>
+        <label>
+         Parentesco / relaci&oacute;n
+        </label>
+        <input maxlength="50" name="parentesco" required=""/>
+       </div>
+       <div>
+        <label>
+         Lugar de trabajo
+        </label>
+        <input maxlength="150" name="trabajo"/>
+       </div>
+       <div>
+        <label>
+         NIT (opcional)
+        </label>
+        <input maxlength="20" name="nit"/>
+       </div>
+       <div>
+        <label>
+         Correo (opcional)
+        </label>
+        <input maxlength="100" name="correo" type="email"/>
+       </div>
+      </div>
+      <button>
+       Guardar referencia
+      </button>
+     </form>
+     <p class="msg" id="msgRef" role="status">
+     </p>
+    </section>
+    <section class="panel">
+     <h2>
+      2. Fiadores y garant&iacute;as personales
+     </h2>
+     <p class="ayuda">
+      Una persona puede respaldar varios cr&eacute;ditos; un cr&eacute;dito puede tener varios fiadores.
+     </p>
+     <form id="formFiador">
+      <h3>
+       Registrar fiador
+      </h3>
+      <div class="grid">
+       <div>
+        <label>
+         Nombre completo
+        </label>
+        <input maxlength="150" name="nombre" required=""/>
+       </div>
+       <div>
+        <label>
+         DPI (13 d&iacute;gitos)
+        </label>
+        <input maxlength="13" name="dpi" pattern="[0-9]{13}" required=""/>
+       </div>
+       <div>
+        <label>
+         NIT
+        </label>
+        <input maxlength="20" name="nit"/>
+       </div>
+       <div>
+        <label>
+         Correo
+        </label>
+        <input maxlength="100" name="correo" type="email"/>
+       </div>
+       <div>
+        <label>
+         Tel&eacute;fono
+        </label>
+        <input maxlength="15" name="telefono" required=""/>
+       </div>
+       <div>
+        <label>
+         Direcci&oacute;n
+        </label>
+        <input maxlength="250" name="direccion" required=""/>
+       </div>
+      </div>
+      <button>
+       Registrar fiador
+      </button>
+     </form>
+     <p class="msg" id="msgFiador" role="status">
+     </p>
+     <h3>
+      Asignar fiador a un cr&eacute;dito
+     </h3>
+     <div class="grid">
+      <div>
+       <label>
+        Cr&eacute;dito
+       </label>
+       <select id="credito">
+       </select>
+      </div>
+      <div>
+       <label>
+        Fiador
+       </label>
+       <select id="fiador">
+       </select>
+      </div>
+     </div>
+     <button id="asignar" type="button">
+      Asignar fiador
+     </button>
+     <p class="msg" id="msgAsignar" role="status">
+     </p>
+     <h3>
+      Fiadores asignados
+     </h3>
+     <div class="table" id="tablaAsignados">
+     </div>
+    </section>
+    <section class="panel">
+     <h2>
+      3. Comisiones de vendedores
+     </h2>
+     <p class="ayuda">
+      Comisi&oacute;n devengada = suma de cada pago recibido &times; porcentaje de comisi&oacute;n del cr&eacute;dito. No se calcula sobre cuotas a&uacute;n no pagadas.
+     </p>
+     <button id="cargarComisiones" type="button">
+      Actualizar comisiones
+     </button>
+     <div class="table" id="tablaComisiones">
+     </div>
+    </section>
+    <section class="panel">
+     <h2>
+      4. Depreciaci&oacute;n del veh&iacute;culo
+     </h2>
+     <p class="ayuda">
+      Se muestra la estimaci&oacute;n de salida de agencia (15%&ndash;20%) y se permite registrar valoraciones hist&oacute;ricas reales. No modifica el precio original ni las garant&iacute;as existentes.
+     </p>
+     <div class="grid">
+      <div>
+       <label>
+        Filtrar por VIN (opcional)
+       </label>
+       <input id="vinFiltro" maxlength="17" placeholder="Dejar vac&iacute;o para todos"/>
+      </div>
+     </div>
+     <button id="consultarDepreciacion" type="button">
+      Consultar depreciaci&oacute;n
+     </button>
+     <div class="table" id="tablaDepreciacion">
+     </div>
+     <form id="formValoracion">
+      <h3>
+       Registrar valoraci&oacute;n hist&oacute;rica
+      </h3>
+      <div class="grid">
+       <div>
+        <label>
+         VIN
+        </label>
+        <input maxlength="17" minlength="17" name="vin" required=""/>
+       </div>
+       <div>
+        <label>
+         Fecha de valoraci&oacute;n
+        </label>
+        <input name="fecha" required="" type="date"/>
+       </div>
+       <div>
+        <label>
+         Valor estimado actual (Q)
+        </label>
+        <input min="0" name="valor" required="" step="0.01" type="number"/>
+       </div>
+       <div>
+        <label>
+         Observaci&oacute;n
+        </label>
+        <input maxlength="250" name="observacion"/>
+       </div>
+      </div>
+      <button>
+       Guardar valoraci&oacute;n
+      </button>
+     </form>
+     <p class="msg" id="msgDep" role="status">
+     </p>
+    </section>
+   </main>
+  </div>
+  <script defer="" src="gestion.js">
+  </script>
+ </body>
 </html>
+

@@ -1,398 +1,338 @@
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Nuevo financiamiento | MAGIS-AUTO</title>
-        <style>
-            :root {
-                font-family: Arial, sans-serif;
-                color: #182b45;
-                background: #f2f5fa;
-            }
-            * {
-                box-sizing: border-box;
-            }
-            body {
-                margin: 0;
-            }
-            header {
-                background: #102e55;
-                color: white;
-                padding: 20px 5%;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                gap: 15px;
-                flex-wrap: wrap;
-            }
-            header h1 {
-                font-size: 22px;
-                margin: 0;
-            }
-            a {
-                color: inherit;
-                text-decoration: none;
-            }
-            header a {
-                background: #fff2;
-                padding: 10px 14px;
-                border: 1px solid #8ca6c8;
-                border-radius: 8px;
-            }
-            main {
-                max-width: 960px;
-                margin: 32px auto;
-                padding: 0 18px;
-            }
-            .card {
-                background: white;
-                border-radius: 14px;
-                padding: 25px;
-                box-shadow: 0 4px 18px #102e5514;
-                margin-bottom: 20px;
-            }
-            h2 {
-                margin-top: 0;
-                font-size: 22px;
-            }
-            p {
-                line-height: 1.5;
-                color: #617188;
-            }
-            .grid {
-                display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                gap: 18px;
-            }
-            label {
-                display: block;
-                font-weight: 600;
-                font-size: 14px;
-                margin-bottom: 7px;
-            }
-            input, select {
-                width: 100%;
-                padding: 12px;
-                border: 1px solid #ccd6e3;
-                border-radius: 8px;
-                font-size: 15px;
-                background: white;
-            }
-            input:focus, select:focus {
-                outline: 2px solid #a9c5e7;
-            }
-            .actions {
-                display: flex;
-                gap: 12px;
-                margin-top: 24px;
-                align-items: center;
-                flex-wrap: wrap;
-            }
-            button {
-                border: 0;
-                background: #1663b8;
-                color: white;
-                padding: 13px 22px;
-                border-radius: 9px;
-                font-size: 15px;
-                font-weight: bold;
-                cursor: pointer;
-            }
-            button:disabled {
-                opacity: .5;
-                cursor: wait;
-            }
-            .summary {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 14px;
-            }
-            .summary div {
-                background: #f3f7fc;
-                padding: 16px;
-                border-radius: 10px;
-            }
-            .summary strong {
-                display: block;
-                font-size: 21px;
-                margin-top: 7px;
-                color: #102e55;
-            }
-            .summary small {
-                color: #52657c;
-            }
-            .etiqueta-seleccion {
-                margin-top: 12px;
-            }
-            input[type="search"] {
-                background: #f7faff;
-            }
-            #mensaje {
-                font-weight: 600;
-            }
-            #mensaje.error {
-                color: #bb3030;
-            }
-            #mensaje.ok {
-                color: #137347;
-            }
-            @media (max-width: 650px) {
-                .grid, .summary {
-                    grid-template-columns: 1fr;
-                }
-            }
-        </style>
-    <link rel="stylesheet" href="tema-oscuro.css?v=2">
-<script src="tema-oscuro.js?v=2" defer></script>
-</head>
-    <body>
-        <header>
-            <h1>🚗 MAGIS-AUTO · Nuevo financiamiento</h1>
-            <a href="creditos.html">← Volver a créditos</a><a href="gestion.html">🛡️ Garantías y comisiones</a>
-        </header>
-        <main>
-            <section class="card">
-                <h2>Registrar crédito</h2>
-                <p>Selecciona un cliente, un vendedor y un vehículo NUEVO de agencia que todavía no tenga financiamiento. Si no aparece un vehículo, clasifícalo en <a href="vehiculos.html">Vehículos</a>. Los intereses se calculan sobre el saldo pendiente. El cliente debe tener al menos tres referencias personales antes de autorizar el crédito. <a href="gestion.html">Administrar referencias y fiadores</a>.</p>
-                <form id="formulario">
-                    <div class="grid">
-                        <div>
-                            <label for="numero">Número de obligación</label>
-                            <input id="numero" required maxlength="30" pattern="[A-Za-z0-9-]{3,30}">
-                        </div>
-                        <div>
-                            <label for="buscarCliente">Buscar cliente por nombre o DPI</label>
-                            <input id="buscarCliente" type="search" placeholder="Nombre o DPI" autocomplete="off">
-                            <label for="cliente" class="etiqueta-seleccion">Seleccionar cliente</label>
-                            <select id="cliente" required>
-                                <option value="">Cargando clientes...</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="vendedor">Vendedor</label>
-                            <select id="vendedor" required>
-                                <option value="">Cargando vendedores...</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="buscarVehiculo">Buscar vehículo por marca, modelo o placa</label>
-                            <input id="buscarVehiculo" type="search" placeholder="Ejemplo: Toyota, Corolla o P-001GTA" autocomplete="off">
-                            <label for="vehiculo" class="etiqueta-seleccion">Seleccionar vehículo disponible</label>
-                            <select id="vehiculo" required>
-                                <option value="">Cargando vehículos...</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="enganche">Enganche (Q)</label>
-                            <input id="enganche" type="number" min="0" step="0.01" value="0" required>
-                        </div>
-                        <div>
-                            <label for="plazo">Plazo (meses)</label>
-                            <select id="plazo">
-                                <option value="12">12 meses</option>
-                                <option value="24" selected>24 meses</option>
-                                <option value="36">36 meses</option>
-                                <option value="48">48 meses</option><option value="60">60 meses</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="tasa">Interés anual (%)</label>
-                            <input id="tasa" type="number" min="0" max="100" step="0.001" value="12.5" required>
-                        </div>
-                    </div>
-                    <div class="actions">
-                        <button type="submit" id="guardar">Registrar financiamiento</button>
-                        <span id="mensaje" role="status"></span>
-                    </div>
-                </form>
-            </section>
-            
-            <section class="card">
-                <h2>Resumen estimado</h2>
-                <div class="summary">
-                    <div>
-                        <small>Precio del vehículo</small>
-                        <strong id="precio">Q 0.00</strong>
-                    </div>
-                    <div>
-                        <small>Monto financiado</small>
-                        <strong id="financiado">Q 0.00</strong>
-                    </div>
-                    <div>
-                        <small>Intereses totales</small>
-                        <strong id="intereses">Q 0.00</strong>
-                    </div>
-                    <div>
-                        <small>Total a pagar en cuotas</small>
-                        <strong id="total">Q 0.00</strong>
-                    </div>
-                    <div>
-                        <small>Cuota mensual aproximada</small>
-                        <strong id="cuota">Q 0.00</strong>
-                    </div>
-                    <div>
-                        <small>Cargos mensuales incluidos</small>
-                        <strong>Q 265.00</strong>
-                    </div>
-                </div>
-                <p>Los cargos mensuales incluyen seguro de vehículo (Q 175), seguro de vida (Q 65) y manejo de cuenta (Q 25). La comisión del 2% se guarda como dato informativo, no se suma al total. La última cuota puede variar unos centavos por redondeo.</p>
-            </section>
-        </main>
-        
-        <script>
-            const $ = id => document.getElementById(id);
-            let vehiculos = [];
-            let clientes = [];
-            const dinero = n => 'Q ' + Number(n || 0).toLocaleString('es-GT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            
-            function opcion(select, valor, texto) {
-                const o = document.createElement('option');
-                o.value = valor;
-                o.textContent = texto;
-                select.appendChild(o);
-            }
-            
-            
-            function normalizar(texto) {
-                return String(texto || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-            }
-
-            function buscarClientes() {
-                const busqueda = normalizar($('buscarCliente').value.trim());
-                const seleccion = $('cliente').value;
-                const encontrados = clientes.filter(c =>
-                    normalizar(c.NombreCompleto).includes(busqueda) ||
-                    String(c.DPI || '').includes(busqueda)
-                );
-                $('cliente').innerHTML = '';
-                opcion($('cliente'), '', encontrados.length ? 'Selecciona un cliente' : 'No se encontraron clientes');
-                encontrados.forEach(c => opcion($('cliente'), c.IdCliente, `${c.NombreCompleto} · ${c.DPI}`));
-                if (encontrados.some(c => String(c.IdCliente) === seleccion)) {
-                    $('cliente').value = seleccion;
-                }
-            }
-
-            function buscarVehiculos() {
-                const busqueda = normalizar($('buscarVehiculo').value.trim());
-                const seleccion = $('vehiculo').value;
-                const encontrados = vehiculos.filter(v =>
-                    normalizar(`${v.NombreMarca} ${v.Modelo} ${v.Placa || ''} ${v.VIN} ${v.AnioFabricacion}`).includes(busqueda)
-                );
-                $('vehiculo').innerHTML = '';
-                opcion($('vehiculo'), '', encontrados.length ? 'Selecciona un vehículo' : 'No se encontraron vehículos disponibles');
-                encontrados.forEach(v => opcion($('vehiculo'), v.VIN,
-                    `${v.NombreMarca} ${v.Modelo} (${v.AnioFabricacion}) · ${v.Placa || 'Sin placa'} · ${dinero(v.ValorAgencia)}`));
-                if (encontrados.some(v => v.VIN === seleccion)) {
-                    $('vehiculo').value = seleccion;
-                }
-                actualizar();
-            }
-
-            async function cargar() {
-                try {
-                    const urls = ['/api/clientes', '/api/vendedores', '/api/vehiculos', '/api/creditos'];
-                    const respuestas = await Promise.all(urls.map(u => fetch(u, { cache: 'no-store' })));
-                    
-                    if (respuestas.some(r => !r.ok)) throw Error('No se pudieron consultar los datos del sistema.');
-                    
-                    const [datosClientes, vendedores, todos, creditos] = await Promise.all(respuestas.map(r => r.json()));
-                    clientes = datosClientes;
-                    const usados = new Set(creditos.map(c => c.VIN));
-                    vehiculos = todos.filter(v => !usados.has(v.VIN) && Number(v.EsNuevo) === 1 && v.IdAgenciaOrigen);
-                    
-                    [['cliente', 'Selecciona un cliente'], ['vendedor', 'Selecciona un vendedor'], ['vehiculo', 'Selecciona un vehículo']].forEach(([id, t]) => {
-                        $(id).innerHTML = '';
-                        opcion($(id), '', t);
-                    });
-                    
-                    $('buscarCliente').value = '';
-                    $('buscarVehiculo').value = '';
-                    buscarClientes();
-                    vendedores.forEach(v => opcion($('vendedor'), v.IdVendedor, v.NombreCompleto));
-                    buscarVehiculos();
-                } catch (e) {
-                    $('mensaje').textContent = e.message;
-                    $('mensaje').className = 'error';
-                }
-            }
-            
-            function actualizar() {
-                const v = vehiculos.find(x => x.VIN === $('vehiculo').value);
-                const precio = Number(v?.ValorAgencia || 0),
-                      enganche = Number($('enganche').value || 0),
-                      plazo = Number($('plazo').value || 1),
-                      tasa = Number($('tasa').value || 0);
-                
-                const monto = Math.max(0, precio - enganche);
-                let saldo = monto, intereses = 0;
-                for (let i = 1; i <= plazo; i++) {
-                    const capital = i === plazo ? saldo : Math.round(monto / plazo * 100) / 100;
-                    intereses += Math.round(saldo * tasa / 1200 * 100) / 100;
-                    saldo = Math.max(0, Math.round((saldo - capital) * 100) / 100);
-                }
-                const total = monto + intereses + plazo * 265;
-                
-                $('precio').textContent = dinero(precio);
-                $('financiado').textContent = dinero(monto);$('intereses').textContent = dinero(intereses);
-                $('total').textContent = dinero(total);$('cuota').textContent = dinero(total / plazo);
-            }
-            
-            $('buscarCliente').addEventListener('input', buscarClientes);
-            $('buscarVehiculo').addEventListener('input', buscarVehiculos);
-            ['vehiculo', 'enganche', 'plazo', 'tasa'].forEach(id => $(id).addEventListener('input', actualizar));
-
-            $('formulario').addEventListener('submit', async e => {
-                e.preventDefault();
-                const v = vehiculos.find(x => x.VIN === $('vehiculo').value);
-                
-                if (!v) {
-                    $('mensaje').textContent = 'Selecciona un vehículo disponible.';
-                    $('mensaje').className = 'error';
-                    return;
-                }
-                
-                if (Number($('enganche').value) >= Number(v.ValorAgencia)) {$('mensaje').textContent = 'El enganche debe ser menor que el valor del vehículo.';
-                    $('mensaje').className = 'error';
-                    return;
-                }
-                
-                if (!confirm('¿Confirmas registrar este crédito y generar todas sus cuotas?')) return;
-                
-                $('guardar').disabled = true;
-                $('mensaje').textContent = 'Guardando...';$('mensaje').className = '';
-                
-                try {
-                    const r = await fetch('/api/creditos', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            numero: $('numero').value,
-                            idCliente: $('cliente').value,
-                            idVendedor: $('vendedor').value,
-                            vin: $('vehiculo').value,
-                            enganche: Number($('enganche').value),
-                            plazo: Number($('plazo').value),
-                            tasa: Number($('tasa').value)
-                        })
-                    });
-                    
-                    const data = await r.json();
-                    if (!r.ok) throw Error(data.mensaje || 'Error al registrar.');
-                    
-                    $('formulario').reset();
-                    await cargar();
-                    $('mensaje').textContent = data.mensaje;
-                    $('mensaje').className = 'ok';
-                } catch (err) {
-                    $('mensaje').textContent = err.message;
-                    $('mensaje').className = 'error';
-                } finally {
-                    $('guardar').disabled = false;
-                }
-            });
-            
-            cargar();
-        </script>
-    </body>
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   Nuevo financiamiento | MAGIS-AUTO
+  </title>
+  <link href="nuevoCredito.css" rel="stylesheet"/>
+  <link href="tema-oscuro.css?v=2" rel="stylesheet"/>
+ </head>
+ <body class="magis-credit-page">
+  <header>
+   <h1>
+    🚗 MAGIS-AUTO &middot; Nuevo financiamiento
+   </h1>
+   <a href="creditos.html">
+    &larr; Volver a cr&eacute;ditos
+   </a>
+   <a href="gestion.html">
+    🛡️ Garant&iacute;as y comisiones
+   </a>
+  </header>
+  <script defer="" src="nuevoCredito.js">
+  </script>
+  <div class="contenedor">
+   <input aria-label="Mostrar men&uacute; de navegaci&oacute;n" class="magis-menu-check" id="menuMovil" type="checkbox"/>
+   <aside aria-label="Men&uacute; de navegaci&oacute;n" class="menu">
+    <div class="magis-brand">
+     <span class="magis-brand-icon">
+      🚗
+     </span>
+     <div>
+      <strong>
+       MAGIS
+       <span>
+        -AUTO
+       </span>
+      </strong>
+      <small>
+       SISTEMA DE FINANCIAMIENTO
+      </small>
+     </div>
+    </div>
+    <div class="magis-nav-label">
+     NAVEGACI&Oacute;N PRINCIPAL
+    </div>
+    <nav aria-label="Secciones de MAGIS-AUTO" class="magis-links">
+     <a href="index.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       ⌂
+      </span>
+      <span>
+       Panel principal
+      </span>
+     </a>
+     <a href="clientes.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       👥
+      </span>
+      <span>
+       Clientes
+      </span>
+     </a>
+     <a href="vehiculos.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       🚘
+      </span>
+      <span>
+       Veh&iacute;culos
+      </span>
+     </a>
+     <a href="creditos.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       💳
+      </span>
+      <span>
+       Cr&eacute;ditos y financiamiento
+      </span>
+     </a>
+     <a aria-current="page" class="activo" href="nuevoCredito.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       ➕
+      </span>
+      <span>
+       Nuevo financiamiento
+      </span>
+     </a>
+     <a href="cuotas.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       ▦
+      </span>
+      <span>
+       Cuotas y pagos
+      </span>
+     </a>
+     <a href="registroPago.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       💵
+      </span>
+      <span>
+       Registrar pago
+      </span>
+     </a>
+     <a href="gestion.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       🛡️
+      </span>
+      <span>
+       Garant&iacute;as y comisiones
+      </span>
+     </a>
+     <a href="reportes.html">
+      <span aria-hidden="true" class="magis-link-icon">
+       📈
+      </span>
+      <span>
+       Reportes financieros
+      </span>
+     </a>
+    </nav>
+    <div class="magis-promo">
+     <strong>
+      MAGIS-AUTO
+     </strong>
+     <p>
+      Financiamientos bajo control, en un solo lugar.
+     </p>
+    </div>
+    <div class="magis-side-foot">
+     Panel de administraci&oacute;n &middot; Guatemala
+    </div>
+   </aside>
+   <label aria-label="Cerrar men&uacute;" class="magis-menu-overlay" for="menuMovil">
+   </label>
+   <main>
+    <div class="magis-topbar">
+     <div class="magis-top-left">
+      <label aria-label="Abrir men&uacute;" class="magis-mobile-btn" for="menuMovil">
+       ☰
+      </label>
+      <span class="magis-top-symbol">
+       🛡
+      </span>
+      <strong>
+       Nuevo financiamiento
+      </strong>
+     </div>
+     <div class="magis-top-right">
+      <span class="magis-status-dot">
+      </span>
+      <span class="magis-status-label">
+       Panel administrativo
+      </span>
+      <span class="magis-avatar" title="MAGIS-AUTO">
+       M
+      </span>
+     </div>
+    </div>
+    <div class="magis-hero">
+     <div class="magis-eyebrow">
+      MAGIS-AUTO / GESTI&Oacute;N FINANCIERA
+     </div>
+     <h1>
+      Nuevo financiamiento
+     </h1>
+     <p>
+      Registra cr&eacute;ditos, genera cuotas y consulta las condiciones del pr&eacute;stamo.
+     </p>
+    </div>
+    <section class="card">
+     <h2>
+      Registrar cr&eacute;dito
+     </h2>
+     <p>
+      Selecciona un cliente, un vendedor y un veh&iacute;culo NUEVO de agencia que todav&iacute;a no tenga financiamiento. Si no aparece un veh&iacute;culo, clasif&iacute;calo en
+      <a href="vehiculos.html">
+       Veh&iacute;culos
+      </a>
+      . Los intereses se calculan sobre el saldo pendiente. El cliente debe tener al menos tres referencias personales antes de autorizar el cr&eacute;dito.
+      <a href="gestion.html">
+       Administrar referencias y fiadores
+      </a>
+      .
+     </p>
+     <form id="formulario">
+      <div class="grid">
+       <div>
+        <label for="numero">
+         N&uacute;mero de obligaci&oacute;n
+        </label>
+        <input id="numero" maxlength="30" pattern="[A-Za-z0-9-]{3,30}" required=""/>
+       </div>
+       <div>
+        <label for="buscarCliente">
+         Buscar cliente por nombre o DPI
+        </label>
+        <input autocomplete="off" id="buscarCliente" placeholder="Nombre o DPI" type="search"/>
+        <label class="etiqueta-seleccion" for="cliente">
+         Seleccionar cliente
+        </label>
+        <select id="cliente" required="">
+         <option value="">
+          Cargando clientes...
+         </option>
+        </select>
+       </div>
+       <div>
+        <label for="vendedor">
+         Vendedor
+        </label>
+        <select id="vendedor" required="">
+         <option value="">
+          Cargando vendedores...
+         </option>
+        </select>
+       </div>
+       <div>
+        <label for="buscarVehiculo">
+         Buscar veh&iacute;culo por marca, modelo o placa
+        </label>
+        <input autocomplete="off" id="buscarVehiculo" placeholder="Ejemplo: Toyota, Corolla o P-001GTA" type="search"/>
+        <label class="etiqueta-seleccion" for="vehiculo">
+         Seleccionar veh&iacute;culo disponible
+        </label>
+        <select id="vehiculo" required="">
+         <option value="">
+          Cargando veh&iacute;culos...
+         </option>
+        </select>
+       </div>
+       <div>
+        <label for="enganche">
+         Enganche (Q)
+        </label>
+        <input id="enganche" min="0" required="" step="0.01" type="number" value="0"/>
+       </div>
+       <div>
+        <label for="plazo">
+         Plazo (meses)
+        </label>
+        <select id="plazo">
+         <option value="12">
+          12 meses
+         </option>
+         <option selected="" value="24">
+          24 meses
+         </option>
+         <option value="36">
+          36 meses
+         </option>
+         <option value="48">
+          48 meses
+         </option>
+         <option value="60">
+          60 meses
+         </option>
+        </select>
+       </div>
+       <div>
+        <label for="tasa">
+         Inter&eacute;s anual (%)
+        </label>
+        <input id="tasa" max="100" min="0" required="" step="0.001" type="number" value="12.5"/>
+       </div>
+      </div>
+      <div class="actions">
+       <button id="guardar" type="submit">
+        Registrar financiamiento
+       </button>
+       <span id="mensaje" role="status">
+       </span>
+      </div>
+     </form>
+    </section>
+    <section class="card">
+     <h2>
+      Resumen estimado
+     </h2>
+     <div class="summary">
+      <div>
+       <small>
+        Precio del veh&iacute;culo
+       </small>
+       <strong id="precio">
+        Q 0.00
+       </strong>
+      </div>
+      <div>
+       <small>
+        Monto financiado
+       </small>
+       <strong id="financiado">
+        Q 0.00
+       </strong>
+      </div>
+      <div>
+       <small>
+        Intereses totales
+       </small>
+       <strong id="intereses">
+        Q 0.00
+       </strong>
+      </div>
+      <div>
+       <small>
+        Total a pagar en cuotas
+       </small>
+       <strong id="total">
+        Q 0.00
+       </strong>
+      </div>
+      <div>
+       <small>
+        Cuota mensual aproximada
+       </small>
+       <strong id="cuota">
+        Q 0.00
+       </strong>
+      </div>
+      <div>
+       <small>
+        Cargos mensuales incluidos
+       </small>
+       <strong>
+        Q 265.00
+       </strong>
+      </div>
+     </div>
+     <p>
+      Los cargos mensuales incluyen seguro de veh&iacute;culo (Q 175), seguro de vida (Q 65) y manejo de cuenta (Q 25). La comisi&oacute;n del 2% se guarda como dato informativo, no se suma al total. La &uacute;ltima cuota puede variar unos centavos por redondeo.
+     </p>
+    </section>
+   </main>
+  </div>
+ </body>
 </html>
+

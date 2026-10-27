@@ -29,7 +29,7 @@ function buscarFila(resultados, columna) {
     return null;
 }
 
-// Conexion con SQL Server
+
 const conexion =
     "Driver={ODBC Driver 18 for SQL Server};" +
     "Server=localhost;" +
@@ -37,7 +37,6 @@ const conexion =
     "Trusted_Connection=Yes;" +
     "Encrypt=Yes;" +
     "TrustServerCertificate=Yes;";
-
 
 app.get('/api/resumen', (req, res) => {
 
@@ -59,7 +58,8 @@ app.get('/api/resumen', (req, res) => {
     });
 });
 
-// LISTAR CLIENTES
+
+
 app.get('/api/clientes', (req, res) => {
 
     const consulta = "EXEC dbo.usp_API_Clientes_Listar;";
@@ -80,7 +80,6 @@ app.get('/api/clientes', (req, res) => {
     });
 });
 
-// REGISTRAR CLIENTE
 app.post('/api/clientes', (req, res) => {
 
     const { nombre, dpi, nit, correo } = req.body;
@@ -125,7 +124,6 @@ app.post('/api/clientes', (req, res) => {
     });
 });
 
-// ACTUALIZAR CLIENTE
 app.put('/api/clientes/:id', (req, res) => {
 
     const id = Number(req.params.id);
@@ -184,7 +182,6 @@ app.put('/api/clientes/:id', (req, res) => {
     });
 });
 
- // ELIMINAR CLIENTE
 app.delete('/api/clientes/:id', (req, res) => {
 
     const id = Number(req.params.id);
@@ -230,7 +227,6 @@ app.delete('/api/clientes/:id', (req, res) => {
 });
 
 
-// CONSULTAR MARCAS
 app.get('/api/marcas', (req, res) => {
 
     const consulta = "EXEC dbo.usp_API_Marcas_Listar;";
@@ -252,7 +248,7 @@ app.get('/api/marcas', (req, res) => {
 
 app.get('/api/agencias', (req, res) => consultarSP(res, 'usp_API_Agencias_Listar'));
 
-// CONSULTAR VEHICULOS
+
 app.get('/api/vehiculos', (req, res) => {
 
     const consulta = "EXEC dbo.usp_API_Vehiculos_Listar;";
@@ -272,7 +268,6 @@ app.get('/api/vehiculos', (req, res) => {
     });
 });
 
-// VALIDAR DATOS DEL VEHICULO
 function validarVehiculo(datos) {
 
     const vin = String(datos.vin || '')
@@ -316,7 +311,6 @@ function validarVehiculo(datos) {
     };
 }
 
-// REGISTRAR VEHICULO
 app.post('/api/vehiculos', (req, res) => {
 
     const datos = validarVehiculo(req.body || {});
@@ -355,7 +349,7 @@ app.post('/api/vehiculos', (req, res) => {
     });
 });
 
-// EDITAR VEHICULO
+
 app.put('/api/vehiculos/:vin', (req, res) => {
 
     const datos = validarVehiculo({
@@ -405,7 +399,7 @@ app.put('/api/vehiculos/:vin', (req, res) => {
     });
 });
 
-// ELIMINAR VEHICULO
+
 app.delete('/api/vehiculos/:vin', (req, res) => {
 
     const vin = String(req.params.vin || '')
@@ -445,9 +439,6 @@ app.delete('/api/vehiculos/:vin', (req, res) => {
     });
 });
 
-
-
-// CONSULTAR CREDITOS 
 app.get('/api/creditos', (req, res) => {
 
     const consulta = "EXEC dbo.usp_API_Creditos_Listar;";
@@ -471,8 +462,6 @@ app.get('/api/creditos', (req, res) => {
     });
 });
 
-
-// Consultar vendedores
 app.get('/api/vendedores', (req, res) => {
     const consulta = "EXEC dbo.usp_API_Vendedores_Listar;";
 
@@ -489,7 +478,6 @@ app.get('/api/vendedores', (req, res) => {
     });
 });
 
-// Registrar un nuevo crédito y cuotas
 app.post('/api/creditos', (req, res) => {
     const d = req.body || {};
 
@@ -547,7 +535,6 @@ app.post('/api/creditos', (req, res) => {
     });
 });
 
-
 app.get('/api/cuotas', (req, res) => {
 
     const idCredito = Number(req.query.credito);
@@ -581,8 +568,6 @@ app.get('/api/cuotas', (req, res) => {
     );
 });
 
-
-// Consultar medios de pago 
 app.get('/api/medios-pago', (req, res) => {
 
     const consulta = "EXEC dbo.usp_API_MediosPago_Listar;";
@@ -602,7 +587,6 @@ app.get('/api/medios-pago', (req, res) => {
     });
 });
 
-// Registrar un pago en una cuota
 app.post('/api/pagos', (req, res) => {
 
     const datos = req.body || {};
@@ -659,6 +643,7 @@ app.post('/api/pagos', (req, res) => {
 });
 
 
+
 app.get('/api/reportes/:numero', (req, res) => {
     const numero = Number(req.params.numero);
     if (!Number.isInteger(numero) || numero < 1 || numero > 20) {
@@ -702,77 +687,222 @@ function mensajeNegocio(error) {
         [/FOREIGN KEY|REFERENCE constraint/i, 'No se puede eliminar porque existen registros relacionados.'],
         [/UNIQUE KEY|duplicate key/i, 'Ya existe un registro con esos datos.']
     ];
-    for (const [exp, texto] of reglas) if (exp.test(m)) return texto;
+
+    for (const [exp, texto] of reglas) {
+        if (exp.test(m)) {
+            return texto;
+        }
+    }
+
     return 'No se pudo completar la operación. Revisa los datos o consulta la terminal del servidor.';
 }
 
-function consultarSP(res, nombre, valores=[], codigo=200) {
-    const marcas=valores.map(()=>'?').join(', ');
-    sql.query(conexion, `EXEC dbo.${nombre}${marcas?' '+marcas:''};`, valores, (error, filas)=>{
-        if(error){ console.error(nombre, error.message); return res.status(400).json({mensaje:mensajeNegocio(error)}); }
-        res.status(codigo).json(Array.isArray(filas)?filas:[]);
-    });
+function consultarSP(res, nombre, valores = [], codigo = 200) {
+    const marcas = valores.map(() => '?').join(', ');
+
+    sql.query(
+        conexion,
+        `EXEC dbo.${nombre}${marcas ? ' ' + marcas : ''};`,
+        valores,
+        (error, filas) => {
+            if (error) {
+                console.error(nombre, error.message);
+                return res.status(400).json({ mensaje: mensajeNegocio(error) });
+            }
+
+            res.status(codigo).json(Array.isArray(filas) ? filas : []);
+        }
+    );
 }
-function positivo(x){ const n=Number(x);return Number.isInteger(n)&&n>0?n:null; }
-function texto(x,lim=150){return typeof x==='string'?x.trim().slice(0,lim):'';}
-function personaValida(d){return /^\d{13}$/.test(texto(d.dpi))&&!!texto(d.nombre)&&!!texto(d.telefono,15)&&!!texto(d.direccion,250);}
-app.get('/api/clientes/:id/contacto', (req,res) => {
- const id=positivo(req.params.id);
- if(!id)return res.status(400).json({mensaje:'Cliente inválido.'});
- consultarSP(res,'usp_API_Cliente_Contacto_Consultar',[id]);
-});
-app.put('/api/clientes/:id/contacto', (req,res) => {
- const id=positivo(req.params.id),d=req.body||{};
- const telefono=texto(d.telefono,15),direccion=texto(d.direccion,250);
- if(!id)return res.status(400).json({mensaje:'Cliente inválido.'});
- consultarSP(res,'usp_API_Cliente_Contacto_Guardar',[id,telefono||null,direccion||null]);
-});
-app.get('/api/referencias/:cliente',(req,res)=>{
- const id=positivo(req.params.cliente);if(!id)return res.status(400).json({mensaje:'Cliente invalido.'});
- consultarSP(res,'usp_API_Referencias_Listar',[id]);
-});
-app.post('/api/referencias',(req,res)=>{
- const d=req.body||{},id=positivo(d.idCliente);
- if(!id||!personaValida(d)||!texto(d.parentesco,50))return res.status(400).json({mensaje:'Completa cliente, DPI, nombre, telefono, direccion y parentesco.'});
- consultarSP(res,'usp_API_Referencias_Crear',[id,texto(d.dpi),texto(d.nombre),texto(d.telefono,15),texto(d.direccion,250),texto(d.parentesco,50),texto(d.trabajo,150)||null,texto(d.nit,20)||null,texto(d.correo,100)||null],201);
-});
-app.delete('/api/referencias/:id',(req,res)=>{
- const id=positivo(req.params.id);if(!id)return res.status(400).json({mensaje:'Referencia invalida.'});
- consultarSP(res,'usp_API_Referencias_Eliminar',[id]);
-});
-app.get('/api/fiadores',(req,res)=>consultarSP(res,'usp_API_Fiadores_Listar'));
-app.post('/api/fiadores',(req,res)=>{
- const d=req.body||{};if(!personaValida(d))return res.status(400).json({mensaje:'Completa DPI, nombre, telefono y direccion.'});
- consultarSP(res,'usp_API_Fiadores_Crear',[texto(d.dpi),texto(d.nombre),texto(d.telefono,15),texto(d.direccion,250),texto(d.nit,20)||null,texto(d.correo,100)||null],201);
-});
-app.get('/api/creditos/:id/fiadores',(req,res)=>{
- const id=positivo(req.params.id);if(!id)return res.status(400).json({mensaje:'Credito invalido.'});
- consultarSP(res,'usp_API_CreditoFiadores_Listar',[id]);
-});
-app.post('/api/creditos/:id/fiadores',(req,res)=>{
- const id=positivo(req.params.id),fiador=positivo(req.body?.idFiador);
- if(!id||!fiador)return res.status(400).json({mensaje:'Selecciona credito y fiador.'});
- consultarSP(res,'usp_API_CreditoFiadores_Asignar',[id,fiador],201);
-});
-app.delete('/api/creditos/:id/fiadores/:fiador',(req,res)=>{
- const id=positivo(req.params.id),fiador=positivo(req.params.fiador);
- if(!id||!fiador)return res.status(400).json({mensaje:'Datos incorrectos.'});
- consultarSP(res,'usp_API_CreditoFiadores_Quitar',[id,fiador]);
-});
-app.get('/api/comisiones',(req,res)=>consultarSP(res,'usp_API_Comisiones_Listar'));
-app.get('/api/depreciacion',(req,res)=>{
- const vin=texto(req.query.vin,17).toUpperCase();
- if(vin&&!/^[A-Z0-9]{17}$/.test(vin))return res.status(400).json({mensaje:'VIN incorrecto.'});
- consultarSP(res,'usp_API_Depreciacion_Listar',[vin||null]);
-});
-app.post('/api/depreciacion',(req,res)=>{
- const d=req.body||{},vin=texto(d.vin,17).toUpperCase(),fecha=texto(d.fecha,10),valor=Number(d.valor);
- if(!/^[A-Z0-9]{17}$/.test(vin)||!/^\d{4}-\d{2}-\d{2}$/.test(fecha)||!Number.isFinite(valor)||valor<0||valor>9999999999.99)
- return res.status(400).json({mensaje:'Revisa VIN, fecha y valor.'});
- consultarSP(res,'usp_API_Depreciacion_Registrar',[vin,fecha,valor,texto(d.observacion,250)||null],201);
+
+function positivo(valor) {
+    const numero = Number(valor);
+
+    if (Number.isInteger(numero) && numero > 0) {
+        return numero;
+    }
+
+    return null;
+}
+
+function texto(valor, limite = 150) {
+    if (typeof valor === 'string') {
+        return valor.trim().slice(0, limite);
+    }
+
+    return '';
+}
+
+function personaValida(datos) {
+    return /^\d{13}$/.test(texto(datos.dpi)) &&
+        !!texto(datos.nombre) &&
+        !!texto(datos.telefono, 15) &&
+        !!texto(datos.direccion, 250);
+}
+
+app.get('/api/clientes/:id/contacto', (req, res) => {
+    const id = positivo(req.params.id);
+
+    if (!id) {
+        return res.status(400).json({ mensaje: 'Cliente inválido.' });
+    }
+
+    consultarSP(res, 'usp_API_Cliente_Contacto_Consultar', [id]);
 });
 
-// INICIAR SERVIDOR
+app.put('/api/clientes/:id/contacto', (req, res) => {
+    const id = positivo(req.params.id);
+    const datos = req.body || {};
+    const telefono = texto(datos.telefono, 15);
+    const direccion = texto(datos.direccion, 250);
+
+    if (!id) {
+        return res.status(400).json({ mensaje: 'Cliente inválido.' });
+    }
+
+    consultarSP(res, 'usp_API_Cliente_Contacto_Guardar', [
+        id,
+        telefono || null,
+        direccion || null
+    ]);
+});
+
+app.get('/api/referencias/:cliente', (req, res) => {
+    const id = positivo(req.params.cliente);
+
+    if (!id) {
+        return res.status(400).json({ mensaje: 'Cliente invalido.' });
+    }
+
+    consultarSP(res, 'usp_API_Referencias_Listar', [id]);
+});
+
+app.post('/api/referencias', (req, res) => {
+    const datos = req.body || {};
+    const id = positivo(datos.idCliente);
+
+    if (!id || !personaValida(datos) || !texto(datos.parentesco, 50)) {
+        return res.status(400).json({
+            mensaje: 'Completa cliente, DPI, nombre, telefono, direccion y parentesco.'
+        });
+    }
+
+    consultarSP(res, 'usp_API_Referencias_Crear', [
+        id,
+        texto(datos.dpi),
+        texto(datos.nombre),
+        texto(datos.telefono, 15),
+        texto(datos.direccion, 250),
+        texto(datos.parentesco, 50),
+        texto(datos.trabajo, 150) || null,
+        texto(datos.nit, 20) || null,
+        texto(datos.correo, 100) || null
+    ], 201);
+});
+
+app.delete('/api/referencias/:id', (req, res) => {
+    const id = positivo(req.params.id);
+
+    if (!id) {
+        return res.status(400).json({ mensaje: 'Referencia invalida.' });
+    }
+
+    consultarSP(res, 'usp_API_Referencias_Eliminar', [id]);
+});
+
+app.get('/api/fiadores', (req, res) => {
+    consultarSP(res, 'usp_API_Fiadores_Listar');
+});
+
+app.post('/api/fiadores', (req, res) => {
+    const datos = req.body || {};
+
+    if (!personaValida(datos)) {
+        return res.status(400).json({
+            mensaje: 'Completa DPI, nombre, telefono y direccion.'
+        });
+    }
+
+    consultarSP(res, 'usp_API_Fiadores_Crear', [
+        texto(datos.dpi),
+        texto(datos.nombre),
+        texto(datos.telefono, 15),
+        texto(datos.direccion, 250),
+        texto(datos.nit, 20) || null,
+        texto(datos.correo, 100) || null
+    ], 201);
+});
+
+app.get('/api/creditos/:id/fiadores', (req, res) => {
+    const id = positivo(req.params.id);
+
+    if (!id) {
+        return res.status(400).json({ mensaje: 'Credito invalido.' });
+    }
+
+    consultarSP(res, 'usp_API_CreditoFiadores_Listar', [id]);
+});
+
+app.post('/api/creditos/:id/fiadores', (req, res) => {
+    const id = positivo(req.params.id);
+    const fiador = positivo(req.body?.idFiador);
+
+    if (!id || !fiador) {
+        return res.status(400).json({ mensaje: 'Selecciona credito y fiador.' });
+    }
+
+    consultarSP(res, 'usp_API_CreditoFiadores_Asignar', [id, fiador], 201);
+});
+
+app.delete('/api/creditos/:id/fiadores/:fiador', (req, res) => {
+    const id = positivo(req.params.id);
+    const fiador = positivo(req.params.fiador);
+
+    if (!id || !fiador) {
+        return res.status(400).json({ mensaje: 'Datos incorrectos.' });
+    }
+
+    consultarSP(res, 'usp_API_CreditoFiadores_Quitar', [id, fiador]);
+});
+
+app.get('/api/comisiones', (req, res) => {
+    consultarSP(res, 'usp_API_Comisiones_Listar');
+});
+
+app.get('/api/depreciacion', (req, res) => {
+    const vin = texto(req.query.vin, 17).toUpperCase();
+
+    if (vin && !/^[A-Z0-9]{17}$/.test(vin)) {
+        return res.status(400).json({ mensaje: 'VIN incorrecto.' });
+    }
+
+    consultarSP(res, 'usp_API_Depreciacion_Listar', [vin || null]);
+});
+
+app.post('/api/depreciacion', (req, res) => {
+    const datos = req.body || {};
+    const vin = texto(datos.vin, 17).toUpperCase();
+    const fecha = texto(datos.fecha, 10);
+    const valor = Number(datos.valor);
+
+    if (
+        !/^[A-Z0-9]{17}$/.test(vin) ||
+        !/^\d{4}-\d{2}-\d{2}$/.test(fecha) ||
+        !Number.isFinite(valor) ||
+        valor < 0 ||
+        valor > 9999999999.99
+    ) {
+        return res.status(400).json({ mensaje: 'Revisa VIN, fecha y valor.' });
+    }
+
+    consultarSP(res, 'usp_API_Depreciacion_Registrar', [
+        vin,
+        fecha,
+        valor,
+        texto(datos.observacion, 250) || null
+    ], 201);
+});
+
 app.listen(3000, () => {
     console.log('Servidor MAGIS-AUTO iniciado');
     console.log('Direccion: http://localhost:3000');

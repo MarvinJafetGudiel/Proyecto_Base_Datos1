@@ -1,0 +1,153 @@
+* {
+                box-sizing: border-box;
+            }
+            body {
+                margin: 0;
+                font-family: Arial, sans-serif;
+                background: #f2f5fa;
+                color: #14233d;
+            }
+            .contenedor {
+                display: flex;
+                min-height: 100vh;
+            }
+            .menu {
+                width: 250px;
+                background: #14233d;
+                color: white;
+                padding: 25px 18px;
+                flex-shrink: 0;
+            }
+            .logo {
+                font-size: 23px;
+                font-weight: bold;
+            }
+            .sub {
+                font-size: 12px;
+                color: #b2c4dc;
+                margin: 10px 0 25px;
+            }
+            .menu a {
+                display: block;
+                padding: 12px;
+                color: #e1e9f7;
+                text-decoration: none;
+                border-radius: 8px;
+                margin: 4px 0;
+            }
+            .menu a:hover, .menu a.activo {
+                background: #2864dc;
+                color: white;
+            }
+            .principal {
+                flex: 1;
+                padding: 28px;
+                min-width: 0;
+            }
+            .panel {
+                background: white;
+                border: 1px solid #e1e7f0;
+                border-radius: 12px;
+                padding: 22px;
+                margin: 18px 0;
+                box-shadow: 0 2px 12px #14233d0a;
+            }
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(160px, 1fr));
+                gap: 12px;
+            }
+            .grid div {
+                min-width: 0;
+            }
+            label {
+                display: block;
+                font-weight: bold;
+                font-size: 13px;
+                margin-bottom: 6px;
+                color: #53657f;
+            }
+            input, select {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #cbd6e4;
+                border-radius: 7px;
+                font: inherit;
+            }
+            button {
+                border: 0;
+                background: #2864dc;
+                color: white;
+                padding: 11px 16px;
+                border-radius: 7px;
+                cursor: pointer;
+                margin-top: 13px;
+                font-weight: bold;
+            }
+            button.alt {
+                background: #5b6c85;
+            }
+            button.danger {
+                background: #b83838;
+                margin: 0;
+                padding: 6px 9px;
+            }
+            .table {
+                overflow: auto;
+                max-height: 340px;
+                margin-top: 14px;
+            }
+            table {
+                border-collapse: collapse;
+                width: 100%;
+                font-size: 13px;
+            }
+            th, td {
+                padding: 10px;
+                border-bottom: 1px solid #e4eaf3;
+                text-align: left;
+                white-space: nowrap;
+            }
+            th {
+                background: #eaf0fa;
+                position: sticky;
+                top: 0;
+            }
+            .msg {
+                min-height: 20px;
+                margin: 8px 0;
+                color: #275780;
+            }
+            .ayuda {
+                color: #52637d;
+                font-size: 14px;
+                line-height: 1.5;
+            }
+            h1 {
+                margin: 0 0 5px;
+            }
+            h2 {
+                margin: 0 0 8px;
+            }
+            form {
+                margin-top: 15px;
+            }
+            @media (max-width: 1000px) {
+                .grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+            @media (max-width: 750px) {
+                .contenedor {
+                    display: block;
+                }
+                .menu {
+                    width: 100%;
+                }
+                .principal {
+                    padding: 15px;
+                }
+                .grid {
+                    grid-template-columns: 1fr;
+                }
+            }
